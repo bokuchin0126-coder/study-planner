@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { supabase } from "../lib/supabase"
 import type { DailyRecord, DailyTask } from "../types/daily"
 
@@ -50,7 +50,7 @@ export function useDaily() {
 
         if (planError) throw planError
         
-        const { data: taskData, error: taskError } = await supabase
+        const { data: taskData, error: taskaError } = await supabase
         .from("daily_tasks")
         .insert({
           user_id: user.id,
@@ -59,7 +59,7 @@ export function useDaily() {
         })
         .select().single()
 
-        if (taskError) throw taskError
+        if (taskaError) throw taskaError
 
         const newTasks: DailyRecord = {
             date: date,
@@ -84,7 +84,7 @@ export function useDaily() {
 
         if (planError) throw planError
         
-        const { data: taskData, error: taskError } = await supabase
+        const { data: taskData, error: taskaError } = await supabase
           .from("daily_tasks")
           .insert({
             user_id: user.id,
@@ -93,7 +93,7 @@ export function useDaily() {
           })
           .select().single()
         
-        if (taskError) throw taskError
+        if (taskaError) throw taskaError
 
         const newTasks: DailyTask = {
           id: taskData.id,
@@ -244,12 +244,12 @@ export function useDaily() {
           text: task.title,
         }))
 
-        const { data: tasksData, error: taskError } = await supabase
+        const { data: tasksData, error: tasksError } = await supabase
           .from("daily_tasks")
           .insert(insertTasks)
           .select()
 
-        if (taskError) throw taskError
+        if (tasksError) throw tasksError
 
         const newTasks = tasksData.map(task => ({
           id: task.id,
@@ -281,12 +281,12 @@ export function useDaily() {
           text: task.title,
         }))
 
-        const { data: tasksData, error: taskError } = await supabase
+        const { data: tasksData, error: tasksError } = await supabase
           .from("daily_tasks")
           .insert(insertTasks)
           .select()
 
-        if (taskError) throw taskError
+        if (tasksError) throw tasksError
 
         const newTasks = tasksData.map(task => ({
           id: task.id,
@@ -307,6 +307,46 @@ export function useDaily() {
       alert("タスクのコピーに失敗しました")
     }
   }
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const { data: planData, error: planError } = await supabase
+          .from("daily_plans")
+          .select("*")
+
+        if (planError) throw planError
+
+        const { data: tasksData, error: tasksError } = await supabase
+          .from("daily_tasks")
+          .select("*")
+
+        if (tasksError) throw tasksError
+
+        const dailyRecords = planData.map(plan => {
+          const tasks = tasksData
+            .filter(task => task.plan_id === plan.id)
+            .map(task => ({
+              id: task.id,
+              title: task.text,
+              completed: task.completed
+            }))
+
+          return {
+            date: plan.date,
+            tasks: tasks,
+            reflection: plan.reflection
+          }
+        })
+
+        setDailyTasks(dailyRecords)
+      } catch(e) {
+        console.error(e)
+        alert("データの取得に失敗しました")
+      }
+    }
+    fetch()
+  }, [])
 
   return {
     dailyTasks,

@@ -132,9 +132,37 @@ export function useDaily() {
     }
   }
 
+  const updateDailyTasksToggle = async (id: string, completed: boolean, date: string) => {
+    try {
+      const user = await getCurrentUser()
+
+      const { error } = await supabase
+        .from("daily_tasks")
+        .update({
+          completed: !completed
+        })
+        .eq("user_id", user.id)
+        .eq("id", id)
+
+      setDailyTasks(prev => prev.map(day => day.date === date ?
+        {
+          ...day,
+          tasks: day.tasks.map(task => 
+            task.id === id ? {...task, completed: !completed} : task
+          )
+        }
+        : day
+      ))
+    } catch(e) {
+      console.error(e)
+      alert("タグ切り替えに失敗しました")
+    }
+  }
+
   return {
     dailyTasks,
     addDailyTasks,
-    updateDailyTaskTitle
+    updateDailyTaskTitle,
+    updateDailyTasksToggle
   }
 }

@@ -6,7 +6,8 @@ export default function DailyPage() {
   const { 
     dailyTasks,
     addDailyTasks,
-    updateDailyTaskTitle
+    updateDailyTaskTitle,
+    updateDailyTasksToggle
   } = useDaily()
 
   const [addText, setAddText] = useState<string>("")
@@ -33,7 +34,9 @@ export default function DailyPage() {
           
             todayDate.tasks.map(task =>
               <div key={task.id}>
-                <p>{task.completed ? "☑" : "□"}</p>
+                <button onClick={() => updateDailyTasksToggle(task.id, task.completed, today)}>
+                  {task.completed ? "☑" : "□"}
+                </button>
 
                 {editingId === task.id ?
                   <div>

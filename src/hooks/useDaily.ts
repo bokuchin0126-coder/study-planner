@@ -15,15 +15,28 @@ export function useDaily() {
 
   const [dailyTasks, setDailyTasks] = useState<DailyRecord[]>([])
 
+   const today = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Asia/Tokyo"
+  }).format(new Date())
+
+  const tomorrow = new Date()
+  tomorrow.setDate(tomorrow.getDate() + 1)
+
+  const tomorrowDate = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Asia/Tokyo"
+  }).format(tomorrow)
+
+  const todayPlan = dailyTasks.find(day => day.date === today)
+  const tomorrowPlan = dailyTasks.find(day => day.date === tomorrowDate)
+
 
   const addDailyTasks = async (text: string, date: string) => {
     try {
       if (text.trim() === "") return alert("タスク名を入力して下さい")
 
       const user = await getCurrentUser()
-      const currentDate = dailyTasks.find(day => day.date === date)
 
-      if (!currentDate) {
+      if (!todayPlan) {
 
         const { data: planData, error: planError } = await supabase
           .from("daily_plans")
@@ -208,8 +221,14 @@ export function useDaily() {
     }
   }
 
+ 
+
   return {
     dailyTasks,
+    today,
+    tomorrowDate,
+    todayPlan,
+    tomorrowPlan,
     addDailyTasks,
     updateDailyTaskTitle,
     updateDailyTasksToggle,

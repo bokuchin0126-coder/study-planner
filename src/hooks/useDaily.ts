@@ -53,7 +53,8 @@ export function useDaily() {
                 id: taskData.id,
                 title: text,
                 completed: false
-            }]
+            }],
+            reflection: ""
         }
 
         setDailyTasks(prev => [...prev, newTasks])
@@ -182,11 +183,37 @@ export function useDaily() {
     }
   }
 
+  const updateDailyTaskReflection = async (text: string, date: string) => {
+    try {
+      const user = await getCurrentUser()
+
+      const { error } = await supabase
+        .from("daily_plans")
+        .update({
+          reflectioin: text
+        })
+        .eq("user_id", user.id)
+        .eq("date", date)
+
+        setDailyTasks(prev => prev.map(day => day.date === date ? 
+          {
+            ...day,
+            reflection: text
+          }
+          : day
+        ))
+    } catch(e) {
+      console.error(e)
+      alert("振り返りの更新に失敗しました")
+    }
+  }
+
   return {
     dailyTasks,
     addDailyTasks,
     updateDailyTaskTitle,
     updateDailyTasksToggle,
-    deleteDailyTask
+    deleteDailyTask,
+    updateDailyTaskReflection
   }
 }

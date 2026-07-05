@@ -8,14 +8,17 @@ export default function DailyPage() {
     addDailyTasks,
     updateDailyTaskTitle,
     updateDailyTasksToggle,
-    deleteDailyTask
+    deleteDailyTask,
+    updateDailyTaskReflection
   } = useDaily()
 
   const [addText, setAddText] = useState<string>("")
   const [editText, setEditText] = useState<string>("")
+  const [reflectionText, setReflectionText] = useState<string>("")
 
   const [showAdd, setShowAdd] = useState<boolean>(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [isEditingPlan, setIsEditingPlan] = useState<boolean>(false)
 
   const today = new Intl.DateTimeFormat("sv-SE", {
     timeZone: "Asia/Tokyo"
@@ -35,7 +38,10 @@ export default function DailyPage() {
           
             todayDate.tasks.map(task =>
               <div key={task.id}>
-                <button onClick={() => updateDailyTasksToggle(task.id, task.completed, today)}>
+                <button 
+                  disabled={!isEditingPlan}
+                  onClick={() => updateDailyTasksToggle(task.id, task.completed, today)}
+                >
                   {task.completed ? "☑" : "□"}
                 </button>
 
@@ -45,6 +51,7 @@ export default function DailyPage() {
                     <input
                       autoFocus
                       value={editText}
+                      disabled={!isEditingPlan}
                       onChange={(e) => setEditText(e.target.value)}
                       onKeyDown={async (e) => {
                         if (e.key === "Enter") {
@@ -55,11 +62,14 @@ export default function DailyPage() {
                       }}
                     />
 
-                    <button onClick={async () => {
-                      await updateDailyTaskTitle(task.id, editText, today)
-                      setEditText("")
-                      setEditingId(null)
-                    }}>
+                    <button 
+                      disabled={!isEditingPlan}
+                      onClick={async () => {
+                        await updateDailyTaskTitle(task.id, editText, today)
+                        setEditText("")
+                        setEditingId(null)
+                      }}
+                    >
                       保存
                     </button>
 
@@ -68,17 +78,23 @@ export default function DailyPage() {
                   <div>
 
                     <p>{task.title}</p>
-                    <button onClick={() => {
-                      setEditingId(task.id)
-                      setEditText(task.title)
-                    }}>
+                    <button
+                      disabled={!isEditingPlan} 
+                      onClick={() => {
+                        setEditingId(task.id)
+                        setEditText(task.title)
+                      }}
+                    >
                       編集
                     </button>
 
                   </div>
                 }
 
-                <button onClick={() => deleteDailyTask(task.id, today)}>
+                <button 
+                  disabled={!isEditingPlan}
+                  onClick={() => deleteDailyTask(task.id, today)}
+                >
                   削除
                 </button>
               </div>
@@ -92,8 +108,9 @@ export default function DailyPage() {
 
             <div>
               <input
-                placeholder="タスク名を入力"
+                placeholder="タスク名を入力..."
                 autoFocus
+                disabled={!isEditingPlan}
                 value={addText}
                 onChange={(e) => setAddText(e.target.value)}
                 onKeyDown={async (e) => {
@@ -105,6 +122,7 @@ export default function DailyPage() {
                 }}
               />
               <button 
+                disabled={!isEditingPlan}
                 onClick={async () => {
                   await addDailyTasks(addText, today),
                   setAddText(""),
@@ -114,7 +132,10 @@ export default function DailyPage() {
               </button>
             </div>
           :
-            <button onClick={() => setShowAdd(true)}>
+            <button 
+              disabled={!isEditingPlan}
+              onClick={() => setShowAdd(true)}
+            >
               新しいタスクを追加＋
             </button>
           }
@@ -123,10 +144,32 @@ export default function DailyPage() {
 
         <div>
           <h2>今日の振り返り</h2>
+          <textarea
+            placeholder="振り返りを入力..."
+            disabled={!isEditingPlan}
+            value={reflectionText}
+            onChange={(e) => setReflectionText(e.target.value)}
+          />
         </div>
 
         <div>
           <h2>明日の課題</h2>
+        </div>
+
+        <div>
+          {isEditingPlan ?
+          
+            <button onClick={() => {
+              updateDailyTaskReflection(reflectionText, today), 
+              setIsEditingPlan(false)
+            }}>
+              保存する
+            </button>
+          :
+            <button onClick={() => setIsEditingPlan(true)}>
+              編集する
+            </button>
+          }
         </div>
       </div>
     </>

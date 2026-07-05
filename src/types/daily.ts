@@ -7,4 +7,5 @@ export interface DailyTask {
 export interface DailyRecord {
     date: string
     tasks: DailyTask[]
+    reflection: string
 }

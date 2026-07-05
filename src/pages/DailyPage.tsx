@@ -13,7 +13,8 @@ export default function DailyPage() {
     updateDailyTaskTitle,
     updateDailyTasksToggle,
     deleteDailyTask,
-    updateDailyTaskReflection
+    updateDailyTaskReflection,
+    carryOverTasks
   } = useDaily()
 
   const [addText, setAddText] = useState<string>("")
@@ -259,7 +260,8 @@ export default function DailyPage() {
           {isEditingPlan ?
           
             <button onClick={async () => {
-              await updateDailyTaskReflection(reflectionText, today), 
+              await updateDailyTaskReflection(reflectionText, today),
+              await carryOverTasks()
               setIsEditingPlan(false)
             }}>
               保存する

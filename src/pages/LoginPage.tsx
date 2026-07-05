@@ -6,14 +6,23 @@ export default function LoginPage() {
   const { signIn } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-
+ 
   const handleSignIn = async () => {
     try {
-        await signIn(email, password)
-        alert("登録しました")
+      if (email.trim() === "") return alert("メールアドレスを入力してください。")
+      if (password.trim() === "") return alert("パスワードを入力してください")
+        
+      await signIn(email, password)
+      alert("ログインしました")
+
     } catch (e) {
-        console.error(e)
-        alert("ログイン失敗")
+      console.error(e)
+      alert("ログイン失敗")
+      return
+
+    } finally {
+      setEmail("")
+      setPassword("")
     }
   }
   return (

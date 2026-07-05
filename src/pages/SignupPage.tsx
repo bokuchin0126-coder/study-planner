@@ -8,11 +8,20 @@ export default function SignupPage() {
 
   const handleSignUp = async () => {
     try {
-        await signUp(email, password)
-        alert("登録しました")
+      if (email.trim() === "") return alert("メールアドレスを入力してください。")
+      if (password.trim() === "") return alert("パスワードを入力してください")
+
+      await signUp(email, password)
+      alert("登録成功")
+
     } catch(e) {
-        console.error(e)
-        alert("登録失敗")
+      console.error(e)
+      alert("登録失敗")
+      return
+      
+    } finally {
+      setEmail("")
+      setPassword("")
     }
   } 
 

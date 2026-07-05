@@ -1,7 +1,6 @@
-import { useState } from "react"
-import { supabase } from "./lib/supabase"
 import SignupPage from "./pages/SignupPage"
 import LoginPage from "./pages/LoginPage"
+import DailyPage from "./pages/DailyPage"
 
 
 function App() {
@@ -11,6 +10,7 @@ function App() {
     <>
       <SignupPage />
       <LoginPage />
+      <DailyPage />
     </>
   )
 }

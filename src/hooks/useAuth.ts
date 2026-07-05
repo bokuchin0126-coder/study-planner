@@ -1,7 +1,7 @@
 import { supabase } from "../lib/supabase"
 
 
-export const useAuth = () => {
+export function useAuth() {
 
     const signUp = async (email: string, password: string) => {
         const { error } = await supabase.auth.signUp({

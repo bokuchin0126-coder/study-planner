@@ -5,34 +5,31 @@ import type { DailyRecord, DailyTask } from "../types/daily"
 
 export function useDaily() {
 
+  const getCurrentUser = async () => {
+    const { data: {user}, error } = await supabase.auth.getUser()
+    
+    if (error) throw error
+    if (!user) throw new Error("ログインしてください")
+    return user
+  }
+
   const [dailyTasks, setDailyTasks] = useState<DailyRecord[]>([])
 
-  const today = new Intl.DateTimeFormat("sv-SE", {
-    timeZone: "Asia/Tokyo"
-  }).format(new Date())
 
-  const todayDate = dailyTasks.find(daily => daily.date === today)
-
-  const addDailyTasks = async (text: string) => {
+  const addDailyTasks = async (text: string, date: string) => {
     try {
       if (text.trim() === "") return alert("タスク名を入力して下さい")
 
-      const {
-        data: {user},
-        error: userError,
-      } = await supabase.auth.getUser()
-      
+      const user = await getCurrentUser()
+      const currentDate = dailyTasks.find(day => day.date === date)
 
-      if (userError) throw userError
-      if (!user) return alert("ログインしてください")
-
-      if (!todayDate) {
+      if (!currentDate) {
 
         const { data: planData, error: planError } = await supabase
           .from("daily_plans")
           .insert({
             user_id: user.id,
-            date: today,
+            date: date,
             reflection: ""
           })
           .select().single()
@@ -51,7 +48,7 @@ export function useDaily() {
         if (taskError) throw taskError
 
         const newTasks: DailyRecord = {
-            date: today,
+            date: date,
             tasks: [{
                 id: taskData.id,
                 title: text,
@@ -67,7 +64,7 @@ export function useDaily() {
           .from("daily_plans")
           .select()
           .eq("user_id", user.id)
-          .eq("date", today)
+          .eq("date", date)
           .single()
 
         if (planError) throw planError
@@ -90,23 +87,54 @@ export function useDaily() {
         }
         
         setDailyTasks(prev => prev.map(day =>
-           day.date === today ? {
+           day.date === date ? {
             ...day,
             tasks: [...day.tasks, newTasks]
           }
           : day
         ))
       }
+    } catch(e: any) {
+      console.error(e)
+      alert(e.message)
+    }
+  }
+
+  const updateDailyTaskTitle = async (id: string, text: string, date: string) => {
+    try {
+      if (text.trim() === "") alert("タスク名を入力して下さい")
+
+      const user = await getCurrentUser()
+
+      const { error } = await supabase
+        .from("daily_tasks")
+        .update({
+          text: text
+        })
+        .eq("user_id", user.id)
+        .eq("id", id)
+
+      if (error) throw error
+
+      setDailyTasks(prev => prev.map(day => day.date === date ?
+        {
+          ...day,
+          tasks: day.tasks.map(task =>
+            task.id === id ? {...task, title: text} 
+            : task
+          )
+        }
+        : day
+      ))
     } catch(e) {
       console.error(e)
-      alert("タスクの追加に失敗しました")
-      return
+      alert("タスク名の変更に失敗しました")
     }
   }
 
   return {
     dailyTasks,
-    todayDate,
-    addDailyTasks
+    addDailyTasks,
+    updateDailyTaskTitle
   }
 }

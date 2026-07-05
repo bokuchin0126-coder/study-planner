@@ -5,13 +5,22 @@ export default function DailyPage() {
 
   const { 
     dailyTasks,
-    todayDate,
-    addDailyTasks
+    addDailyTasks,
+    updateDailyTaskTitle
   } = useDaily()
 
   const [addText, setAddText] = useState<string>("")
-  const [showAdd, setShowAdd] = useState<boolean>(false)
+  const [editText, setEditText] = useState<string>("")
 
+  const [showAdd, setShowAdd] = useState<boolean>(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+
+  const today = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Asia/Tokyo"
+  }).format(new Date())
+
+  const todayDate = dailyTasks.find(daily => daily.date === today)
+  const todayTasks = dailyTasks.filter(day => day.date === today)
 
     
   return (
@@ -25,7 +34,45 @@ export default function DailyPage() {
             todayDate.tasks.map(task =>
               <div key={task.id}>
                 <p>{task.completed ? "☑" : "□"}</p>
-                <p>{task.title}</p>
+
+                {editingId === task.id ?
+                  <div>
+
+                    <input
+                      autoFocus
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      onKeyDown={async (e) => {
+                        if (e.key === "Enter") {
+                          await updateDailyTaskTitle(task.id, editText, today)
+                          setEditText("")
+                          setEditingId(null)
+                        }
+                      }}
+                    />
+
+                    <button onClick={async () => {
+                      await updateDailyTaskTitle(task.id, editText, today)
+                      setEditText("")
+                      setEditingId(null)
+                    }}>
+                      保存
+                    </button>
+
+                  </div>
+                :
+                  <div>
+
+                    <p>{task.title}</p>
+                    <button onClick={() => {
+                      setEditingId(task.id)
+                      setEditText(task.title)
+                    }}>
+                      編集
+                    </button>
+
+                  </div>
+                }
               </div>
             )
           :
@@ -41,17 +88,17 @@ export default function DailyPage() {
                 autoFocus
                 value={addText}
                 onChange={(e) => setAddText(e.target.value)}
-                onKeyDown={(e) => {
+                onKeyDown={async (e) => {
                   if (e.key === "Enter") {
-                    addDailyTasks(addText)
+                    await addDailyTasks(addText, today)
                     setAddText("")
                     setShowAdd(false)
                   }
                 }}
               />
               <button 
-                onClick={() => {
-                  addDailyTasks(addText),
+                onClick={async () => {
+                  await addDailyTasks(addText, today),
                   setAddText(""),
                   setShowAdd(false)}}
               >

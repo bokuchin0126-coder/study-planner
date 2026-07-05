@@ -7,7 +7,8 @@ export default function DailyPage() {
     dailyTasks,
     addDailyTasks,
     updateDailyTaskTitle,
-    updateDailyTasksToggle
+    updateDailyTasksToggle,
+    deleteDailyTask
   } = useDaily()
 
   const [addText, setAddText] = useState<string>("")
@@ -76,6 +77,10 @@ export default function DailyPage() {
 
                   </div>
                 }
+
+                <button onClick={() => deleteDailyTask(task.id, today)}>
+                  削除
+                </button>
               </div>
             )
           :

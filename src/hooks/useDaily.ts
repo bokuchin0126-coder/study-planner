@@ -159,10 +159,34 @@ export function useDaily() {
     }
   }
 
+  const deleteDailyTask = async (id: string, date: string) => {
+    try {
+      const user = await getCurrentUser()
+
+      const { error } = await supabase
+        .from("daily_tasks")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("id", id)
+
+      setDailyTasks(prev => prev.map(day => day.date === date ? 
+        {
+          ...day,
+          tasks: day.tasks.filter(task => task.id !== id)
+        }
+        : day
+      ))
+    } catch(e) {
+      console.error(e)
+      alert("タスクの削除に失敗しました")
+    }
+  }
+
   return {
     dailyTasks,
     addDailyTasks,
     updateDailyTaskTitle,
-    updateDailyTasksToggle
+    updateDailyTasksToggle,
+    deleteDailyTask
   }
 }

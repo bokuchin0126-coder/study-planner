@@ -34,10 +34,13 @@ export function useDaily() {
   const addDailyTasks = async (text: string, date: string) => {
     try {
       if (text.trim() === "") return alert("タスク名を入力して下さい")
+      const contentsDate = dailyTasks.find(day => day.date === date)
 
       const user = await getCurrentUser()
 
-      if (!todayPlan) {
+      const orderIndex = dailyTasks.length
+
+      if (!contentsDate) {
 
         const { data: planData, error: planError } = await supabase
           .from("daily_plans")
@@ -55,7 +58,8 @@ export function useDaily() {
         .insert({
           user_id: user.id,
           plan_id: planData.id,
-          text: text
+          text: text,
+          order_index: orderIndex
         })
         .select().single()
 
@@ -66,7 +70,8 @@ export function useDaily() {
             tasks: [{
                 id: taskData.id,
                 title: text,
-                completed: false
+                completed: false,
+                orderIndex: orderIndex
             }],
             reflection: ""
         }
@@ -89,7 +94,8 @@ export function useDaily() {
           .insert({
             user_id: user.id,
             plan_id: planData.id,
-            text: text
+            text: text,
+            order_index: orderIndex
           })
           .select().single()
         
@@ -98,7 +104,8 @@ export function useDaily() {
         const newTasks: DailyTask = {
           id: taskData.id,
           title: text,
-          completed: false
+          completed: false,
+          orderIndex: orderIndex
         }
         
         setDailyTasks(prev => prev.map(day =>
@@ -281,7 +288,8 @@ export function useDaily() {
         const newTasks = tasksData.map(task => ({
           id: task.id,
           title: task.text,
-          completed: false
+          completed: false,
+          orderIndex: task.order_index
         }))
 
         const copyDate = {
@@ -319,7 +327,8 @@ export function useDaily() {
         const newTasks = tasksData.map(task => ({
           id: task.id,
           title: task.text,
-          completed: false
+          completed: false,
+          orderIndex: task.order_index
         }))
 
         setDailyTasks(prev => prev.map(day => day.date === tomorrowDate ?
@@ -358,13 +367,14 @@ export function useDaily() {
             .map(task => ({
               id: task.id,
               title: task.text,
-              completed: task.completed
+              completed: task.completed,
+              orderIndex: task.order_index
             }))
 
           return {
             date: plan.date,
             tasks: tasks,
-            reflection: plan.reflection
+            reflection: plan.reflection,
           }
         })
 

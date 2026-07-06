@@ -271,7 +271,22 @@ export function useDaily() {
 
         if (planError) throw planError
 
-        const insertTasks = carryTasks.map(task => ({
+        const { data: existsTasks, error: existsError } = await supabase
+          .from("daily_tasks")
+          .select("source_task_id")
+          .eq("plan_id", planData.id)
+
+        if (existsError) throw existsError
+
+        const filteredTasks = carryTasks.filter(task =>
+          !existsTasks.some(
+            copied => copied.source_task_id === task.id
+          )
+        )
+
+        if (filteredTasks.length === 0) return 
+
+        const insertTasks = filteredTasks.map(task => ({
           user_id: user.id,
           plan_id: planData.id,
           text: task.title,
@@ -310,7 +325,22 @@ export function useDaily() {
 
         if (planError) throw planError
 
-        const insertTasks = carryTasks.map(task => ({
+        const { data: existsTasks, error: existsError } = await supabase
+          .from("daily_tasks")
+          .select("source_task_id")
+          .eq("plan_id", planData.id)
+
+        if (existsError) throw existsError
+
+        const filteredTasks = carryTasks.filter(task =>
+          !existsTasks.some(
+            copied => copied.source_task_id === task.id
+          )
+        )
+
+        if (filteredTasks.length === 0) return
+
+        const insertTasks = filteredTasks.map(task => ({
           user_id: user.id,
           plan_id: planData.id,
           text: task.title,

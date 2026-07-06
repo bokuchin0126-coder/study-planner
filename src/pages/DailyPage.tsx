@@ -25,7 +25,10 @@ export default function DailyPage() {
   const [tomorrowShowAdd, setTomorrowShowAdd] = useState<boolean>(false)
 
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [isEditingPlan, setIsEditingPlan] = useState<boolean>(false)
+  const [isEditingPlan, setIsEditingPlan] = useState<boolean>(() => {
+    if (!todayPlan) return true
+    else return false
+  })
 
  
 

@@ -28,7 +28,7 @@ export function useDaily() {
 
   const todayPlan = dailyTasks.find(day => day.date === today)
   const tomorrowPlan = dailyTasks.find(day => day.date === tomorrowDate)
-  const carryTasks = todayPlan?.tasks.filter(task => !task.completed) ?? []
+  const carryTasks = todayPlan?.tasks.filter(task => !task.completed)
 
 
   const addDailyTasks = async (text: string, date: string) => {
@@ -151,13 +151,36 @@ export function useDaily() {
     try {
       const user = await getCurrentUser()
 
-      const { error } = await supabase
+      const { data: taskData, error: taskError } = await supabase
         .from("daily_tasks")
         .update({
           completed: !completed
         })
         .eq("user_id", user.id)
         .eq("id", id)
+        .select().single()
+
+      if (taskError) throw taskError
+
+      const { data: deleteTasks, error: deleteError } = await supabase
+        .from("daily_tasks")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("source_task_id", taskData.id)
+        .select()
+
+      if (deleteError) throw deleteError
+
+      if (deleteTasks.length > 0) {
+        setDailyTasks(prev => prev.map(day => ({
+          ...day,
+          tasks: day.tasks.filter(task => 
+            !deleteTasks.some(
+              deleted => deleted.id === task.id
+            )
+          )
+        })))
+      }
 
       setDailyTasks(prev => prev.map(day => day.date === date ?
         {
@@ -224,6 +247,9 @@ export function useDaily() {
 
   const carryOverTasks = async () => {
     try {
+      if (!carryTasks) return  
+      if (carryTasks.length === 0) return
+
       const user = await getCurrentUser()
 
       if (!tomorrowPlan) {
@@ -242,6 +268,7 @@ export function useDaily() {
           user_id: user.id,
           plan_id: planData.id,
           text: task.title,
+          source_task_id: task.id
         }))
 
         const { data: tasksData, error: tasksError } = await supabase
@@ -270,7 +297,7 @@ export function useDaily() {
           .from("daily_plans")
           .select()
           .eq("user_id", user.id)
-          .eq("data", tomorrowDate)
+          .eq("date", tomorrowDate)
           .single()
 
         if (planError) throw planError
@@ -279,6 +306,7 @@ export function useDaily() {
           user_id: user.id,
           plan_id: planData.id,
           text: task.title,
+          source_task_id: task.id
         }))
 
         const { data: tasksData, error: tasksError } = await supabase
@@ -301,6 +329,7 @@ export function useDaily() {
           }
           : day
         ))
+         
       }
     } catch(e) {
       console.error(e)

@@ -15,7 +15,7 @@ export function useDaily() {
 
   const [dailyTasks, setDailyTasks] = useState<DailyRecord[]>([])
 
-   const today = new Intl.DateTimeFormat("sv-SE", {
+  const today = new Intl.DateTimeFormat("sv-SE", {
     timeZone: "Asia/Tokyo"
   }).format(new Date())
 
@@ -53,7 +53,7 @@ export function useDaily() {
 
         if (planError) throw planError
         
-        const { data: taskData, error: taskaError } = await supabase
+        const { data: taskData, error: taskError } = await supabase
         .from("daily_tasks")
         .insert({
           user_id: user.id,
@@ -63,7 +63,7 @@ export function useDaily() {
         })
         .select().single()
 
-        if (taskaError) throw taskaError
+        if (taskError) throw taskError
 
         const newTasks: DailyRecord = {
             date: date,
@@ -89,7 +89,7 @@ export function useDaily() {
 
         if (planError) throw planError
         
-        const { data: taskData, error: taskaError } = await supabase
+        const { data: taskData, error: taskError } = await supabase
           .from("daily_tasks")
           .insert({
             user_id: user.id,
@@ -99,7 +99,7 @@ export function useDaily() {
           })
           .select().single()
         
-        if (taskaError) throw taskaError
+        if (taskError) throw taskError
 
         const newTasks: DailyTask = {
           id: taskData.id,
@@ -169,7 +169,7 @@ export function useDaily() {
 
       if (taskError) throw taskError
 
-      const { data: deleteTasks, error: deleteError } = await supabase
+      const { data: deleteTask, error: deleteError } = await supabase
         .from("daily_tasks")
         .delete()
         .eq("user_id", user.id)
@@ -178,11 +178,11 @@ export function useDaily() {
 
       if (deleteError) throw deleteError
 
-      if (deleteTasks.length > 0) {
+      if (deleteTask.length > 0) {
         setDailyTasks(prev => prev.map(day => ({
           ...day,
           tasks: day.tasks.filter(task => 
-            !deleteTasks.some(
+            !deleteTask.some(
               deleted => deleted.id === task.id
             )
           )
@@ -293,14 +293,14 @@ export function useDaily() {
           source_task_id: task.id
         }))
 
-        const { data: tasksData, error: tasksError } = await supabase
+        const { data: taskData, error: taskError } = await supabase
           .from("daily_tasks")
           .insert(insertTasks)
           .select()
 
-        if (tasksError) throw tasksError
+        if (taskError) throw taskError
 
-        const newTasks = tasksData.map(task => ({
+        const newTasks = taskData.map(task => ({
           id: task.id,
           title: task.text,
           completed: false,
@@ -347,14 +347,14 @@ export function useDaily() {
           source_task_id: task.id
         }))
 
-        const { data: tasksData, error: tasksError } = await supabase
+        const { data: taskData, error: taskError } = await supabase
           .from("daily_tasks")
           .insert(insertTasks)
           .select()
 
-        if (tasksError) throw tasksError
+        if (taskError) throw taskError
 
-        const newTasks = tasksData.map(task => ({
+        const newTasks = taskData.map(task => ({
           id: task.id,
           title: task.text,
           completed: false,

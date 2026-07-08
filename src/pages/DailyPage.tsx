@@ -1,5 +1,5 @@
 import { useDaily } from "../hooks/useDaily"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function DailyPage() {
 
@@ -25,12 +25,7 @@ export default function DailyPage() {
   const [tomorrowShowAdd, setTomorrowShowAdd] = useState<boolean>(false)
 
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [isEditingPlan, setIsEditingPlan] = useState<boolean>(() => {
-    if (!todayPlan) return true
-    else return false
-  })
-
- 
+  const [isTyping, setIsTyping] = useState<boolean>(false)
 
     
   return (
@@ -44,8 +39,10 @@ export default function DailyPage() {
             todayPlan.tasks.map(task =>
               <div key={task.id}>
                 <button 
-                  disabled={!isEditingPlan}
-                  onClick={() => updateDailyTasksToggle(task.id, task.completed, today)}
+                  onClick={async () => {
+                    await updateDailyTasksToggle(task.id, task.completed, today),
+                    await carryOverTasks()
+                  }}
                 >
                   {task.completed ? "☑" : "□"}
                 </button>
@@ -56,7 +53,6 @@ export default function DailyPage() {
                     <input
                       autoFocus
                       value={editText}
-                      disabled={!isEditingPlan}
                       onChange={(e) => setEditText(e.target.value)}
                       onKeyDown={async (e) => {
                         if (e.key === "Enter") {
@@ -68,7 +64,6 @@ export default function DailyPage() {
                     />
 
                     <button 
-                      disabled={!isEditingPlan}
                       onClick={async () => {
                         await updateDailyTaskTitle(task.id, editText, today)
                         setEditText("")
@@ -84,7 +79,6 @@ export default function DailyPage() {
 
                     <p>{task.title}</p>
                     <button
-                      disabled={!isEditingPlan} 
                       onClick={() => {
                         setEditingId(task.id)
                         setEditText(task.title)
@@ -97,8 +91,7 @@ export default function DailyPage() {
                 }
 
                 <button 
-                  disabled={!isEditingPlan}
-                  onClick={() => deleteDailyTask(task.id, today)}
+                  onClick={async () => await deleteDailyTask(task.id, today)}
                 >
                   削除
                 </button>
@@ -115,21 +108,21 @@ export default function DailyPage() {
               <input
                 placeholder="タスク名を入力..."
                 autoFocus
-                disabled={!isEditingPlan}
                 value={addText}
                 onChange={(e) => setAddText(e.target.value)}
                 onKeyDown={async (e) => {
                   if (e.key === "Enter") {
                     await addDailyTasks(addText, today)
+                    await carryOverTasks()
                     setAddText("")
                     setTodayShowAdd(false)
                   }
                 }}
               />
               <button 
-                disabled={!isEditingPlan}
                 onClick={async () => {
                   await addDailyTasks(addText, today),
+                  await carryOverTasks()
                   setAddText(""),
                   setTodayShowAdd(false)}}
               >
@@ -138,12 +131,12 @@ export default function DailyPage() {
             </div>
           :
             <button 
-              disabled={!isEditingPlan}
               onClick={() => setTodayShowAdd(true)}
             >
               新しいタスクを追加＋
             </button>
           }
+          <p>※達成されなかったタスクは自動で明日に引き継がれます</p>
 
         </div>
 
@@ -151,10 +144,17 @@ export default function DailyPage() {
           <h2>今日の振り返り</h2>
           <textarea
             placeholder="振り返りを入力..."
-            disabled={!isEditingPlan}
+            onBlur={() => {
+              updateDailyTaskReflection(reflectionText, today),
+              setIsTyping(false)
+            }}
             value={reflectionText}
-            onChange={(e) => setReflectionText(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+              setReflectionText(e.target.value),
+              setIsTyping(true)
+            }}
           />
+          <p>{isTyping ? "入力中..." : "保存済み✓"}</p>
         </div>
 
         <div>
@@ -170,7 +170,6 @@ export default function DailyPage() {
                     <input
                       autoFocus
                       value={editText}
-                      disabled={!isEditingPlan}
                       onChange={(e) => setEditText(e.target.value)}
                       onKeyDown={async (e) => {
                         if (e.key === "Enter") {
@@ -182,7 +181,6 @@ export default function DailyPage() {
                     />
 
                     <button 
-                      disabled={!isEditingPlan}
                       onClick={async () => {
                         await updateDailyTaskTitle(task.id, editText, tomorrowDate)
                         setEditText("")
@@ -198,7 +196,6 @@ export default function DailyPage() {
 
                     <p>{task.title}</p>
                     <button
-                      disabled={!isEditingPlan} 
                       onClick={() => {
                         setEditingId(task.id)
                         setEditText(task.title)
@@ -211,7 +208,6 @@ export default function DailyPage() {
                 }
 
                 <button 
-                  disabled={!isEditingPlan}
                   onClick={() => deleteDailyTask(task.id, tomorrowDate)}
                 >
                   削除
@@ -228,7 +224,6 @@ export default function DailyPage() {
               <input
                 placeholder="タスク名を入力..."
                 autoFocus
-                disabled={!isEditingPlan}
                 value={addText}
                 onChange={(e) => setAddText(e.target.value)}
                 onKeyDown={async (e) => {
@@ -240,7 +235,6 @@ export default function DailyPage() {
                 }}
               />
               <button 
-                disabled={!isEditingPlan}
                 onClick={async () => {
                   await addDailyTasks(addText, tomorrowDate),
                   setAddText(""),
@@ -251,7 +245,6 @@ export default function DailyPage() {
             </div>
           :
             <button 
-              disabled={!isEditingPlan}
               onClick={() => setTomorrowShowAdd(true)}
             >
               新しいタスクを追加＋
@@ -259,31 +252,6 @@ export default function DailyPage() {
           }
         </div>
 
-        <div>
-          {isEditingPlan ?
-          
-            <button onClick={async () => {
-              await updateDailyTaskReflection(reflectionText, today),
-              await carryOverTasks()
-              setIsEditingPlan(false)
-            }}>
-              保存する
-            </button>
-          :
-              <button onClick={() => {
-                if (!todayPlan) {
-                  setIsEditingPlan(true)
-                  return
-                } else {
-                  setIsEditingPlan(true)
-                  setReflectionText(todayPlan.reflection)
-                }
-              }}>
-                編集する
-              </button>
-          
-          }
-        </div>
       </div>
     </>
   )

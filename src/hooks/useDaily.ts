@@ -26,6 +26,8 @@ export function useDaily() {
     timeZone: "Asia/Tokyo"
   }).format(tomorrow)
 
+  const [dateData, setDateData] = useState<string>(today)
+
   const todayPlan = dailyTasks.find(day => day.date === today)
   const tomorrowPlan = dailyTasks.find(day => day.date === tomorrowDate)
   const carryTasks = todayPlan?.tasks.filter(task => !task.completed)
@@ -259,7 +261,14 @@ export function useDaily() {
 
       const user = await getCurrentUser()
 
-      if (!tomorrowPlan) {
+      const { data: tomorrowPlanData } = await supabase
+        .from("daily_plans")
+        .select()
+        .eq("user_id", user.id)
+        .eq("date", tomorrowDate)
+        .maybeSingle()
+
+      if (!tomorrowPlanData) {
         const { data: planData, error: planError } = await supabase
           .from("daily_plans")
           .insert({
@@ -300,20 +309,23 @@ export function useDaily() {
 
         if (taskError) throw taskError
 
-        const newTasks = taskData.map(task => ({
-          id: task.id,
-          title: task.text,
-          completed: false,
-          orderIndex: task.order_index
-        }))
+        if (today > dateData) {
+          const newTasks = taskData.map(task => ({
+            id: task.id,
+            title: task.text,
+            completed: false,
+            orderIndex: task.order_index
+          }))
 
-        const copyDate = {
-          date: tomorrowDate,
-          tasks: newTasks,
-          reflection: ""
+          const copyDate = {
+            date: tomorrowDate,
+            tasks: newTasks,
+            reflection: ""
+          }
+
+          setDailyTasks(prev => [...prev, copyDate])
+          setDateData(today)
         }
-
-        setDailyTasks(prev => [...prev, copyDate])
 
       } else {
         const { data: planData, error: planError } = await supabase
@@ -354,21 +366,23 @@ export function useDaily() {
 
         if (taskError) throw taskError
 
-        const newTasks = taskData.map(task => ({
-          id: task.id,
-          title: task.text,
-          completed: false,
-          orderIndex: task.order_index
-        }))
-
-        setDailyTasks(prev => prev.map(day => day.date === tomorrowDate ?
-          {
-            ...day,
-            tasks: [...day.tasks, ...newTasks]
-          }
-          : day
-        ))
-         
+        if (today > dateData) {
+          const newTasks = taskData.map(task => ({
+            id: task.id,
+            title: task.text,
+            completed: false,
+            orderIndex: task.order_index
+          }))
+  
+          setDailyTasks(prev => prev.map(day => day.date === tomorrowDate ?
+            {
+              ...day,
+              tasks: [...day.tasks, ...newTasks]
+            }
+            : day
+          ))
+          setDateData(today)
+        }
       }
     } catch(e) {
       console.error(e)

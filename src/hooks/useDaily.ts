@@ -393,20 +393,29 @@ export function useDaily() {
   useEffect(() => {
     const fetch = async () => {
       try {
+        const user = await getCurrentUser()
+
         const { data: planData, error: planError } = await supabase
           .from("daily_plans")
-          .select("*")
+          .select()
+          .eq("user_id", user.id)
+          .in("date", [today, tomorrowDate])
 
         if (planError) throw planError
+        const planIds = planData.map(plan => plan.id)
 
         const { data: tasksData, error: tasksError } = await supabase
           .from("daily_tasks")
-          .select("*")
+          .select()
+          .eq("user_id", user.id)
+          .in("plan_id", planIds)
 
         if (tasksError) throw tasksError
 
+        const taskFilter = tasksData.filter(task => task.source_task_id === null)
+
         const dailyRecords = planData.map(plan => {
-          const tasks = tasksData
+          const tasks = taskFilter
             .filter(task => task.plan_id === plan.id)
             .map(task => ({
               id: task.id,

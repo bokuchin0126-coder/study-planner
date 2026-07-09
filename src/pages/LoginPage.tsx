@@ -1,11 +1,14 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "../hooks/useAuth"
+import { Link, useNavigate } from "react-router-dom"
+import { supabase } from "../lib/supabase"
 
 
 export default function LoginPage() {
   const { signIn } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const navigate = useNavigate()
  
   const handleSignIn = async () => {
     try {
@@ -13,7 +16,10 @@ export default function LoginPage() {
       if (password.trim() === "") return alert("パスワードを入力してください")
         
       await signIn(email, password)
-      alert("ログインしました")
+
+      navigate("/daily", {
+        replace: true
+      })
 
     } catch (e) {
       console.error(e)
@@ -25,6 +31,22 @@ export default function LoginPage() {
       setPassword("")
     }
   }
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: {user}
+      } = await supabase.auth.getUser()
+
+      if (user) {
+        navigate("/daily", { replace: true })
+      }
+
+    }
+    checkUser()
+  }, [])
+
+
   return (
     <>
       <h1>ログイン</h1>
@@ -44,6 +66,8 @@ export default function LoginPage() {
       />
 
       <button onClick={handleSignIn}>ログイン</button>
+
+      <Link to="/signup">サインインへ</Link>
     </>
   )
 }

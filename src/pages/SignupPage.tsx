@@ -1,10 +1,12 @@
 import { useState } from "react"
 import { useAuth } from "../hooks/useAuth"
+import { Link, useNavigate } from "react-router-dom"
 
 export default function SignupPage() {
   const { signUp } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const navigate = useNavigate()
 
   const handleSignUp = async () => {
     try {
@@ -12,7 +14,11 @@ export default function SignupPage() {
       if (password.trim() === "") return alert("パスワードを入力してください")
 
       await signUp(email, password)
-      alert("登録成功")
+      alert("登録しました")
+
+      navigate("/signin", {
+        replace: true
+      })
 
     } catch(e) {
       console.error(e)
@@ -44,6 +50,8 @@ export default function SignupPage() {
       />
 
       <button onClick={handleSignUp}>登録</button>
+
+      <Link to="/signin">ログインへ</Link>
     </>
   )
 }

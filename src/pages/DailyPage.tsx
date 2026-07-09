@@ -1,5 +1,6 @@
 import { useDaily } from "../hooks/useDaily"
 import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
 
 export default function DailyPage() {
 
@@ -251,6 +252,8 @@ export default function DailyPage() {
             </button>
           }
         </div>
+
+        <Link to="/weekly">ウィークリーへ</Link>
 
       </div>
     </>

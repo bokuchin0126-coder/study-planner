@@ -46,7 +46,7 @@ export default function useWeekly() {
       }
 
       const contentsDate = weeklyTasks.find(week => week.week === keepWeekStart)
-      const orderIndex = weeklyTasks.length
+      const orderIndex = contentsDate ? contentsDate.goals.length : 0
       const user = await getCurrentUser()
 
       if (!contentsDate) {
@@ -93,7 +93,7 @@ export default function useWeekly() {
           .from("weekly_plans")
           .select()
           .eq("user_id", user.id)
-          .eq("date", keepWeekStart)
+          .eq("week_start", keepWeekStart)
           .single()
 
         if (planError) throw planError
@@ -130,5 +130,11 @@ export default function useWeekly() {
       console.error(e)
       alert("タスクの追加に失敗しました")
     }
+  }
+
+  return { 
+    addWeeklyTasks,
+    weeklyTasks,
+    keepWeekStart
   }
 }

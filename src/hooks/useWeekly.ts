@@ -8,27 +8,27 @@ export default function useWeekly() {
 
   const weekDate = (date: "start" | "end") => {
     const today = new Date()
+    const day = today.getDay()
+
+    const monday = new Date(today)
+    const diff = day === 0 ? -6 : 1 - day
+    monday.setDate(today.getDate() + diff)
+
+    const sunday = new Date(monday)
+    sunday.setDate(monday.getDate() + 6)
 
     const weekStart = new Intl.DateTimeFormat("sv-SE", {
       timeZone: "Asia/Tokyo"
-    }).format(today)
-
-    const endDate = new Date(today)
-    endDate.setDate(endDate.getDate() + 6)
+    }).format(monday)
 
     const weekEnd = new Intl.DateTimeFormat("sv-SE", {
       timeZone: "Asia/Tokyo"
-    }).format(endDate)
+    }).format(sunday)
 
     if (date === "start") return weekStart
     else if (date === "end") return weekEnd
     else return ""
   }
-
-  const [keepWeekStart, setKeepWeekStart] = useState<string>("")
-  const [keepWeekEnd, setKeepWeekEnd] = useState<string>("")
-
-  const weekTasks = weeklyTasks.filter(week => week.week === keepWeekStart)
 
   const getCurrentUser = async () => {
     const { data: {user}, error } = await supabase.auth.getUser()
@@ -42,15 +42,7 @@ export default function useWeekly() {
     try {
       if (text.trim() === "") throw alert("タスクを入力して下さい")
 
-      let currentWeekStart = keepWeekStart
-      let currentWeekEnd = keepWeekEnd
-
-      if (keepWeekEnd < weekDate("start") || keepWeekStart === "" && keepWeekEnd === "") {
-        currentWeekStart = weekDate("start")
-        currentWeekEnd = weekDate("end")
-        setKeepWeekStart(currentWeekStart)
-        setKeepWeekEnd(currentWeekEnd)
-      }
+      let currentWeekStart = weekDate("start")
 
       const contentsDate = weeklyTasks.find(week => week.week === currentWeekStart)
       const orderIndex = contentsDate ? contentsDate.goals.length : 0
@@ -154,7 +146,7 @@ export default function useWeekly() {
 
       if (error) throw error
 
-      setWeeklyTasks(prev => prev.map(week => week.week === keepWeekStart ? 
+      setWeeklyTasks(prev => prev.map(week => week.week === weekDate("start") ? 
         {
           ...week,
           goals: week.goals.map(goal => (
@@ -183,7 +175,7 @@ export default function useWeekly() {
 
       if (error) throw error
 
-      setWeeklyTasks(prev => prev.map(week => week.week === keepWeekStart ? 
+      setWeeklyTasks(prev => prev.map(week => week.week === weekDate("start") ? 
         {
           ...week,
           goals: week.goals.map(goal => (
@@ -198,11 +190,13 @@ export default function useWeekly() {
     }
   }
 
+  
+
   return { 
     addWeeklyTasks,
     updateWeeklyTaskText,
     updateTaskToggle,
     weeklyTasks,
-    keepWeekStart
+    weekDate
   }
 }

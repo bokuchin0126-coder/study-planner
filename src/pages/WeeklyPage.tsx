@@ -10,7 +10,7 @@ export default function WeeklyPage() {
     updateWeeklyTaskText,
     updateTaskToggle,
     weeklyTasks,
-    keepWeekStart
+    weekDate
   } = useWeekly()
 
   const [showAdd, setShowAdd] = useState<boolean>(false)
@@ -18,7 +18,10 @@ export default function WeeklyPage() {
   const [editText, setEditText] = useState<string>("")
   const [editingId, setEditingId] = useState<string>("")
 
-  const week = weeklyTasks.find(week => week.week === keepWeekStart)
+  const weekStart = weekDate("start")
+  const weekEnd = weekDate("end")
+
+  const week = weeklyTasks.find(week => week.week === weekStart)
 
 
   return (

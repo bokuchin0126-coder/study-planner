@@ -9,8 +9,8 @@ export default function WeeklyPage() {
     addWeeklyTasks,
     updateWeeklyTaskText,
     updateTaskToggle,
+    deleteWeeklyTask,
     weeklyTasks,
-    weekDate
   } = useWeekly()
 
   const [showAdd, setShowAdd] = useState<boolean>(false)
@@ -18,8 +18,31 @@ export default function WeeklyPage() {
   const [editText, setEditText] = useState<string>("")
   const [editingId, setEditingId] = useState<string>("")
 
+  const weekDate = (date: "start" | "end", offset = 0) => {
+      const today = new Date()
+      const day = today.getDay()
+  
+      const monday = new Date(today)
+      const diff = day === 0 ? -6 : 1 - day
+      monday.setDate(today.getDate() + diff + offset * 7)
+  
+      const sunday = new Date(monday)
+      sunday.setDate(monday.getDate() + 6)
+  
+      const weekStart = new Intl.DateTimeFormat("sv-SE", {
+        timeZone: "Asia/Tokyo"
+      }).format(monday)
+  
+      const weekEnd = new Intl.DateTimeFormat("sv-SE", {
+        timeZone: "Asia/Tokyo"
+      }).format(sunday)
+  
+      if (date === "start") return weekStart
+      else if (date === "end") return weekEnd
+      else return ""
+    }
+
   const weekStart = weekDate("start")
-  const weekEnd = weekDate("end")
 
   const week = weeklyTasks.find(week => week.week === weekStart)
 
@@ -33,7 +56,7 @@ export default function WeeklyPage() {
             {week?.goals.map(goal =>
               <div key={goal.id}>
 
-                <button onClick={() => updateTaskToggle(goal.id, goal.completed)}>
+                <button onClick={() => updateTaskToggle(goal.id, goal.completed, weekStart)}>
                   {goal.completed ? "☑" : "□"}
                 </button>
 
@@ -45,14 +68,14 @@ export default function WeeklyPage() {
                       onChange={(e) => setEditText(e.target.value)}
                       onKeyDown={async (e) => {
                         if (e.key === "Enter") {
-                          await updateWeeklyTaskText(goal.id, editText)
+                          await updateWeeklyTaskText(goal.id, editText, weekStart)
                           setEditText("")
                           setEditingId("")
                         }
                       }}
                     />
                     <button onClick={async () => {
-                      await updateWeeklyTaskText(goal.id, editText)
+                      await updateWeeklyTaskText(goal.id, editText, weekStart)
                       setEditText("")
                       setEditingId("")
                     }}>
@@ -71,7 +94,7 @@ export default function WeeklyPage() {
                     </button>
                   </div>
                 }
-                <button>
+                <button onClick={() => deleteWeeklyTask(goal.id, weekStart)}>
                   削除
                 </button>
               </div>
@@ -86,14 +109,14 @@ export default function WeeklyPage() {
                   onChange={(e) => setAddText(e.target.value)}
                   onKeyDown={async (e) => {
                     if (e.key === "Enter") {
-                      await addWeeklyTasks(addText)
+                      await addWeeklyTasks(addText, weekStart)
                       setAddText("")
                       setShowAdd(false)
                     }
                   }} 
                 />
                 <button onClick={async () => {
-                  await addWeeklyTasks(addText),
+                  await addWeeklyTasks(addText, weekStart),
                   setAddText(""),
                   setShowAdd(false)
                 }}>

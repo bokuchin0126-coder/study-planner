@@ -6,30 +6,6 @@ export default function useWeekly() {
 
   const [weeklyTasks, setWeeklyTasks] = useState<WeeklyRecord[]>([])
 
-  const weekDate = (date: "start" | "end") => {
-    const today = new Date()
-    const day = today.getDay()
-
-    const monday = new Date(today)
-    const diff = day === 0 ? -6 : 1 - day
-    monday.setDate(today.getDate() + diff)
-
-    const sunday = new Date(monday)
-    sunday.setDate(monday.getDate() + 6)
-
-    const weekStart = new Intl.DateTimeFormat("sv-SE", {
-      timeZone: "Asia/Tokyo"
-    }).format(monday)
-
-    const weekEnd = new Intl.DateTimeFormat("sv-SE", {
-      timeZone: "Asia/Tokyo"
-    }).format(sunday)
-
-    if (date === "start") return weekStart
-    else if (date === "end") return weekEnd
-    else return ""
-  }
-
   const getCurrentUser = async () => {
     const { data: {user}, error } = await supabase.auth.getUser()
     
@@ -38,13 +14,11 @@ export default function useWeekly() {
     return user
   }
 
-  const addWeeklyTasks = async (text: string) => {
+  const addWeeklyTasks = async (text: string, date: string) => {
     try {
       if (text.trim() === "") throw alert("タスクを入力して下さい")
 
-      let currentWeekStart = weekDate("start")
-
-      const contentsDate = weeklyTasks.find(week => week.week === currentWeekStart)
+      const contentsDate = weeklyTasks.find(week => week.week === date)
       const orderIndex = contentsDate ? contentsDate.goals.length : 0
       const user = await getCurrentUser()
 
@@ -53,7 +27,7 @@ export default function useWeekly() {
           .from("weekly_plans")
           .insert({
             user_id: user.id,
-            week_start: currentWeekStart,
+            week_start: date,
             reflection: ""
           })
           .select().single()
@@ -80,7 +54,7 @@ export default function useWeekly() {
         }
 
         const task: WeeklyRecord = {
-          week: currentWeekStart,
+          week: date,
           goals: [goal],
           reflection: ""
         }
@@ -92,7 +66,7 @@ export default function useWeekly() {
           .from("weekly_plans")
           .select()
           .eq("user_id", user.id)
-          .eq("week_start", currentWeekStart)
+          .eq("week_start", date)
           .single()
 
         if (planError) throw planError
@@ -117,7 +91,7 @@ export default function useWeekly() {
         }
 
         setWeeklyTasks(prev => prev.map(week => 
-          week.week === currentWeekStart ? 
+          week.week === date ? 
           {
             ...week,
             goals: [...week.goals, goal]
@@ -131,7 +105,7 @@ export default function useWeekly() {
     }
   }
 
-  const updateWeeklyTaskText = async (id: string, text: string) => {
+  const updateWeeklyTaskText = async (id: string, text: string, date: string) => {
     try {
       if (text.trim() === "") throw alert("タスク名を入力してください")
       const user = await getCurrentUser()
@@ -146,7 +120,7 @@ export default function useWeekly() {
 
       if (error) throw error
 
-      setWeeklyTasks(prev => prev.map(week => week.week === weekDate("start") ? 
+      setWeeklyTasks(prev => prev.map(week => week.week === date ? 
         {
           ...week,
           goals: week.goals.map(goal => (
@@ -161,7 +135,7 @@ export default function useWeekly() {
     }
   }
 
-  const updateTaskToggle = async (id: string, completed: boolean) => {
+  const updateTaskToggle = async (id: string, completed: boolean, date: string) => {
     try {
       const user = await getCurrentUser()
 
@@ -175,7 +149,7 @@ export default function useWeekly() {
 
       if (error) throw error
 
-      setWeeklyTasks(prev => prev.map(week => week.week === weekDate("start") ? 
+      setWeeklyTasks(prev => prev.map(week => week.week === date ? 
         {
           ...week,
           goals: week.goals.map(goal => (
@@ -190,13 +164,36 @@ export default function useWeekly() {
     }
   }
 
-  
+  const deleteWeeklyTask = async (id: string, date: string) => {
+    try {
+      const user = await getCurrentUser()
+
+      const { error } = await supabase
+        .from("weekly_tasks")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("id", id)
+
+      if (error) throw error
+
+      setWeeklyTasks(prev => prev.map(week => week.week === date ? 
+        {
+          ...week,
+          goals: week.goals.filter(goal => goal.id !== id)
+        }
+        : week
+      ))
+    } catch(e) {
+      console.error(e)
+      alert("タスクの削除に失敗しました")
+    }
+  }
 
   return { 
     addWeeklyTasks,
     updateWeeklyTaskText,
     updateTaskToggle,
-    weeklyTasks,
-    weekDate
+    deleteWeeklyTask,
+    weeklyTasks
   }
 }

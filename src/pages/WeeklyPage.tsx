@@ -7,14 +7,18 @@ export default function WeeklyPage() {
 
   const {
     addWeeklyTasks,
+    updateWeeklyTaskText,
+    updateTaskToggle,
     weeklyTasks,
     keepWeekStart
   } = useWeekly()
 
   const [showAdd, setShowAdd] = useState<boolean>(false)
   const [addText, setAddText] = useState<string>("")
+  const [editText, setEditText] = useState<string>("")
+  const [editingId, setEditingId] = useState<string>("")
 
-  const week = weeklyTasks.filter(week => week.week === keepWeekStart)
+  const week = weeklyTasks.find(week => week.week === keepWeekStart)
 
 
   return (
@@ -23,10 +27,58 @@ export default function WeeklyPage() {
         <div>
             <h2>今週の課題</h2>
 
+            {week?.goals.map(goal =>
+              <div key={goal.id}>
+
+                <button onClick={() => updateTaskToggle(goal.id, goal.completed)}>
+                  {goal.completed ? "☑" : "□"}
+                </button>
+
+                {editingId === goal.id ?
+                  <div>
+                    <input
+                      value={editText}
+                      autoFocus
+                      onChange={(e) => setEditText(e.target.value)}
+                      onKeyDown={async (e) => {
+                        if (e.key === "Enter") {
+                          await updateWeeklyTaskText(goal.id, editText)
+                          setEditText("")
+                          setEditingId("")
+                        }
+                      }}
+                    />
+                    <button onClick={async () => {
+                      await updateWeeklyTaskText(goal.id, editText)
+                      setEditText("")
+                      setEditingId("")
+                    }}>
+                      保存
+                    </button>
+                  </div>
+                :
+                  <div>
+                    <p>{goal.title}</p>
+                    <button onClick={() => {
+                      setEditingId(goal.id)
+                      setEditText(goal.title)
+                    }}
+                    >
+                      編集
+                    </button>
+                  </div>
+                }
+                <button>
+                  削除
+                </button>
+              </div>
+            )}
+  
             {showAdd ? 
               <div>
                 <input
                   value={addText}
+                  autoFocus
                   placeholder="タスク名を入力..."
                   onChange={(e) => setAddText(e.target.value)}
                   onKeyDown={async (e) => {
@@ -47,7 +99,7 @@ export default function WeeklyPage() {
               </div>
             :
               <div>
-                <p>{week.length === 0 && "タスクを追加してください"}</p>
+                <p>{week ? "" : "タスクを追加してください"}</p>
                 <button onClick={() => setShowAdd(true)}>新しいタスクを追加＋</button>
               </div>
             }

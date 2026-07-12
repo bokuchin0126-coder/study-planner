@@ -13,7 +13,7 @@ export default function useDaily() {
     return user
   }
 
-  const [dailyTasks, setDailyTasks] = useState<DailyRecord[]>([])
+  const [dailyRecords, setDailyRecords] = useState<DailyRecord[]>([])
 
   const today = new Intl.DateTimeFormat("sv-SE", {
     timeZone: "Asia/Tokyo"
@@ -35,20 +35,20 @@ export default function useDaily() {
 
   const [dateData, setDateData] = useState<string>(today)
 
-  const todayPlan = dailyTasks.find(day => day.date === today)
-  const tomorrowPlan = dailyTasks.find(day => day.date === tomorrowDate)
-  const yesterdayPlan = dailyTasks.find(day => day.date === yesterdayDate)
+  const todayPlan = dailyRecords.find(day => day.date === today)
+  const tomorrowPlan = dailyRecords.find(day => day.date === tomorrowDate)
+  const yesterdayPlan = dailyRecords.find(day => day.date === yesterdayDate)
   const carryTasks = todayPlan?.tasks.filter(task => !task.completed)
 
 
-  const addDailyTasks = async (text: string, date: string) => {
+  const addDailyRecord = async (text: string, date: string) => {
     try {
       if (text.trim() === "") return alert("タスク名を入力して下さい")
-      const contentsDate = dailyTasks.find(day => day.date === date)
+      const contentsDate = dailyRecords.find(day => day.date === date)
 
       const user = await getCurrentUser()
 
-      const orderIndex = dailyTasks.length
+      const orderIndex = dailyRecords.length
 
       if (!contentsDate) {
 
@@ -86,7 +86,7 @@ export default function useDaily() {
             reflection: ""
         }
 
-        setDailyTasks(prev => [...prev, newTasks])
+        setDailyRecords(prev => [...prev, newTasks])
 
       } else {
 
@@ -118,7 +118,7 @@ export default function useDaily() {
           orderIndex: orderIndex
         }
         
-        setDailyTasks(prev => prev.map(day =>
+        setDailyRecords(prev => prev.map(day =>
            day.date === date ? {
             ...day,
             tasks: [...day.tasks, newTasks]
@@ -148,7 +148,7 @@ export default function useDaily() {
 
       if (error) throw error
 
-      setDailyTasks(prev => prev.map(day => day.date === date ?
+      setDailyRecords(prev => prev.map(day => day.date === date ?
         {
           ...day,
           tasks: day.tasks.map(task =>
@@ -164,7 +164,7 @@ export default function useDaily() {
     }
   }
 
-  const updateDailyTasksToggle = async (id: string, completed: boolean, date: string) => {
+  const updateDailyTaskToggle = async (id: string, completed: boolean, date: string) => {
     try {
       const user = await getCurrentUser()
 
@@ -189,7 +189,7 @@ export default function useDaily() {
       if (deleteError) throw deleteError
 
       if (deleteTask.length > 0) {
-        setDailyTasks(prev => prev.map(day => ({
+        setDailyRecords(prev => prev.map(day => ({
           ...day,
           tasks: day.tasks.filter(task => 
             !deleteTask.some(
@@ -199,7 +199,7 @@ export default function useDaily() {
         })))
       }
 
-      setDailyTasks(prev => prev.map(day => day.date === date ?
+      setDailyRecords(prev => prev.map(day => day.date === date ?
         {
           ...day,
           tasks: day.tasks.map(task => 
@@ -224,7 +224,7 @@ export default function useDaily() {
         .eq("user_id", user.id)
         .eq("id", id)
 
-      setDailyTasks(prev => prev.map(day => day.date === date ? 
+      setDailyRecords(prev => prev.map(day => day.date === date ? 
         {
           ...day,
           tasks: day.tasks.filter(task => task.id !== id)
@@ -237,7 +237,7 @@ export default function useDaily() {
     }
   }
 
-  const updateDailyTaskReflection = async (text: string, date: string) => {
+  const updateDailyRecordReflection = async (text: string, date: string) => {
     try {
       const user = await getCurrentUser()
 
@@ -249,7 +249,7 @@ export default function useDaily() {
         .eq("user_id", user.id)
         .eq("date", date)
 
-        setDailyTasks(prev => prev.map(day => day.date === date ? 
+        setDailyRecords(prev => prev.map(day => day.date === date ? 
           {
             ...day,
             reflection: text
@@ -262,7 +262,7 @@ export default function useDaily() {
     }
   }
 
-  const carryOverTasks = async () => {
+  const carryOverRecords = async () => {
     try {
       if (!carryTasks) return  
       if (carryTasks.length === 0) return
@@ -331,7 +331,7 @@ export default function useDaily() {
             reflection: ""
           }
 
-          setDailyTasks(prev => [...prev, copyDate])
+          setDailyRecords(prev => [...prev, copyDate])
           setDateData(today)
         }
 
@@ -382,7 +382,7 @@ export default function useDaily() {
             orderIndex: task.order_index
           }))
   
-          setDailyTasks(prev => prev.map(day => day.date === tomorrowDate ?
+          setDailyRecords(prev => prev.map(day => day.date === tomorrowDate ?
             {
               ...day,
               tasks: [...day.tasks, ...newTasks]
@@ -439,7 +439,7 @@ export default function useDaily() {
           }
         })
 
-        setDailyTasks(dailyRecords)
+        setDailyRecords(dailyRecords)
       } catch(e) {
         console.error(e)
         alert("データの取得に失敗しました")
@@ -449,17 +449,17 @@ export default function useDaily() {
   }, [])
 
   return {
-    dailyTasks,
+    dailyRecords,
     today,
     tomorrowDate,
     todayPlan,
     tomorrowPlan,
     yesterdayPlan,
-    addDailyTasks,
+    addDailyRecord,
     updateDailyTaskTitle,
-    updateDailyTasksToggle,
+    updateDailyTaskToggle,
     deleteDailyTask,
-    updateDailyTaskReflection,
-    carryOverTasks
+    updateDailyRecordReflection,
+    carryOverRecords
   }
 }

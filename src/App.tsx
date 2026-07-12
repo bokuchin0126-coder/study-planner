@@ -4,6 +4,7 @@ import SignupPage from "./pages/SignupPage"
 import LoginPage from "./pages/LoginPage"
 import DailyPage from "./pages/DailyPage"
 import WeeklyPage from "./pages/WeeklyPage"
+import MonthlyPage from "./pages/MonthlyPage"
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
       <Route element={<ProtectedRoute />} >
         <Route path="/daily" element={<DailyPage />} />
         <Route path="/weekly" element={<WeeklyPage />} />
+        <Route path="/monthly" element={<MonthlyPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/daily" replace />} />

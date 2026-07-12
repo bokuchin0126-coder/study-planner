@@ -3,20 +3,20 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 
 export default function DailyPage() {
-
+ 
   const { 
-    dailyTasks,
+    dailyRecords,
     today,
     tomorrowDate,
     todayPlan,
     tomorrowPlan,
     yesterdayPlan,
-    addDailyTasks,
+    addDailyRecord,
     updateDailyTaskTitle,
-    updateDailyTasksToggle,
+    updateDailyTaskToggle,
     deleteDailyTask,
-    updateDailyTaskReflection,
-    carryOverTasks
+    updateDailyRecordReflection,
+    carryOverRecords
   } = useDaily()
 
   const [addText, setAddText] = useState<string>("")
@@ -59,8 +59,8 @@ export default function DailyPage() {
               <div key={task.id}>
                 <button 
                   onClick={async () => {
-                    await updateDailyTasksToggle(task.id, task.completed, today),
-                    await carryOverTasks()
+                    await updateDailyTaskToggle(task.id, task.completed, today),
+                    await carryOverRecords()
                   }}
                 >
                   {task.completed ? "☑" : "□"}
@@ -131,8 +131,8 @@ export default function DailyPage() {
                 onChange={(e) => setAddText(e.target.value)}
                 onKeyDown={async (e) => {
                   if (e.key === "Enter") {
-                    await addDailyTasks(addText, today)
-                    await carryOverTasks()
+                    await addDailyRecord(addText, today)
+                    await carryOverRecords()
                     setAddText("")
                     setTodayShowAdd(false)
                   }
@@ -140,8 +140,8 @@ export default function DailyPage() {
               />
               <button 
                 onClick={async () => {
-                  await addDailyTasks(addText, today),
-                  await carryOverTasks()
+                  await addDailyRecord(addText, today),
+                  await carryOverRecords()
                   setAddText(""),
                   setTodayShowAdd(false)}}
               >
@@ -164,7 +164,7 @@ export default function DailyPage() {
           <textarea
             placeholder="振り返りを入力..."
             onBlur={() => {
-              updateDailyTaskReflection(reflectionText, today),
+              updateDailyRecordReflection(reflectionText, today),
               setIsTyping(false)
             }}
             value={reflectionText}
@@ -247,7 +247,7 @@ export default function DailyPage() {
                 onChange={(e) => setAddText(e.target.value)}
                 onKeyDown={async (e) => {
                   if (e.key === "Enter") {
-                    await addDailyTasks(addText, tomorrowDate)
+                    await addDailyRecord(addText, tomorrowDate)
                     setAddText("")
                     setTomorrowShowAdd(false)
                   }
@@ -255,7 +255,7 @@ export default function DailyPage() {
               />
               <button 
                 onClick={async () => {
-                  await addDailyTasks(addText, tomorrowDate),
+                  await addDailyRecord(addText, tomorrowDate),
                   setAddText(""),
                   setTomorrowShowAdd(false)}}
               >
@@ -272,7 +272,7 @@ export default function DailyPage() {
         </div>
 
         <Link to="/weekly">ウィークリーへ</Link>
-
+        <Link to="/monthly">マンリーへ</Link>
       </div>
     </>
   )

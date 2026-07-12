@@ -4,7 +4,7 @@ import { supabase } from "../lib/supabase"
 
 export default function useWeekly() {
 
-  const [weeklyTasks, setWeeklyTasks] = useState<WeeklyRecord[]>([])
+  const [weeklyRecords, setWeeklyRecords] = useState<WeeklyRecord[]>([])
 
   const getCurrentUser = async () => {
     const { data: {user}, error } = await supabase.auth.getUser()
@@ -14,7 +14,7 @@ export default function useWeekly() {
     return user
   }
 
-  const weekDate = (date: "start" | "end", offset = 0) => {
+  const weeklyDate = (date: "start" | "end", offset = 0) => {
     const today = new Date()
     const day = today.getDay()
   
@@ -38,11 +38,11 @@ export default function useWeekly() {
     else return ""
   }
 
-  const addWeeklyTasks = async (text: string, date: string) => {
+  const addWeeklyRecord = async (text: string, date: string) => {
     try {
       if (text.trim() === "") throw alert("タスクを入力して下さい")
 
-      const contentsDate = weeklyTasks.find(week => week.week === date)
+      const contentsDate = weeklyRecords.find(week => week.week === date)
       const orderIndex = contentsDate ? contentsDate.goals.length : 0
       const user = await getCurrentUser()
 
@@ -77,13 +77,13 @@ export default function useWeekly() {
           orderIndex: orderIndex
         }
 
-        const task: WeeklyRecord = {
+        const weeklyRecord: WeeklyRecord = {
           week: date,
           goals: [goal],
           reflection: ""
         }
 
-        setWeeklyTasks(prev => [...prev, task])
+        setWeeklyRecords(prev => [...prev, weeklyRecord])
    
       } else {
         const { data: planData, error: planError } = await supabase
@@ -114,7 +114,7 @@ export default function useWeekly() {
           orderIndex: orderIndex
         }
 
-        setWeeklyTasks(prev => prev.map(week => 
+        setWeeklyRecords(prev => prev.map(week => 
           week.week === date ? 
           {
             ...week,
@@ -129,7 +129,7 @@ export default function useWeekly() {
     }
   }
 
-  const updateWeeklyTaskText = async (id: string, text: string, date: string) => {
+  const updateWeeklyTaskTitle = async (id: string, text: string, date: string) => {
     try {
       if (text.trim() === "") throw alert("タスク名を入力してください")
       const user = await getCurrentUser()
@@ -144,7 +144,7 @@ export default function useWeekly() {
 
       if (error) throw error
 
-      setWeeklyTasks(prev => prev.map(week => week.week === date ? 
+      setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
           ...week,
           goals: week.goals.map(goal => (
@@ -173,7 +173,7 @@ export default function useWeekly() {
 
       if (error) throw error
 
-      setWeeklyTasks(prev => prev.map(week => week.week === date ? 
+      setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
           ...week,
           goals: week.goals.map(goal => (
@@ -188,7 +188,7 @@ export default function useWeekly() {
     }
   }
 
-  const updateWeeklyTaskReflection = async (text: string, date: string) => {
+  const updateWeeklyRecordReflection = async (text: string, date: string) => {
     try {
       const user = await getCurrentUser()
 
@@ -202,7 +202,7 @@ export default function useWeekly() {
 
       if (error) throw error
 
-      setWeeklyTasks(prev => prev.map(week => week.week === date ? 
+      setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
           ...week,
           reflection: text
@@ -211,7 +211,7 @@ export default function useWeekly() {
       ))
     } catch(e) {
       console.error(e)
-      alert("振り返りの編集に失敗しました")
+      alert("振り返りテキストの更新に失敗しました")
     }
   }
 
@@ -227,7 +227,7 @@ export default function useWeekly() {
 
       if (error) throw error
 
-      setWeeklyTasks(prev => prev.map(week => week.week === date ? 
+      setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
           ...week,
           goals: week.goals.filter(goal => goal.id !== id)
@@ -249,7 +249,7 @@ export default function useWeekly() {
           .from("weekly_plans")
           .select()
           .eq("user_id", user.id)
-          .in("week_start", [weekDate("start"), weekDate("start", -1), weekDate("start", 1)])
+          .in("week_start", [weeklyDate("start"), weeklyDate("start", -1), weeklyDate("start", 1)])
 
         if (plansError) throw plansError
         const planIds = plansData.map(plan => plan.id)
@@ -279,7 +279,7 @@ export default function useWeekly() {
           }
         })
 
-        setWeeklyTasks(weeklyRecord)
+        setWeeklyRecords(weeklyRecord)
       } catch(e) {
         console.error(e)
         alert("データの取得に失敗しました")
@@ -289,12 +289,12 @@ export default function useWeekly() {
   }, [])
 
   return { 
-    addWeeklyTasks,
-    updateWeeklyTaskText,
+    addWeeklyRecord,
+    updateWeeklyTaskTitle,
     updateTaskToggle,
-    updateWeeklyTaskReflection,
+    updateWeeklyRecordReflection,
     deleteWeeklyTask,
-    weeklyTasks,
-    weekDate
+    weeklyRecords,
+    weeklyDate
   }
 }

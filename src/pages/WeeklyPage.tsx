@@ -8,16 +8,16 @@ import { Link } from "react-router-dom"
 export default function WeeklyPage() {
 
   const {
-    addWeeklyTasks,
-    updateWeeklyTaskText,
+    addWeeklyRecord,
+    updateWeeklyTaskTitle,
     updateTaskToggle,
-    updateWeeklyTaskReflection,
+    updateWeeklyRecordReflection,
     deleteWeeklyTask,
-    weeklyTasks,
-    weekDate
+    weeklyRecords,
+    weeklyDate
   } = useWeekly()
 
-  const {dailyTasks} = useDaily()
+  const {dailyRecords} = useDaily()
 
   const [weekShowAdd, setWeekShowAdd] = useState<boolean>(false)
   const [nextWeekShowAdd, setNextWeekShowAdd] = useState<boolean>(false)
@@ -29,15 +29,15 @@ export default function WeeklyPage() {
   const [editingId, setEditingId] = useState<string>("")
   const [isTyping, setIsTyping] = useState<boolean>(false)
 
-  const weekStart = weekDate("start")
-  const weekEnd = weekDate("end")
-  const nextWeekStart = weekDate("start", 1)
+  const weekStart = weeklyDate("start")
+  const weekEnd = weeklyDate("end")
+  const nextWeekStart = weeklyDate("start", 1)
 
-  const week = weeklyTasks.find(week => week.week === weekStart)
-  const lastWeek = weeklyTasks.find(week => week.week === weekDate("start", -1))
-  const nextWeek = weeklyTasks.find(week => week.week === nextWeekStart)
+  const week = weeklyRecords.find(week => week.week === weekStart)
+  const lastWeek = weeklyRecords.find(week => week.week === weeklyDate("start", -1))
+  const nextWeek = weeklyRecords.find(week => week.week === nextWeekStart)
 
-  const thisWeekDailyPlans = dailyTasks.filter((day: DailyRecord) => weekStart <= day.date && day.date <= weekEnd )
+  const thisWeekDailyPlans = dailyRecords.filter((day: DailyRecord) => weekStart <= day.date && day.date <= weekEnd )
   const completedThisWeekDailyPlans = thisWeekDailyPlans.flatMap((day: DailyRecord) => 
     day.tasks
       .filter(task => task.completed)
@@ -87,14 +87,14 @@ export default function WeeklyPage() {
                       onChange={(e) => setEditText(e.target.value)}
                       onKeyDown={async (e) => {
                         if (e.key === "Enter") {
-                          await updateWeeklyTaskText(goal.id, editText, weekStart)
+                          await updateWeeklyTaskTitle(goal.id, editText, weekStart)
                           setEditText("")
                           setEditingId("")
                         }
                       }}
                     />
                     <button onClick={async () => {
-                      await updateWeeklyTaskText(goal.id, editText, weekStart)
+                      await updateWeeklyTaskTitle(goal.id, editText, weekStart)
                       setEditText("")
                       setEditingId("")
                     }}>
@@ -128,14 +128,14 @@ export default function WeeklyPage() {
                   onChange={(e) => setAddText(e.target.value)}
                   onKeyDown={async (e) => {
                     if (e.key === "Enter") {
-                      await addWeeklyTasks(addText, weekStart)
+                      await addWeeklyRecord(addText, weekStart)
                       setAddText("")
                       setWeekShowAdd(false)
                     }
                   }} 
                 />
                 <button onClick={async () => {
-                  await addWeeklyTasks(addText, weekStart),
+                  await addWeeklyRecord(addText, weekStart),
                   setAddText(""),
                   setWeekShowAdd(false)
                 }}>
@@ -155,7 +155,7 @@ export default function WeeklyPage() {
             <textarea
             placeholder="振り返りを入力..."
             onBlur={() => {
-              updateWeeklyTaskReflection(reflectionText, weekStart),
+              updateWeeklyRecordReflection(reflectionText, weekStart),
               setIsTyping(false)
             }}
             value={reflectionText}
@@ -185,14 +185,14 @@ export default function WeeklyPage() {
                       onChange={(e) => setEditText(e.target.value)}
                       onKeyDown={async (e) => {
                         if (e.key === "Enter") {
-                          await updateWeeklyTaskText(goal.id, editText, nextWeekStart)
+                          await updateWeeklyTaskTitle(goal.id, editText, nextWeekStart)
                           setEditText("")
                           setEditingId("")
                         }
                       }}
                     />
                     <button onClick={async () => {
-                      await updateWeeklyTaskText(goal.id, editText, nextWeekStart)
+                      await updateWeeklyTaskTitle(goal.id, editText, nextWeekStart)
                       setEditText("")
                       setEditingId("")
                     }}>
@@ -226,14 +226,14 @@ export default function WeeklyPage() {
                   onChange={(e) => setAddText(e.target.value)}
                   onKeyDown={async (e) => {
                     if (e.key === "Enter") {
-                      await addWeeklyTasks(addText, nextWeekStart)
+                      await addWeeklyRecord(addText, nextWeekStart)
                       setAddText("")
                       setNextWeekShowAdd(false)
                     }
                   }} 
                 />
                 <button onClick={async () => {
-                  await addWeeklyTasks(addText, nextWeekStart),
+                  await addWeeklyRecord(addText, nextWeekStart),
                   setAddText(""),
                   setNextWeekShowAdd(false)
                 }}>
@@ -268,6 +268,7 @@ export default function WeeklyPage() {
             }
         </div>
         <Link to="/daily">デイリーへ</Link>
+        <Link to="/monthly">マンリーへ</Link>
       </div>
     </>
   )

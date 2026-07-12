@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import type { WeeklyRecord, WeeklyGoal } from "../types/weekly"
 import { supabase } from "../lib/supabase"
 
@@ -12,6 +12,30 @@ export default function useWeekly() {
     if (error) throw error
     if (!user) throw new Error("ログインしてください")
     return user
+  }
+
+  const weekDate = (date: "start" | "end", offset = 0) => {
+    const today = new Date()
+    const day = today.getDay()
+  
+    const monday = new Date(today)
+    const diff = day === 0 ? -6 : 1 - day
+    monday.setDate(today.getDate() + diff + offset * 7)
+  
+    const sunday = new Date(monday)
+    sunday.setDate(monday.getDate() + 6)
+  
+    const weekStart = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "Asia/Tokyo"
+    }).format(monday)
+  
+    const weekEnd = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "Asia/Tokyo"
+    }).format(sunday)
+  
+    if (date === "start") return weekStart
+    else if (date === "end") return weekEnd
+    else return ""
   }
 
   const addWeeklyTasks = async (text: string, date: string) => {
@@ -216,12 +240,61 @@ export default function useWeekly() {
     }
   }
 
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const user = await getCurrentUser()
+
+        const { data: plansData, error: plansError } = await supabase
+          .from("weekly_plans")
+          .select()
+          .eq("user_id", user.id)
+          .in("week_start", [weekDate("start"), weekDate("start", -1), weekDate("start", 1)])
+
+        if (plansError) throw plansError
+        const planIds = plansData.map(plan => plan.id)
+
+        const { data: tasksData, error: tasksError } = await supabase
+          .from("weekly_tasks")
+          .select()
+          .eq("user_id", user.id)
+          .in("plan_id", planIds)
+
+        if (tasksError) throw tasksError
+
+        const weeklyRecord: WeeklyRecord[] = plansData.map(plan => {
+          const goals = tasksData
+          .filter(task => task.plan_id === plan.id)
+          .map(task => ({
+            id: task.id,
+            title: task.text,
+            completed: task.completed,
+            orderIndex: task.order_index
+          }))
+
+          return {
+            week: plan.week_start,
+            goals: goals,
+            reflection: plan.reflection
+          }
+        })
+
+        setWeeklyTasks(weeklyRecord)
+      } catch(e) {
+        console.error(e)
+        alert("データの取得に失敗しました")
+      } 
+    }
+    fetch()
+  }, [])
+
   return { 
     addWeeklyTasks,
     updateWeeklyTaskText,
     updateTaskToggle,
     updateWeeklyTaskReflection,
     deleteWeeklyTask,
-    weeklyTasks
+    weeklyTasks,
+    weekDate
   }
 }

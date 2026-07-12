@@ -12,6 +12,7 @@ export default function WeeklyPage() {
     updateWeeklyTaskReflection,
     deleteWeeklyTask,
     weeklyTasks,
+    weekDate
   } = useWeekly()
 
   const [weekShowAdd, setWeekShowAdd] = useState<boolean>(false)
@@ -23,30 +24,6 @@ export default function WeeklyPage() {
 
   const [editingId, setEditingId] = useState<string>("")
   const [isTyping, setIsTyping] = useState<boolean>(false)
-
-  const weekDate = (date: "start" | "end", offset = 0) => {
-    const today = new Date()
-    const day = today.getDay()
-  
-    const monday = new Date(today)
-    const diff = day === 0 ? -6 : 1 - day
-    monday.setDate(today.getDate() + diff + offset * 7)
-  
-    const sunday = new Date(monday)
-    sunday.setDate(monday.getDate() + 6)
-  
-    const weekStart = new Intl.DateTimeFormat("sv-SE", {
-      timeZone: "Asia/Tokyo"
-    }).format(monday)
-  
-    const weekEnd = new Intl.DateTimeFormat("sv-SE", {
-      timeZone: "Asia/Tokyo"
-    }).format(sunday)
-  
-    if (date === "start") return weekStart
-    else if (date === "end") return weekEnd
-    else return ""
-  }
 
   const weekStart = weekDate("start")
   const nextWeekStart = weekDate("start", 1)

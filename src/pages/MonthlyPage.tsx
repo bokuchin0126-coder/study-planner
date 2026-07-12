@@ -1,4 +1,6 @@
 import useMonthly from "../hooks/useMonthly"
+import useWeekly from "../hooks/useWeekly"
+import type { WeeklyRecord } from "../types/weekly"
 import { useState } from "react"
 import { Link } from "react-router-dom"
 
@@ -14,6 +16,8 @@ export default function MonthlyPage() {
     monthlyRecords
   } = useMonthly()
 
+  const {weeklyRecords} = useWeekly()
+
   const [addText, setAddText] = useState<string>("")
   const [editText, setEditText] = useState<string>("")
   const [reflectionText, setReflectionText] = useState<string>("")
@@ -24,6 +28,7 @@ export default function MonthlyPage() {
   const [editingId, setEditingId] = useState<string>("")
 
   const monthStart = monthlyDate("start")
+  const monthEnd = monthlyDate("end")
   const nextMonthStart = monthlyDate("start", 1)
   const lastMonthStart = monthlyDate("start", -1)
 
@@ -31,7 +36,13 @@ export default function MonthlyPage() {
   const nextMonth = monthlyRecords.find(month => month.month === nextMonthStart)
   const lastMonth = monthlyRecords.find(month => month.month === lastMonthStart)
   
-const completedLastWeekTasks = lastMonth?.goals.filter(goal => goal.completed)
+  const completedLastMonthTasks = lastMonth?.goals.filter(goal => goal.completed)
+
+  const thisMonthWeeklyPlans = weeklyRecords.filter((week: WeeklyRecord) => monthStart <= week.week && week.week <= monthEnd )
+  const completedThisMonthWeeklyPlans = thisMonthWeeklyPlans.map((week: WeeklyRecord) => ({
+    week: week.week,
+    goals: week.goals.filter(goal => goal.completed)
+  }))
 
   return (
     <>
@@ -40,8 +51,8 @@ const completedLastWeekTasks = lastMonth?.goals.filter(goal => goal.completed)
         <div>
           <h2>先週達成した課題</h2>
           {lastMonth ?
-            completedLastWeekTasks && completedLastWeekTasks.length > 0 ? 
-              completedLastWeekTasks.map(goal => (
+            completedLastMonthTasks && completedLastMonthTasks.length > 0 ? 
+              completedLastMonthTasks.map(goal => (
                 <p>・{goal.completed ? goal.title : ""}</p>
               ))
             :
@@ -231,12 +242,31 @@ const completedLastWeekTasks = lastMonth?.goals.filter(goal => goal.completed)
 
         <div>
           <h2>今月達成したウィークリータスク</h2>
-          
+
+          {completedThisMonthWeeklyPlans.length > 0 ? (
+            completedThisMonthWeeklyPlans.map((week, index) => (
+              <div key={week.week}>
+                <h3>Week {index + 1}</h3>
+
+                {week.goals.length > 0 ? (
+                  week.goals.map(goal => (
+                    <p key={goal.id}>✓ {goal.title}</p>
+                  ))
+                )
+                :
+                  <p>達成した課題はありません</p>
+                }
+              </div>
+            ))
+          ) 
+          : 
+            <p>今月達成したウィークリータスクはありません</p>
+          }
         </div>
         
         <div>
-          <Link to="daily">デイリーへ</Link>
-          <Link to="weekly">ウィークリーへ</Link>
+          <Link to="/daily">デイリーへ</Link>
+          <Link to="/weekly">ウィークリーへ</Link>
         </div>
       </div>
     </>

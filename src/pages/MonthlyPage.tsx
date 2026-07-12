@@ -42,7 +42,26 @@ export default function MonthlyPage() {
   const completedThisMonthWeeklyPlans = thisMonthWeeklyPlans.map((week: WeeklyRecord) => ({
     week: week.week,
     goals: week.goals.filter(goal => goal.completed)
-  }))
+  })).sort(
+    (a, b) => new Date(a.week).getTime() - new Date(b.week).getTime()
+  )
+
+  const getWeekNumber = (weekStart: string) => {
+    const weekDate = new Date(weekStart)
+    const firstDay = new Date(monthStart)
+    const firstWeekMonday = new Date(firstDay)
+
+    while (firstWeekMonday.getDay() !== 1) {
+      firstWeekMonday.setDate(firstWeekMonday.getDate() - 1)
+    }
+    const diff = weekDate.getTime() - firstWeekMonday.getTime()
+    const days = diff / (1000 * 60 * 60 * 24)
+
+    return Math.floor(days / 7) + 1
+  }
+  
+  const maxWeek = getWeekNumber(monthEnd)
+  const weeks = Array.from({ length: maxWeek} , (_, i) => i + 1)
 
   return (
     <>
@@ -165,10 +184,6 @@ export default function MonthlyPage() {
           {nextMonth?.goals.map(goal =>
               <div key={goal.id}>
 
-                <button onClick={() => updateMonthlyTaskToggle(goal.id, goal.completed, nextMonthStart)}>
-                  {goal.completed ? "☑" : "□"}
-                </button>
-
                 {editingId === goal.id ?
                   <div>
                     <input
@@ -244,20 +259,26 @@ export default function MonthlyPage() {
           <h2>今月達成したウィークリータスク</h2>
 
           {completedThisMonthWeeklyPlans.length > 0 ? (
-            completedThisMonthWeeklyPlans.map((week, index) => (
-              <div key={week.week}>
-                <h3>Week {index + 1}</h3>
+            weeks.map(number => {
+              const week = completedThisMonthWeeklyPlans.find(
+                item => getWeekNumber(item.week) === number
+              )
 
-                {week.goals.length > 0 ? (
-                  week.goals.map(goal => (
-                    <p key={goal.id}>✓ {goal.title}</p>
-                  ))
-                )
-                :
-                  <p>達成した課題はありません</p>
-                }
-              </div>
-            ))
+              return (
+                <div key={number}>
+                  <h3>Week {number}</h3>
+
+                  {week && week.goals.length > 0 ? (
+                    week.goals.map(goal => (
+                      <p key={goal.id}>✓ {goal.title}</p>
+                    ))
+                  )
+                  :
+                    <p>達成した課題はありません</p>
+                  }
+                </div>
+              )
+            })
           ) 
           : 
             <p>今月達成したウィークリータスクはありません</p>

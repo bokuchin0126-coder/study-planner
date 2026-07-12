@@ -41,7 +41,7 @@ export default function DailyPage() {
           {yesterdayPlan ?
             completedYesterdayTasks && completedYesterdayTasks.length > 0 ? 
               completedYesterdayTasks.map(task => (
-                <p>・{task.title}</p>
+                <p key={task.id}>・{task.title}</p>
               ))
             :
               <p>昨日達成したタスクはありません</p>     

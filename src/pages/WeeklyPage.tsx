@@ -59,7 +59,7 @@ export default function WeeklyPage() {
           {lastWeek ?
             completedLastWeekTasks && completedLastWeekTasks.length > 0 ? 
               completedLastWeekTasks.map(goal => (
-                <p>・{goal.completed ? goal.title : ""}</p>
+                <p key={goal.id}>・{goal.completed ? goal.title : ""}</p>
               ))
             :
               <p>先週達成したタスクはありません</p>  
@@ -173,10 +173,6 @@ export default function WeeklyPage() {
           {nextWeek?.goals.map(goal =>
               <div key={goal.id}>
 
-                <button onClick={() => updateTaskToggle(goal.id, goal.completed, nextWeekStart)}>
-                  {goal.completed ? "☑" : "□"}
-                </button>
-
                 {editingId === goal.id ?
                   <div>
                     <input
@@ -249,7 +245,7 @@ export default function WeeklyPage() {
         </div>
 
         <div>
-            今週達成したデイリータスク
+            <h2>今週達成したデイリータスク</h2>
             {completedThisWeekDailyPlans.length > 0 ? (
               completedThisWeekDailyPlans.map((task, index) => {
                 const [, month, day] = task.date.split("-")

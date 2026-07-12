@@ -166,7 +166,7 @@ export default function useWeekly() {
       const { error } = await supabase
         .from("weekly_tasks")
         .update({
-          completed: completed
+          completed: !completed
         })
         .eq("user_id", user.id)
         .eq("id", id)

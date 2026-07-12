@@ -3,7 +3,7 @@ import { supabase } from "../lib/supabase"
 import type { DailyRecord, DailyTask } from "../types/daily"
 
 
-export function useDaily() {
+export default function useDaily() {
 
   const getCurrentUser = async () => {
     const { data: {user}, error } = await supabase.auth.getUser()

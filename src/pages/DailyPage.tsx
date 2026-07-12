@@ -1,5 +1,5 @@
-import { useDaily } from "../hooks/useDaily"
-import { useState, useEffect } from "react"
+import useDaily from "../hooks/useDaily"
+import { useState } from "react"
 import { Link } from "react-router-dom"
 
 export default function DailyPage() {

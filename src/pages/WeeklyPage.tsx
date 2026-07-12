@@ -1,5 +1,7 @@
 import useWeekly from "../hooks/useWeekly"
+import useDaily from "../hooks/useDaily"
 import { useState } from "react"
+import type { DailyRecord } from "../types/daily"
 import { Link } from "react-router-dom"
 
 
@@ -15,6 +17,8 @@ export default function WeeklyPage() {
     weekDate
   } = useWeekly()
 
+  const {dailyTasks} = useDaily()
+
   const [weekShowAdd, setWeekShowAdd] = useState<boolean>(false)
   const [nextWeekShowAdd, setNextWeekShowAdd] = useState<boolean>(false)
 
@@ -26,11 +30,22 @@ export default function WeeklyPage() {
   const [isTyping, setIsTyping] = useState<boolean>(false)
 
   const weekStart = weekDate("start")
+  const weekEnd = weekDate("end")
   const nextWeekStart = weekDate("start", 1)
 
   const week = weeklyTasks.find(week => week.week === weekStart)
   const lastWeek = weeklyTasks.find(week => week.week === weekDate("start", -1))
   const nextWeek = weeklyTasks.find(week => week.week === nextWeekStart)
+
+  const thisWeekDailyPlans = dailyTasks.filter((day: DailyRecord) => weekStart <= day.date && day.date <= weekEnd )
+  const completedThisWeekDailyPlans = thisWeekDailyPlans.flatMap((day: DailyRecord) => 
+    day.tasks
+      .filter(task => task.completed)
+      .map(task => ({
+        ...task,
+        date: day.date
+      }))
+  )
 
   const completedLastWeekTasks = lastWeek?.goals.filter(goal => goal.completed)
 
@@ -136,7 +151,7 @@ export default function WeeklyPage() {
         </div>
 
         <div>
-            <p>振り返り</p>
+            <h2>今週の振り返り</h2>
             <textarea
             placeholder="振り返りを入力..."
             onBlur={() => {
@@ -235,6 +250,22 @@ export default function WeeklyPage() {
 
         <div>
             今週達成したデイリータスク
+            {completedThisWeekDailyPlans.length > 0 ? (
+              completedThisWeekDailyPlans.map((task, index) => {
+                const [, month, day] = task.date.split("-")
+                const displayDate = `${Number(month)}/${Number(day)}`
+                const prevDate = index > 0 ? completedThisWeekDailyPlans[index - 1].date : null
+                return (
+                    <div key={task.id}>
+                      {task.date !== prevDate && <p>{displayDate}</p>}
+                      <p key={task.id}>✓{task.title}</p>
+                  </div>
+                )
+              })
+            )
+            : 
+              <p>今週達成したタスクはありません</p>
+            }
         </div>
         <Link to="/daily">デイリーへ</Link>
       </div>

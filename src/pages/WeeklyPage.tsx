@@ -32,6 +32,8 @@ export default function WeeklyPage() {
   const lastWeek = weeklyTasks.find(week => week.week === weekDate("start", -1))
   const nextWeek = weeklyTasks.find(week => week.week === nextWeekStart)
 
+  const completedLastWeekTasks = lastWeek?.goals.filter(goal => goal.completed)
+
 
   return (
     <>
@@ -39,12 +41,16 @@ export default function WeeklyPage() {
         
         <div>
           <h2>先週達成した課題</h2>
-          {lastWeek ? 
-            lastWeek.goals.map(goal => (
-              <p>・{goal.completed ? goal.title : ""}</p>
-            ))
+          {lastWeek ?
+            completedLastWeekTasks && completedLastWeekTasks.length > 0 ? 
+              completedLastWeekTasks.map(goal => (
+                <p>・{goal.completed ? goal.title : ""}</p>
+              ))
+            :
+              <p>先週達成したタスクはありません</p>  
+          
           :
-            <p>先週達成した課題はありません</p>  
+            <p>先週のタスクはありません</p>
           }
         </div>
 

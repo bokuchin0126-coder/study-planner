@@ -26,10 +26,18 @@ export function useDaily() {
     timeZone: "Asia/Tokyo"
   }).format(tomorrow)
 
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() - 1)
+
+  const yesterdayDate = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Asia/Tokyo"
+  }).format(yesterday)
+
   const [dateData, setDateData] = useState<string>(today)
 
   const todayPlan = dailyTasks.find(day => day.date === today)
   const tomorrowPlan = dailyTasks.find(day => day.date === tomorrowDate)
+  const yesterdayPlan = dailyTasks.find(day => day.date === yesterdayDate)
   const carryTasks = todayPlan?.tasks.filter(task => !task.completed)
 
 
@@ -399,7 +407,7 @@ export function useDaily() {
           .from("daily_plans")
           .select()
           .eq("user_id", user.id)
-          .in("date", [today, tomorrowDate])
+          .in("date", [today, tomorrowDate, yesterdayDate])
 
         if (planError) throw planError
         const planIds = planData.map(plan => plan.id)
@@ -446,6 +454,7 @@ export function useDaily() {
     tomorrowDate,
     todayPlan,
     tomorrowPlan,
+    yesterdayPlan,
     addDailyTasks,
     updateDailyTaskTitle,
     updateDailyTasksToggle,

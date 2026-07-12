@@ -10,6 +10,7 @@ export default function DailyPage() {
     tomorrowDate,
     todayPlan,
     tomorrowPlan,
+    yesterdayPlan,
     addDailyTasks,
     updateDailyTaskTitle,
     updateDailyTasksToggle,
@@ -28,10 +29,27 @@ export default function DailyPage() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isTyping, setIsTyping] = useState<boolean>(false)
 
+  const completedYesterdayTasks = yesterdayPlan?.tasks.filter(task => task.completed)
+
     
   return (
     <>
       <div>
+
+        <div>
+          <h2>昨日達成した課題</h2>
+          {yesterdayPlan ?
+            completedYesterdayTasks && completedYesterdayTasks.length > 0 ? 
+              completedYesterdayTasks.map(task => (
+                <p>・{task.title}</p>
+              ))
+            :
+              <p>昨日達成したタスクはありません</p>     
+          :
+            <p>昨日のタスクはありません</p>
+          }
+        </div>
+
         <div>
           <h2>今日の課題</h2>
 

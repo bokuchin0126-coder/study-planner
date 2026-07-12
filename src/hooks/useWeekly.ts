@@ -164,6 +164,33 @@ export default function useWeekly() {
     }
   }
 
+  const updateWeeklyTaskReflection = async (text: string, date: string) => {
+    try {
+      const user = await getCurrentUser()
+
+      const { error } = await supabase
+        .from("weekly_plans")
+        .update({
+          reflection: text
+        })
+        .eq("user_id", user.id)
+        .eq("week_start", date)
+
+      if (error) throw error
+
+      setWeeklyTasks(prev => prev.map(week => week.week === date ? 
+        {
+          ...week,
+          reflection: text
+        }
+        : week
+      ))
+    } catch(e) {
+      console.error(e)
+      alert("振り返りの編集に失敗しました")
+    }
+  }
+
   const deleteWeeklyTask = async (id: string, date: string) => {
     try {
       const user = await getCurrentUser()
@@ -193,6 +220,7 @@ export default function useWeekly() {
     addWeeklyTasks,
     updateWeeklyTaskText,
     updateTaskToggle,
+    updateWeeklyTaskReflection,
     deleteWeeklyTask,
     weeklyTasks
   }

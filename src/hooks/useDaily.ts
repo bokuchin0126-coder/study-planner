@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react"
 import { supabase } from "../lib/supabase"
 import type { DailyRecord, DailyTask } from "../types/daily"
+import type { DragEndEvent } from "@dnd-kit/core"
+import { arrayMove } from "@dnd-kit/sortable"
 
 
 export default function useDaily() {
@@ -40,6 +42,7 @@ export default function useDaily() {
   const yesterdayPlan = dailyRecords.find(day => day.date === yesterdayDate)
   const carryTasks = todayPlan?.tasks.filter(task => !task.completed)
 
+  const [todayTasks, setTodayTasks] = useState(todayPlan?.tasks ?? [])
 
   const addDailyRecord = async (text: string, date: string) => {
     try {
@@ -448,9 +451,30 @@ export default function useDaily() {
     fetch()
   }, [])
 
+  useEffect(() => {
+    if (todayPlan) {
+      setTodayTasks(todayPlan.tasks)
+    }
+  }, [todayPlan])
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (!over || active.id === over.id) return 
+
+    setTodayTasks(tasks => {
+      const oldIndex = tasks.findIndex(task => task.id === active.id)
+      const newIndex = tasks.findIndex(task => task.id === over.id)
+
+      return arrayMove(tasks, oldIndex, newIndex)
+    })
+  }
+
+
   return {
     dailyRecords,
     today,
+    todayTasks,
     tomorrowDate,
     todayPlan,
     tomorrowPlan,
@@ -460,6 +484,7 @@ export default function useDaily() {
     updateDailyTaskToggle,
     deleteDailyTask,
     updateDailyRecordReflection,
-    carryOverRecords
+    carryOverRecords,
+    handleDragEnd
   }
 }

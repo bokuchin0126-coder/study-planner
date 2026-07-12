@@ -1,12 +1,16 @@
 import useDaily from "../hooks/useDaily"
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import TaskItem from "../components/TaskItem"
+import { DndContext } from "@dnd-kit/core"
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 
 export default function DailyPage() {
  
   const { 
     dailyRecords,
     today,
+    todayTasks,
     tomorrowDate,
     todayPlan,
     tomorrowPlan,
@@ -16,8 +20,11 @@ export default function DailyPage() {
     updateDailyTaskToggle,
     deleteDailyTask,
     updateDailyRecordReflection,
-    carryOverRecords
+    carryOverRecords,
+    handleDragEnd
   } = useDaily()
+
+  
 
   const [addText, setAddText] = useState<string>("")
   const [editText, setEditText] = useState<string>("")
@@ -31,10 +38,12 @@ export default function DailyPage() {
 
   const completedYesterdayTasks = yesterdayPlan?.tasks.filter(task => task.completed)
 
-    
+  
+
+  
   return (
     <>
-      <div>
+      <DndContext onDragEnd={handleDragEnd}>
 
         <div>
           <h2>昨日達成した課題</h2>
@@ -55,67 +64,75 @@ export default function DailyPage() {
 
           {todayPlan ?
           
-            todayPlan.tasks.map(task =>
-              <div key={task.id}>
-                <button 
-                  onClick={async () => {
-                    await updateDailyTaskToggle(task.id, task.completed, today),
-                    await carryOverRecords()
-                  }}
+            <SortableContext
+                items={todayTasks}
+                strategy={verticalListSortingStrategy}
+            >
+              {todayTasks.map(task =>
+                <TaskItem
+                  key={task.id}
+                  id={task.id}
                 >
-                  {task.completed ? "☑" : "□"}
-                </button>
+                  <button 
+                    onClick={async () => {
+                      await updateDailyTaskToggle(task.id, task.completed, today),
+                      await carryOverRecords()
+                    }}
+                  >
+                    {task.completed ? "☑" : "□"}
+                  </button>
 
-                {editingId === task.id ?
-                  <div>
+                  {editingId === task.id ?
+                    <div>
 
-                    <input
-                      autoFocus
-                      value={editText}
-                      onChange={(e) => setEditText(e.target.value)}
-                      onKeyDown={async (e) => {
-                        if (e.key === "Enter") {
+                      <input
+                        autoFocus
+                        value={editText}
+                        onChange={(e) => setEditText(e.target.value)}
+                        onKeyDown={async (e) => {
+                          if (e.key === "Enter") {
+                            await updateDailyTaskTitle(task.id, editText, today)
+                            setEditText("")
+                            setEditingId(null)
+                          }
+                        }}
+                      />
+  
+                      <button 
+                        onClick={async () => {
                           await updateDailyTaskTitle(task.id, editText, today)
                           setEditText("")
                           setEditingId(null)
-                        }
-                      }}
-                    />
-
-                    <button 
-                      onClick={async () => {
-                        await updateDailyTaskTitle(task.id, editText, today)
-                        setEditText("")
-                        setEditingId(null)
-                      }}
-                    >
-                      保存
-                    </button>
-
-                  </div>
-                :
-                  <div>
-
-                    <p>{task.title}</p>
-                    <button
-                      onClick={() => {
-                        setEditingId(task.id)
-                        setEditText(task.title)
-                      }}
-                    >
-                      編集
-                    </button>
-
-                  </div>
-                }
-
-                <button 
-                  onClick={async () => await deleteDailyTask(task.id, today)}
-                >
-                  削除
-                </button>
-              </div>
-            )
+                        }}
+                      >
+                        保存
+                      </button>
+  
+                    </div>
+                  :
+                    <div>
+  
+                      <p>{task.title}</p>
+                      <button
+                        onClick={() => {
+                          setEditingId(task.id)
+                          setEditText(task.title)
+                        }}
+                      >
+                        編集
+                      </button>
+  
+                    </div>
+                  }
+  
+                  <button 
+                    onClick={async () => await deleteDailyTask(task.id, today)}
+                  >
+                    削除
+                  </button>
+                </TaskItem>
+              )}
+            </SortableContext>
           :
             <p>タスクを追加してください</p>
           }
@@ -273,7 +290,7 @@ export default function DailyPage() {
 
         <Link to="/weekly">ウィークリーへ</Link>
         <Link to="/monthly">マンリーへ</Link>
-      </div>
+      </DndContext>
     </>
   )
 }

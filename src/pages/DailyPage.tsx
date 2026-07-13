@@ -1,6 +1,7 @@
 import useDaily from "../hooks/useDaily"
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import handleDragEnd from "../utils/dragAndDrop"
 import TaskItem from "../components/TaskItem"
 import { DndContext } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
@@ -8,9 +9,11 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 export default function DailyPage() {
  
   const { 
-    dailyRecords,
     today,
     todayTasks,
+    setTodayTasks,
+    tomorrowTasks,
+    setTomorrowTasks,
     tomorrowDate,
     todayPlan,
     tomorrowPlan,
@@ -20,8 +23,7 @@ export default function DailyPage() {
     updateDailyTaskToggle,
     deleteDailyTask,
     updateDailyRecordReflection,
-    carryOverRecords,
-    handleDragEnd
+    carryOverRecords
   } = useDaily()
 
   
@@ -39,11 +41,17 @@ export default function DailyPage() {
   const completedYesterdayTasks = yesterdayPlan?.tasks.filter(task => task.completed)
 
   
-
-  
   return (
     <>
-      <DndContext onDragEnd={handleDragEnd}>
+    <div>
+      <DndContext onDragEnd={(event) =>
+        handleDragEnd(
+          event,
+          todayTasks,
+          "daily_tasks",
+          setTodayTasks
+        )
+      }>
 
         <div>
           <h2>昨日達成した課題</h2>
@@ -175,6 +183,7 @@ export default function DailyPage() {
           <p>※達成されなかったタスクは自動で明日に引き継がれます</p>
 
         </div>
+      </DndContext>
 
         <div>
           <h2>今日の振り返り</h2>
@@ -193,63 +202,79 @@ export default function DailyPage() {
           <p>{isTyping ? "入力中..." : "保存済み✓"}</p>
         </div>
 
-        <div>
+        <DndContext onDragEnd={(event) =>
+          handleDragEnd(
+            event,
+            tomorrowTasks,
+            "daily_tasks",
+            setTomorrowTasks
+          )
+        }>
           <h2>明日の課題</h2>
-           {tomorrowPlan ?
+          {tomorrowPlan ?
+
+            <SortableContext
+              items={tomorrowTasks}
+              strategy={verticalListSortingStrategy}
+            >
           
-            tomorrowPlan.tasks.map(task =>
-              <div key={task.id}>
+              {tomorrowTasks.map(task =>
+                <TaskItem
+                  key={task.id}
+                  id={task.id}
+                >
 
-                {editingId === task.id ?
-                  <div>
+                  {editingId === task.id ?
+                    <div>
 
-                    <input
-                      autoFocus
-                      value={editText}
-                      onChange={(e) => setEditText(e.target.value)}
-                      onKeyDown={async (e) => {
-                        if (e.key === "Enter") {
+                      <input
+                        autoFocus
+                        value={editText}
+                        onChange={(e) => setEditText(e.target.value)}
+                        onKeyDown={async (e) => {
+                          if (e.key === "Enter") {
+                            await updateDailyTaskTitle(task.id, editText, tomorrowDate)
+                            setEditText("")
+                            setEditingId(null)
+                          }
+                        }}
+                      />
+
+                      <button 
+                        onClick={async () => {
                           await updateDailyTaskTitle(task.id, editText, tomorrowDate)
                           setEditText("")
                           setEditingId(null)
-                        }
-                      }}
-                    />
-
-                    <button 
-                      onClick={async () => {
-                        await updateDailyTaskTitle(task.id, editText, tomorrowDate)
-                        setEditText("")
-                        setEditingId(null)
-                      }}
-                    >
-                      保存
-                    </button>
-
-                  </div>
-                :
-                  <div>
-
-                    <p>{task.title}</p>
-                    <button
-                      onClick={() => {
-                        setEditingId(task.id)
-                        setEditText(task.title)
-                      }}
-                    >
-                      編集
-                    </button>
-
-                  </div>
-                }
-
-                <button 
-                  onClick={() => deleteDailyTask(task.id, tomorrowDate)}
-                >
-                  削除
-                </button>
-              </div>
-            )
+                        }}
+                      >
+                        保存
+                      </button>
+  
+                    </div>
+                  :
+                    <div>
+  
+                      <p>{task.title}</p>
+                      <button
+                        onClick={() => {
+                          setEditingId(task.id)
+                          setEditText(task.title)
+                        }}
+                      >
+                        編集
+                      </button>
+  
+                    </div>
+                  }
+  
+                  <button 
+                    onClick={() => deleteDailyTask(task.id, tomorrowDate)}
+                  >
+                    削除
+                  </button>
+                </TaskItem>
+              )}
+            </SortableContext>
           :
             <p>タスクを追加してください</p>
           }
@@ -286,11 +311,11 @@ export default function DailyPage() {
               新しいタスクを追加＋
             </button>
           }
-        </div>
+        </DndContext>
 
         <Link to="/weekly">ウィークリーへ</Link>
         <Link to="/monthly">マンリーへ</Link>
-      </DndContext>
+    </div>
     </>
   )
 }

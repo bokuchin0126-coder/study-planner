@@ -1,9 +1,6 @@
-export interface DailyTask {
-    id: string
-    title: string
-    completed: boolean
-    orderIndex: number
-}
+import type { BaseTask } from "./baseTask"
+
+export interface DailyTask extends BaseTask {}
 
 export interface DailyRecord {
     date: string

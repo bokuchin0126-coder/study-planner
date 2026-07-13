@@ -1,9 +1,6 @@
-export interface WeeklyGoal {
-    id: string
-    title: string
-    completed: boolean
-    orderIndex: number
-}
+import type { BaseTask } from "./baseTask"
+
+export interface WeeklyGoal extends BaseTask {}
 
 export interface WeeklyRecord {
     week: string

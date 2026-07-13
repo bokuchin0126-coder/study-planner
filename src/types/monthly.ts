@@ -1,9 +1,6 @@
-export interface MonthlyGoal {
-    id: string
-    title: string
-    completed: boolean
-    orderIndex: number
-}
+import type { BaseTask } from "./baseTask"
+
+export interface MonthlyGoal extends BaseTask {}
  
 export interface MonthlyRecord {
     month: string

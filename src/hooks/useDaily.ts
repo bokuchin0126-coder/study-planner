@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react"
 import { supabase } from "../lib/supabase"
 import type { DailyRecord, DailyTask } from "../types/daily"
-import type { DragEndEvent } from "@dnd-kit/core"
-import { arrayMove } from "@dnd-kit/sortable"
-
 
 export default function useDaily() {
 
@@ -43,6 +40,7 @@ export default function useDaily() {
   const carryTasks = todayPlan?.tasks.filter(task => !task.completed)
 
   const [todayTasks, setTodayTasks] = useState(todayPlan?.tasks ?? [])
+  const [tomorrowTasks, setTomorrowTasks] = useState(tomorrowPlan?.tasks ?? [])
 
   const addDailyRecord = async (text: string, date: string) => {
     try {
@@ -51,7 +49,7 @@ export default function useDaily() {
 
       const user = await getCurrentUser()
 
-      const orderIndex = dailyRecords.length
+      const orderIndex = todayPlan?.tasks.length ?? 0
 
       if (!contentsDate) {
 
@@ -271,6 +269,7 @@ export default function useDaily() {
       if (carryTasks.length === 0) return
 
       const user = await getCurrentUser()
+      const orderIndex = todayPlan?.tasks.length ?? 0
 
       const { data: tomorrowPlanData } = await supabase
         .from("daily_plans")
@@ -310,7 +309,8 @@ export default function useDaily() {
           user_id: user.id,
           plan_id: planData.id,
           text: task.title,
-          source_task_id: task.id
+          source_task_id: task.id,
+          order_index: orderIndex
         }))
 
         const { data: taskData, error: taskError } = await supabase
@@ -367,7 +367,8 @@ export default function useDaily() {
           user_id: user.id,
           plan_id: planData.id,
           text: task.title,
-          source_task_id: task.id
+          source_task_id: task.id,
+          order_index: orderIndex
         }))
 
         const { data: taskData, error: taskError } = await supabase
@@ -457,24 +458,19 @@ export default function useDaily() {
     }
   }, [todayPlan])
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
-
-    if (!over || active.id === over.id) return 
-
-    setTodayTasks(tasks => {
-      const oldIndex = tasks.findIndex(task => task.id === active.id)
-      const newIndex = tasks.findIndex(task => task.id === over.id)
-
-      return arrayMove(tasks, oldIndex, newIndex)
-    })
-  }
+  useEffect(() => {
+    if (tomorrowPlan) {
+      setTomorrowTasks(tomorrowPlan.tasks)
+    }
+  }, [tomorrowPlan])
 
 
   return {
-    dailyRecords,
     today,
     todayTasks,
+    setTodayTasks,
+    tomorrowTasks,
+    setTomorrowTasks,
     tomorrowDate,
     todayPlan,
     tomorrowPlan,
@@ -484,7 +480,6 @@ export default function useDaily() {
     updateDailyTaskToggle,
     deleteDailyTask,
     updateDailyRecordReflection,
-    carryOverRecords,
-    handleDragEnd
+    carryOverRecords
   }
 }

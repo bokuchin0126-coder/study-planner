@@ -44,6 +44,20 @@ export default function DailyPage() {
   return (
     <>
     <div>
+      <div>
+        <h2>昨日達成した課題</h2>
+        {yesterdayPlan ?
+          completedYesterdayTasks && completedYesterdayTasks.length > 0 ? 
+            completedYesterdayTasks.map(task => (
+              <p key={task.id}>・{task.title}</p>
+            ))
+          :
+            <p>昨日達成したタスクはありません</p>     
+        :
+          <p>昨日のタスクはありません</p>
+        }
+      </div>
+
       <DndContext onDragEnd={(event) =>
         handleDragEnd(
           event,
@@ -52,20 +66,6 @@ export default function DailyPage() {
           setTodayTasks
         )
       }>
-
-        <div>
-          <h2>昨日達成した課題</h2>
-          {yesterdayPlan ?
-            completedYesterdayTasks && completedYesterdayTasks.length > 0 ? 
-              completedYesterdayTasks.map(task => (
-                <p key={task.id}>・{task.title}</p>
-              ))
-            :
-              <p>昨日達成したタスクはありません</p>     
-          :
-            <p>昨日のタスクはありません</p>
-          }
-        </div>
 
         <div>
           <h2>今日の課題</h2>

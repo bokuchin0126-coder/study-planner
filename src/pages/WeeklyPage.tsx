@@ -72,7 +72,22 @@ export default function WeeklyPage() {
 
   return (
     <>
-    <div>
+    <div> 
+      <div>
+        <h2>先週達成した課題</h2>
+        {lastWeekPlan ?
+          completedLastWeekTasks && completedLastWeekTasks.length > 0 ? 
+            completedLastWeekTasks.map(task => (
+              <p key={task.id}>・{task.completed ? task.title : ""}</p>
+            ))
+          :
+            <p>先週達成したタスクはありません</p>  
+          
+        :
+          <p>先週のタスクはありません</p>
+        }
+      </div>
+
       <DndContext onDragEnd={(event) =>
         handleDragEnd(
           event,
@@ -81,22 +96,6 @@ export default function WeeklyPage() {
           setWeekTasks
         )
       }>
-        
-        <div>
-          <h2>先週達成した課題</h2>
-          {lastWeekPlan ?
-            completedLastWeekTasks && completedLastWeekTasks.length > 0 ? 
-              completedLastWeekTasks.map(task => (
-                <p key={task.id}>・{task.completed ? task.title : ""}</p>
-              ))
-            :
-              <p>先週達成したタスクはありません</p>  
-          
-          :
-            <p>先週のタスクはありません</p>
-          }
-        </div>
-
         <div>
             <h2>今週の課題</h2>
 

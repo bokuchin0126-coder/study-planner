@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import type { MonthlyRecord } from "../types/monthly"
 import type { Task } from "../types/baseTask"
 import { supabase } from "../lib/supabase"
@@ -232,6 +232,51 @@ export default function useMonthly() {
       alert("タスクの削除に失敗しました")
     }
   }
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const user = await getCurrentUser()
+
+        const { data: plansData, error: plansError } = await supabase
+          .from("monthly_plans")
+          .select()
+          .eq("user_id", user.id)
+          .in("month_start", [monthlyDate("start", -1), monthlyDate("start"), monthlyDate("start", 1)])
+
+        if (plansError) throw plansError
+
+        const planIds = plansData.map(plan => plan.id)
+
+        const { data: tasksData, error: tasksError } = await supabase
+         .from("monthly_tasks")
+         .select()
+         .eq("user_id", user.id)
+         .in("plan_id", planIds) 
+
+        if (tasksError) throw tasksError
+
+        const tasks: Task[] = tasksData?.map(task => ({
+          id: task.id,
+          title: task.text,
+          completed: task.completed,
+          orderIndex: task.order_index
+        }))
+
+        const monthlyRecord: MonthlyRecord[] = plansData.map(plan => ({
+          month: plan.date,
+          tasks: tasks,
+          reflection: plan.reflection
+        }))
+
+        setMonthlyRecords(monthlyRecord)
+      } catch(e) {
+        console.error(e)
+        alert("データの取得に失敗しました")
+      }
+    } 
+    fetch()
+  }, [])
 
   return {
     addMonthlyRecord,

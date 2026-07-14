@@ -1,8 +1,13 @@
 import useMonthly from "../hooks/useMonthly"
 import useWeekly from "../hooks/useWeekly"
 import type { WeeklyRecord } from "../types/weekly"
-import { useState } from "react"
+import type { Task } from "../types/baseTask"
+import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
+import handleDragEnd from "../utils/dragAndDrop"
+import TaskItem from "../components/TaskItem"
+import { DndContext } from "@dnd-kit/core"
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 
 
 export default function MonthlyPage() {
@@ -63,6 +68,21 @@ export default function MonthlyPage() {
   const maxWeek = getWeekNumber(monthEnd)
   const weeks = Array.from({ length: maxWeek} , (_, i) => i + 1)
 
+  const [monthTasks, setMonthTasks] = useState<Task[]>(month?.tasks ?? [])
+  const [nextMonthTasks, setNextMonthTasks] = useState<Task[]>(nextMonth?.tasks ?? [])
+
+  useEffect(() => {
+    if (month) {
+      setMonthTasks(month.tasks)
+    }
+  }, [month])
+
+  useEffect(() => {
+    if (nextMonth) {
+      setNextMonthTasks(nextMonth.tasks)
+    }
+  }, [nextMonth])
+
   return (
     <>
       <div>
@@ -82,56 +102,73 @@ export default function MonthlyPage() {
           }
         </div>
 
-        <div>
-          <h2>今月の課題</h2>
-          {month?.tasks.map(task =>
-              <div key={task.id}>
+        <DndContext onDragEnd={(event) =>
+          handleDragEnd(
+            event,
+            monthTasks,
+            "monthly_tasks",
+            setMonthTasks
+          )
+        }>
 
-                <button onClick={() => updateMonthlyTaskToggle(task.id, task.completed, monthStart)}>
-                  {task.completed ? "☑" : "□"}
-                </button>
+          <div>
+            <h2>今月の課題</h2>
+            <SortableContext
+              items={monthTasks}
+              strategy={verticalListSortingStrategy}
+            >
+              {month?.tasks.map(task =>
+                <TaskItem
+                  key={task.id}
+                  id={task.id}  
+                >
 
-                {editingId === task.id ?
-                  <div>
-                    <input
-                      value={editText}
-                      autoFocus
-                      onChange={(e) => setEditText(e.target.value)}
-                      onKeyDown={async (e) => {
-                        if (e.key === "Enter") {
-                          await updateMonthlyTaskTitle(task.id, editText, monthStart)
-                          setEditText("")
-                          setEditingId("")
-                        }
+                  <button onClick={() => updateMonthlyTaskToggle(task.id, task.completed, monthStart)}>
+                    {task.completed ? "☑" : "□"}
+                  </button>
+  
+                  {editingId === task.id ?
+                    <div>
+                      <input
+                        value={editText}
+                        autoFocus
+                        onChange={(e) => setEditText(e.target.value)}
+                        onKeyDown={async (e) => {
+                          if (e.key === "Enter") {
+                            await updateMonthlyTaskTitle(task.id, editText, monthStart)
+                            setEditText("")
+                            setEditingId("")
+                          }
+                        }}
+                      />
+                      <button onClick={async () => {
+                        await updateMonthlyTaskTitle(task.id, editText, monthStart)
+                        setEditText("")
+                        setEditingId("")
+                      }}>
+                        保存
+                      </button>
+                    </div>
+                  :
+                    <div>
+                      <p>{task.title}</p>
+                      <button onClick={() => {
+                        setEditingId(task.id)
+                        setEditText(task.title)
                       }}
-                    />
-                    <button onClick={async () => {
-                      await updateMonthlyTaskTitle(task.id, editText, monthStart)
-                      setEditText("")
-                      setEditingId("")
-                    }}>
-                      保存
-                    </button>
-                  </div>
-                :
-                  <div>
-                    <p>{task.title}</p>
-                    <button onClick={() => {
-                      setEditingId(task.id)
-                      setEditText(task.title)
-                    }}
-                    >
-                      編集
-                    </button>
-                  </div>
-                }
-                <button onClick={() => deleteMonthlyTask(task.id, monthStart)}>
-                  削除
-                </button>
-              </div>
-            )}
-
-          {monthShowAdd ? 
+                      >
+                        編集
+                      </button>
+                    </div>
+                  }
+                  <button onClick={() => deleteMonthlyTask(task.id, monthStart)}>
+                    削除
+                  </button>
+                </TaskItem>
+              )}
+            </SortableContext>
+  
+            {monthShowAdd ? 
               <div>
                 <input
                   value={addText}
@@ -160,7 +197,8 @@ export default function MonthlyPage() {
                 <button onClick={() => setMonthShowAdd(true)}>新しいタスクを追加＋</button>
               </div>
             }
-        </div>
+          </div>
+        </DndContext>
 
         <div>
             <h2>今週の振り返り</h2>
@@ -179,10 +217,27 @@ export default function MonthlyPage() {
           <p>{isTyping ? "入力中..." : "保存済み✓"}</p>
         </div>
 
+        <DndContext onDragEnd={(event) =>
+          handleDragEnd(
+            event,
+            nextMonthTasks,
+            "monthly_tasks",
+            setNextMonthTasks
+          )
+        }>
+
         <div>
-            <h2>来月の課題</h2>
-          {nextMonth?.tasks.map(task =>
-              <div key={task.id}>
+          <h2>来月の課題</h2>
+
+          <SortableContext
+            items={nextMonthTasks}
+            strategy={verticalListSortingStrategy}
+          >
+            {nextMonth?.tasks.map(task =>
+              <TaskItem
+                key={task.id}
+                id={task.id}
+              >
 
                 {editingId === task.id ?
                   <div>
@@ -221,8 +276,9 @@ export default function MonthlyPage() {
                 <button onClick={() => deleteMonthlyTask(task.id, nextMonthStart)}>
                   削除
                 </button>
-              </div>
+              </TaskItem>
             )}
+          </SortableContext>
 
           {nextMonthShowAdd ? 
               <div>
@@ -254,6 +310,7 @@ export default function MonthlyPage() {
               </div>
             }            
         </div>
+        </DndContext>
 
         <div>
           <h2>今月達成したウィークリータスク</h2>

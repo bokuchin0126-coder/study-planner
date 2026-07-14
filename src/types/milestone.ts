@@ -1,11 +1,8 @@
-export interface Milestone {
-    id: string
-    title: string
+import type { Task } from "./baseTask"
+export interface longTermRecord {
     startDate: string
-    endDate: string
-
-    goals: string[]
-    achievements: string[]
+    tasks: Task[]
     reflection: string
-    nextGoals: string[]
+    goal: string
+    completed: boolean
 }

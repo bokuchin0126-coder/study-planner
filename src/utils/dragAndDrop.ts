@@ -1,9 +1,9 @@
 import { supabase } from "../lib/supabase"
-import type { BaseTask } from "../types/baseTask"
+import type { Task } from "../types/baseTask"
 import type { DragEndEvent } from "@dnd-kit/core"
 import { arrayMove } from "@dnd-kit/sortable"
 
-const updateTaskOrder = async <T extends BaseTask>(activeId: string, overId: string, 
+const updateTaskOrder = async <T extends Task>(activeId: string, overId: string, 
   tasks: T[], tableName: string) => {
   try {
     if (tasks.length === 0) return
@@ -27,7 +27,7 @@ const updateTaskOrder = async <T extends BaseTask>(activeId: string, overId: str
   }
 }
 
-export default function handleDragEnd <T extends BaseTask>(event: DragEndEvent, tasks: T[], 
+export default function handleDragEnd <T extends Task>(event: DragEndEvent, tasks: T[], 
   tableName: string, setTasks: React.Dispatch<React.SetStateAction<T[]>>) {
   const { active, over } = event
 

@@ -1,5 +1,6 @@
 import { useState } from "react"
-import type { MonthlyRecord, MonthlyGoal } from "../types/monthly"
+import type { MonthlyRecord } from "../types/monthly"
+import type { Task } from "../types/baseTask"
 import { supabase } from "../lib/supabase"
 
 
@@ -38,7 +39,7 @@ export default function useMonthly() {
     try {
       const user = await getCurrentUser()
       const currentDate = monthlyRecords.find(month => month.month === date)
-      const orderIndex = currentDate ? currentDate.goals.length : 0
+      const orderIndex = currentDate ? currentDate.tasks.length : 0
 
       if (!currentDate) {
         const { data: planData, error: planError } = await supabase
@@ -64,7 +65,7 @@ export default function useMonthly() {
 
         if (taskError) throw taskError
 
-        const goal: MonthlyGoal = {
+        const task: Task = {
           id: taskData.id,
           title: text,
           completed: false,
@@ -73,7 +74,7 @@ export default function useMonthly() {
 
         const monthlyRecord: MonthlyRecord = {
           month: date,
-          goals: [goal],
+          tasks: [task],
           reflection: ""
         }
 
@@ -101,7 +102,7 @@ export default function useMonthly() {
 
         if (taskError) throw taskError
 
-        const goal: MonthlyGoal = {
+        const task: Task = {
           id: taskData.id,
           title: text,
           completed: false,
@@ -111,7 +112,7 @@ export default function useMonthly() {
         setMonthlyRecords(prev => prev.map(month => month.month === date ? 
           {
             ...month,
-            goals: [...month.goals, goal]  
+            tasks: [...month.tasks, task]  
           }
           : month
         ))
@@ -139,8 +140,8 @@ export default function useMonthly() {
       setMonthlyRecords(prev => prev.map(month => month.month === date ? 
         {
           ...month,
-          goals: month.goals.map(goal => (
-            goal.id === id ? {...goal, title: text} : goal
+          tasks: month.tasks.map(task => (
+            task.id === id ? {...task, title: text} : task
           ))
         }
         : month
@@ -168,8 +169,8 @@ export default function useMonthly() {
       setMonthlyRecords(prev => prev.map(month => month.month === date ? 
         {
           ...month,
-          goals: month.goals.map(goal => (
-            goal.id === id ? {...goal, completed: !completed} : goal
+          tasks: month.tasks.map(task => (
+            task.id === id ? {...task, completed: !completed} : task
           ))
         }
         : month
@@ -222,7 +223,7 @@ export default function useMonthly() {
       setMonthlyRecords(prev => prev.map(month => month.month === date ? 
         {
           ...month,
-          goals: month.goals.filter(goal => goal.id !== id)
+          tasks: month.tasks.filter(task => task.id !== id)
         }
         : month
       ))

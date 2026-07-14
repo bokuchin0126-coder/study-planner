@@ -1,9 +1,7 @@
-import type { BaseTask } from "./baseTask"
-
-export interface DailyTask extends BaseTask {}
+import type { Task } from "./baseTask"
 
 export interface DailyRecord {
     date: string
-    tasks: DailyTask[]
+    tasks: Task[]
     reflection: string
 }

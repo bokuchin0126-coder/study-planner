@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { supabase } from "../lib/supabase"
-import type { DailyRecord, DailyTask } from "../types/daily"
+import type { DailyRecord } from "../types/daily"
+import type { Task } from "../types/baseTask"
 
 export default function useDaily() {
 
@@ -39,8 +40,8 @@ export default function useDaily() {
   const yesterdayPlan = dailyRecords.find(day => day.date === yesterdayDate)
   const carryTasks = todayPlan?.tasks.filter(task => !task.completed)
 
-  const [todayTasks, setTodayTasks] = useState(todayPlan?.tasks ?? [])
-  const [tomorrowTasks, setTomorrowTasks] = useState(tomorrowPlan?.tasks ?? [])
+  const [todayTasks, setTodayTasks] = useState<Task[]>(todayPlan?.tasks ?? [])
+  const [tomorrowTasks, setTomorrowTasks] = useState<Task[]>(tomorrowPlan?.tasks ?? [])
 
   const addDailyRecord = async (text: string, date: string) => {
     try {
@@ -112,7 +113,7 @@ export default function useDaily() {
         
         if (taskError) throw taskError
 
-        const newTasks: DailyTask = {
+        const newTasks: Task = {
           id: taskData.id,
           title: text,
           completed: false,
@@ -466,6 +467,7 @@ export default function useDaily() {
 
 
   return {
+    dailyRecords,
     today,
     todayTasks,
     setTodayTasks,

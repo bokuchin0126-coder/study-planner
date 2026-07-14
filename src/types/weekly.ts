@@ -1,9 +1,7 @@
-import type { BaseTask } from "./baseTask"
-
-export interface WeeklyGoal extends BaseTask {}
+import type { Task } from "./baseTask"
 
 export interface WeeklyRecord {
     week: string
-    goals: WeeklyGoal[]
+    tasks: Task[]
     reflection: string
 } 

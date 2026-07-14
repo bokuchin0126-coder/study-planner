@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
-import type { WeeklyRecord, WeeklyGoal } from "../types/weekly"
+import type { WeeklyRecord } from "../types/weekly"
+import type { Task } from "../types/baseTask"
 import { supabase } from "../lib/supabase"
 
 export default function useWeekly() {
@@ -43,7 +44,7 @@ export default function useWeekly() {
       if (text.trim() === "") throw alert("タスクを入力して下さい")
 
       const contentsDate = weeklyRecords.find(week => week.week === date)
-      const orderIndex = contentsDate ? contentsDate.goals.length : 0
+      const orderIndex = contentsDate ? contentsDate.tasks.length : 0
       const user = await getCurrentUser()
 
       if (!contentsDate) {
@@ -70,7 +71,7 @@ export default function useWeekly() {
 
         if (taskError) throw taskError
 
-        const goal: WeeklyGoal = {
+        const task: Task = {
           id: taskData.id,
           title: text,
           completed: false,
@@ -79,7 +80,7 @@ export default function useWeekly() {
 
         const weeklyRecord: WeeklyRecord = {
           week: date,
-          goals: [goal],
+          tasks: [task],
           reflection: ""
         }
 
@@ -107,7 +108,7 @@ export default function useWeekly() {
 
         if (taskError) throw taskError
 
-        const goal: WeeklyGoal = {
+        const task: Task = {
           id: taskData.id,
           title: text,
           completed: false,
@@ -118,7 +119,7 @@ export default function useWeekly() {
           week.week === date ? 
           {
             ...week,
-            goals: [...week.goals, goal]
+            tasks: [...week.tasks, task]
           }
           : week
         ))
@@ -147,8 +148,8 @@ export default function useWeekly() {
       setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
           ...week,
-          goals: week.goals.map(goal => (
-            goal.id === id ? {...goal, title: text} : goal
+          tasks: week.tasks.map(task => (
+            task.id === id ? {...task, title: text} : task
           ))
         }
         : week
@@ -176,8 +177,8 @@ export default function useWeekly() {
       setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
           ...week,
-          goals: week.goals.map(goal => (
-            goal.id === id ? {...goal, completed: !completed} : goal
+          tasks: week.tasks.map(task => (
+            task.id === id ? {...task, completed: !completed} : task
           ))
         }
         : week
@@ -230,7 +231,7 @@ export default function useWeekly() {
       setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
           ...week,
-          goals: week.goals.filter(goal => goal.id !== id)
+          tasks: week.tasks.filter(task => task.id !== id)
         }
         : week
       ))
@@ -263,7 +264,7 @@ export default function useWeekly() {
         if (tasksError) throw tasksError
 
         const weeklyRecord: WeeklyRecord[] = plansData.map(plan => {
-          const goals = tasksData
+          const tasks = tasksData
           .filter(task => task.plan_id === plan.id)
           .map(task => ({
             id: task.id,
@@ -274,7 +275,7 @@ export default function useWeekly() {
 
           return {
             week: plan.week_start,
-            goals: goals,
+            tasks: tasks,
             reflection: plan.reflection
           }
         })

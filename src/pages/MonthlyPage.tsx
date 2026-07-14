@@ -36,12 +36,12 @@ export default function MonthlyPage() {
   const nextMonth = monthlyRecords.find(month => month.month === nextMonthStart)
   const lastMonth = monthlyRecords.find(month => month.month === lastMonthStart)
   
-  const completedLastMonthTasks = lastMonth?.goals.filter(goal => goal.completed)
+  const completedLastMonthTasks = lastMonth?.tasks.filter(task => task.completed)
 
   const thisMonthWeeklyPlans = weeklyRecords.filter((week: WeeklyRecord) => monthStart <= week.week && week.week <= monthEnd )
   const completedThisMonthWeeklyPlans = thisMonthWeeklyPlans.map((week: WeeklyRecord) => ({
     week: week.week,
-    goals: week.goals.filter(goal => goal.completed)
+    tasks: week.tasks.filter(task => task.completed)
   })).sort(
     (a, b) => new Date(a.week).getTime() - new Date(b.week).getTime()
   )
@@ -71,8 +71,8 @@ export default function MonthlyPage() {
           <h2>先週達成した課題</h2>
           {lastMonth ?
             completedLastMonthTasks && completedLastMonthTasks.length > 0 ? 
-              completedLastMonthTasks.map(goal => (
-                <p>・{goal.completed ? goal.title : ""}</p>
+              completedLastMonthTasks.map(task => (
+                <p>・{task.completed ? task.title : ""}</p>
               ))
             :
               <p>先週達成したタスクはありません</p>  
@@ -84,14 +84,14 @@ export default function MonthlyPage() {
 
         <div>
           <h2>今月の課題</h2>
-          {month?.goals.map(goal =>
-              <div key={goal.id}>
+          {month?.tasks.map(task =>
+              <div key={task.id}>
 
-                <button onClick={() => updateMonthlyTaskToggle(goal.id, goal.completed, monthStart)}>
-                  {goal.completed ? "☑" : "□"}
+                <button onClick={() => updateMonthlyTaskToggle(task.id, task.completed, monthStart)}>
+                  {task.completed ? "☑" : "□"}
                 </button>
 
-                {editingId === goal.id ?
+                {editingId === task.id ?
                   <div>
                     <input
                       value={editText}
@@ -99,14 +99,14 @@ export default function MonthlyPage() {
                       onChange={(e) => setEditText(e.target.value)}
                       onKeyDown={async (e) => {
                         if (e.key === "Enter") {
-                          await updateMonthlyTaskTitle(goal.id, editText, monthStart)
+                          await updateMonthlyTaskTitle(task.id, editText, monthStart)
                           setEditText("")
                           setEditingId("")
                         }
                       }}
                     />
                     <button onClick={async () => {
-                      await updateMonthlyTaskTitle(goal.id, editText, monthStart)
+                      await updateMonthlyTaskTitle(task.id, editText, monthStart)
                       setEditText("")
                       setEditingId("")
                     }}>
@@ -115,17 +115,17 @@ export default function MonthlyPage() {
                   </div>
                 :
                   <div>
-                    <p>{goal.title}</p>
+                    <p>{task.title}</p>
                     <button onClick={() => {
-                      setEditingId(goal.id)
-                      setEditText(goal.title)
+                      setEditingId(task.id)
+                      setEditText(task.title)
                     }}
                     >
                       編集
                     </button>
                   </div>
                 }
-                <button onClick={() => deleteMonthlyTask(goal.id, monthStart)}>
+                <button onClick={() => deleteMonthlyTask(task.id, monthStart)}>
                   削除
                 </button>
               </div>
@@ -181,10 +181,10 @@ export default function MonthlyPage() {
 
         <div>
             <h2>来月の課題</h2>
-          {nextMonth?.goals.map(goal =>
-              <div key={goal.id}>
+          {nextMonth?.tasks.map(task =>
+              <div key={task.id}>
 
-                {editingId === goal.id ?
+                {editingId === task.id ?
                   <div>
                     <input
                       value={editText}
@@ -192,14 +192,14 @@ export default function MonthlyPage() {
                       onChange={(e) => setEditText(e.target.value)}
                       onKeyDown={async (e) => {
                         if (e.key === "Enter") {
-                          await updateMonthlyTaskTitle(goal.id, editText, nextMonthStart)
+                          await updateMonthlyTaskTitle(task.id, editText, nextMonthStart)
                           setEditText("")
                           setEditingId("")
                         }
                       }}
                     />
                     <button onClick={async () => {
-                      await updateMonthlyTaskTitle(goal.id, editText, nextMonthStart)
+                      await updateMonthlyTaskTitle(task.id, editText, nextMonthStart)
                       setEditText("")
                       setEditingId("")
                     }}>
@@ -208,17 +208,17 @@ export default function MonthlyPage() {
                   </div>
                 :
                   <div>
-                    <p>{goal.title}</p>
+                    <p>{task.title}</p>
                     <button onClick={() => {
-                      setEditingId(goal.id)
-                      setEditText(goal.title)
+                      setEditingId(task.id)
+                      setEditText(task.title)
                     }}
                     >
                       編集
                     </button>
                   </div>
                 }
-                <button onClick={() => deleteMonthlyTask(goal.id, nextMonthStart)}>
+                <button onClick={() => deleteMonthlyTask(task.id, nextMonthStart)}>
                   削除
                 </button>
               </div>
@@ -268,9 +268,9 @@ export default function MonthlyPage() {
                 <div key={number}>
                   <h3>Week {number}</h3>
 
-                  {week && week.goals.length > 0 ? (
-                    week.goals.map(goal => (
-                      <p key={goal.id}>✓ {goal.title}</p>
+                  {week && week.tasks.length > 0 ? (
+                    week.tasks.map(task => (
+                      <p key={task.id}>✓ {task.title}</p>
                     ))
                   )
                   :

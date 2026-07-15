@@ -264,7 +264,7 @@ export default function useMonthly() {
         }))
 
         const monthlyRecord: MonthlyRecord[] = plansData.map(plan => ({
-          month: plan.date,
+          month: plan.month_start,
           tasks: tasks,
           reflection: plan.reflection
         }))

@@ -117,7 +117,7 @@ export default function MonthlyPage() {
               items={monthTasks}
               strategy={verticalListSortingStrategy}
             >
-              {month?.tasks.map(task =>
+              {monthTasks.map(task =>
                 <TaskItem
                   key={task.id}
                   id={task.id}  
@@ -233,7 +233,7 @@ export default function MonthlyPage() {
             items={nextMonthTasks}
             strategy={verticalListSortingStrategy}
           >
-            {nextMonth?.tasks.map(task =>
+            {nextMonthTasks.map(task =>
               <TaskItem
                 key={task.id}
                 id={task.id}

@@ -28,6 +28,9 @@ export default function useLongTerm() {
     tasks: []
   }])
 
+  const [startDate, setStartDate] = useState<string>(defaultStartDate)
+  const [endDate, setEndDate] = useState<string>(defaultEndDate)
+
   const getCurrentUser = async () => {
     const { data: {user}, error } = await supabase.auth.getUser()
         
@@ -90,6 +93,7 @@ export default function useLongTerm() {
         ...prev[0],
         startDate: date
       }])
+      setStartDate(date)
 
     } catch(e) {
       console.error(e)
@@ -108,6 +112,7 @@ export default function useLongTerm() {
         ...prev[0],
         endDate: date
       }])
+      setEndDate(date)
 
     } catch(e) {
       console.error(e)
@@ -233,9 +238,56 @@ export default function useLongTerm() {
     }
   }
 
+  const loadLongTermPlan = async () => {
+    try {
+      const user = await getCurrentUser()
+
+      const { data: planData, error: planError } = await supabase
+        .from("long_term_plans")
+        .select()
+        .eq("user_id", user.id)
+        .eq("start_date", startDate)
+        .eq("end_date", endDate)
+        .single()
+
+      if (planError) throw planError
+
+      const { data: tasksData, error: tasksError} = await supabase
+        .from("long_term_tasks")
+        .select()
+        .eq("user_id", user.id)
+        .eq("plan_id", planData.id)
+
+      if (tasksError) throw tasksError
+
+      const tasks: Task[] =  tasksData.map(task =>  ({
+        id: task.id,
+        title: task.text,
+        completed: task.completed,
+        orderIndex: task.order_index
+      }))
+
+      const longTermRecord: longTermRecord = {
+        startDate: planData.start_date,
+        endDate: planData.end_date,
+        goal: planData.goal,
+        completed: planData.completed,
+        reflection: planData.reflection,
+        tasks: tasks
+      }
+
+      setLongTermRecords([longTermRecord])
+    } catch(e) {
+      console.error(e)
+      alert("データの取得に失敗しました")
+    }
+  }
+
   useEffect(() => {
     localStorage.setItem("longTermDraft",JSON.stringify(longTermRecords))
   }, [longTermRecords])
+
+ 
 
   return {
     addLongTermTasks,
@@ -245,6 +297,8 @@ export default function useLongTerm() {
     updateLongTermReflection,
     updateLongTermToggle,
     updateLongTermTaskTitle,
-    updateLongTermTaskToggle
+    updateLongTermTaskToggle,
+    saveLongTermPlan,
+    loadLongTermPlan
   }
 }

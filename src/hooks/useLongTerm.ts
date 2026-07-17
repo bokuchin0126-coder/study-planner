@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import type { longTermRecord } from "../types/longTerm"
 import type { Task } from "../types/baseTask"
 import { supabase } from "../lib/supabase"
@@ -284,10 +284,63 @@ export default function useLongTerm() {
   }
 
   useEffect(() => {
+    if (longTermRecords.length === 0) return 
     localStorage.setItem("longTermDraft",JSON.stringify(longTermRecords))
   }, [longTermRecords])
 
- 
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const draft = localStorage.getItem("longTermDraft")
+
+        if (draft) {
+          setLongTermRecords(JSON.parse(draft))
+        } else {
+          const user = await getCurrentUser()
+
+          const { data: planData, error: planError } = await supabase
+            .from("long_term_plans")
+            .select()
+            .eq("user_id", user.id)
+            .eq("start_date", startDate)
+            .eq("end_date", endDate)
+            .single()
+
+          if (planError) throw planError
+
+          const { data: tasksData, error: tasksError} = await supabase
+            .from("long_term_tasks")
+            .select()
+            .eq("user_id", user.id)
+            .eq("plan_id", planData.id)
+  
+          if (tasksError) throw tasksError
+    
+          const tasks: Task[] =  tasksData.map(task =>  ({
+            id: task.id,
+            title: task.text,
+            completed: task.completed,
+            orderIndex: task.order_index
+          }))
+    
+          const longTermRecord: longTermRecord = {
+            startDate: planData.start_date,
+            endDate: planData.end_date,
+            goal: planData.goal,
+            completed: planData.completed,
+            reflection: planData.reflection,
+            tasks: tasks
+          }
+    
+          setLongTermRecords([longTermRecord])
+        }
+      } catch(e) {
+        console.error(e)
+        alert("データの取得に失敗しました")
+      }
+    }
+    fetch()
+  }, [])
 
   return {
     addLongTermTasks,

@@ -3,7 +3,14 @@ import useLongTerm from "../hooks/useLongTerm"
 
 export default function LongTermPage() {
   const {
-
+    addLongTermTasks,
+    updateLongTermGoal,
+    updateLongTermStartDate,
+    updateLongTermEndDate,
+    updateLongTermReflection,
+    updateLongTermToggle,
+    updateLongTermTaskTitle,
+    updateLongTermTaskToggle
   } = useLongTerm()
   return (
     <>

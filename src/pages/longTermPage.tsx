@@ -1,10 +1,11 @@
 import useLongTerm from "../hooks/useLongTerm"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import handleDragEnd from "../utils/dragAndDrop"
 import TaskItem from "../components/TaskItem"
 import { DndContext } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import "../css/longTerm.css"
 
 
 
@@ -30,11 +31,128 @@ export default function LongTermPage() {
   const [editingId, setEditingId] = useState<string>("")
   const [showAdd, setShowAdd] = useState<boolean>(false)
 
+  const [editingType, setEditingType] = useState<"start" | "end" | null>(null)
+
+  const [startYear, setStartYear] = useState<number>(new Date().getFullYear())
+  const [startMonth, setStartMonth] = useState<number>(new Date().getMonth() + 1)
+  const [startDay, setStartDay] = useState<number>(new Date().getDate())
+
+  const [endYear, setEndYear] = useState<number>(new Date().getFullYear())
+  const [endMonth, setEndMonth] = useState<number>(new Date().getMonth() + 1)
+  const [endDay, setEndDay] = useState<number>(new Date().getDate())
+
+  const saveStartDate = `${startYear}-${String(startMonth).padStart(2, "0")}-${String(startDay).padStart(2, "0")}`
+  const saveEndDate = `${endYear}-${String(endMonth).padStart(2, "0")}-${String(endDay).padStart(2, "0")}`
+
+  const displayStartDate = `${startYear}年 ${startMonth}月 ${startDay}日`
+  const displayEndDate = `${endYear}年 ${endMonth}月 ${endDay}日`
+
+  const pickerRef = useRef<HTMLDivElement | null>(null)
+
+  const startDaysInMonth = new Date(startYear, startMonth, 0).getDate()
+
+  const endDaysInMonth = new Date(endYear, endMonth, 0).getDate()
+  const endFirstYear = startYear
+  const endFirstMonth = endYear === startYear ? startMonth : 1
+  const endFirstDay = endYear === startYear && endMonth === startMonth ? startDay : 1
+
+  const startDate = new Date(startYear, startMonth - 1, startDay)
+  const endDate = new Date(endYear, endMonth - 1, endDay)
+
+  useEffect(() => {
+    const maxStartDay = new Date(startYear, startMonth, 0).getDate()
+
+    if (startDay > maxStartDay) {
+      setStartDay(maxStartDay)
+    }
+  }, [startYear, startMonth, startDay])
+
+  useEffect(() => {
+    const maxEndDay = new Date(endYear, endMonth, 0).getDate()
+
+    if (endDay > maxEndDay) {
+      setEndDay(maxEndDay)
+    }
+  }, [endYear, endMonth, endDay])
+
   useEffect(() => {
     if (!longTermRecord) return
+
     setGoalText(longTermRecord.goal)
     setReflectionText(longTermRecord.reflection)
+
+    const [startYear, startMonth, startDay] = longTermRecord.startDate.split("-").map(Number)
+
+    const [endYear, endMonth, endDay] = longTermRecord.endDate.split("-").map(Number)
+
+    setStartYear(startYear)
+    setStartMonth(startMonth)
+    setStartDay(startDay)
+
+    setEndYear(endYear)
+    setEndMonth(endMonth)
+    setEndDay(endDay)
   }, [longTermRecord])
+
+  useEffect(() => {
+    if (endDate >= startDate) return
+
+    setEndYear(startYear)
+    setEndMonth(startMonth)
+    setEndDay(startDay)
+  }, [
+    startYear,
+    startMonth,
+    startDay,
+    endYear,
+    endMonth,
+    endDay
+  ])
+
+  useEffect(() => {
+    const handleClickOutside = async (e: MouseEvent) => {
+      if (
+        pickerRef.current &&
+        !pickerRef.current.contains(e.target as Node)
+      ) {
+        if (editingType === "start") {
+          if (endDate < startDate) {
+            const correctedEndDate =
+              `${startYear}-${String(startMonth).padStart(2, "0")}-${String(startDay).padStart(2, "0")}`
+
+            setEndYear(startYear)
+            setEndMonth(startMonth)
+            setEndDay(startDay)
+  
+            await updateLongTermEndDate(correctedEndDate)
+          }
+
+          await updateLongTermStartDate(saveStartDate)
+        } else if (editingType === "end") {
+          await updateLongTermEndDate(saveEndDate)
+        }
+  
+        setEditingType(null)
+      }
+    }
+  
+    document.addEventListener("mousedown", handleClickOutside)
+  
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [
+    editingType,
+    saveStartDate,
+    saveEndDate,
+    startDate,
+    endDate,
+    startYear,
+    startMonth,
+    startDay,
+    updateLongTermStartDate,
+    updateLongTermEndDate
+  ])
 
   return (
     <>
@@ -45,12 +163,106 @@ export default function LongTermPage() {
             value={goalText}
             onChange={(e) => setGoalText(e.target.value)}
             placeholder="目標を入力..."
-            onBlur={() => updateLongTermGoal(goalText)}
+            onBlur={async () => await updateLongTermGoal(goalText)}
           />
         </div>
 
         <div>
           <h2>期間</h2>
+
+          <div>
+            <button onClick={() => {setEditingType("start")}}>
+              {displayStartDate}
+            </button>
+
+            {editingType === "start" && (
+              <div className="date-picker" ref={pickerRef}>
+                
+                <div className="year-list">
+
+                  {Array.from({ length: 30}, (_, i) => (
+                    <div key={i} onClick={() => setStartYear(2020 + i)}>
+                      {2020 + i}年
+                    </div>
+                  ))}
+
+                </div>
+
+                <div className="month-list">
+
+                  {Array.from({ length: 12}, (_, i) => (
+                    <div key={i} onClick={() => setStartMonth(i + 1)}>
+                      {i + 1}月
+                    </div>
+                  ))}
+                  
+                </div>
+
+                <div className="day-list">
+
+                  {Array.from({ length: startDaysInMonth}, (_, i) => (
+                    <div key={i} onClick={() => setStartDay(i + 1)}>
+                      {i + 1}日
+                    </div>
+                  ))}
+                  
+                </div>
+
+              </div>
+            )}
+
+            ~
+
+            <button onClick={() => {setEditingType("end")}}>
+              {displayEndDate}
+            </button>
+
+            {editingType === "end" && (
+              <div className="date-picker" ref={pickerRef}>
+
+                <div className="year-list">
+
+                  {Array.from({ length: 2050 - endFirstYear + 1 },(_, i) => {
+                    const year = endFirstYear + i
+                    return (
+                      <div key={year} onClick={() => setEndYear(year)}>
+                        {year}年
+                      </div>
+                    )
+                  })}
+
+                </div>
+
+                <div className="month-list">
+
+                  {Array.from({ length: 12 - endFirstMonth + 1 },(_, i) => {
+                    const month = endFirstMonth + i
+
+                    return (
+                      <div key={month} onClick={() => setEndMonth(month)}>
+                        {month}月
+                      </div>
+                    )
+                  })}
+                  
+                </div>
+
+                <div className="day-list">
+
+                  {Array.from({length:endDaysInMonth -endFirstDay +1},(_, i) => {
+                    const day = endFirstDay + i
+
+                    return (
+                      <div key={day} onClick={() => setEndDay(day)}>
+                        {day}日
+                      </div>
+                    )
+                  })}
+              
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div>
@@ -101,6 +313,7 @@ export default function LongTermPage() {
               </button>
             </div>
           )}
+
           {showAdd ?
             <div>
               <input

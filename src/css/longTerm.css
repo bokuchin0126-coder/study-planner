@@ -1,0 +1,20 @@
+.date-picker {
+    display: flex;
+    gap: 20px;
+}
+
+.year-list,
+.month-list,
+.day-list {
+    height: 200px;
+    overflow-y: auto;
+    width: 100px;
+    border: 1px solid gray;
+}
+
+.year-list div,
+.month-list div,
+.day-list div {
+    padding: 10px;
+    cursor: pointer;
+}

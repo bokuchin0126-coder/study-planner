@@ -315,6 +315,7 @@ export default function DailyPage() {
 
         <Link to="/weekly">ウィークリーへ</Link>
         <Link to="/monthly">マンリーへ</Link>
+        <Link to="/longTerm">長期へ</Link>
     </div>
     </>
   )

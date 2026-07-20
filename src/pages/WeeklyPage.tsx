@@ -321,6 +321,7 @@ export default function WeeklyPage() {
       <div>
         <Link to="/daily">デイリーへ</Link>
         <Link to="/monthly">マンリーへ</Link>
+        <Link to="/longTerm">長期へ</Link>
       </div>
 
     </div>

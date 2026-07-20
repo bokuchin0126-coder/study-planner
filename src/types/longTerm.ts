@@ -1,6 +1,7 @@
 import type { Task } from "./baseTask"
 
-export interface longTermRecord {
+export interface LongTermRecord {
+    id: string
     startDate: string
     endDate: string
     tasks: Task[]

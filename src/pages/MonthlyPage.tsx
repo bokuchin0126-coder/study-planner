@@ -29,7 +29,6 @@ export default function MonthlyPage() {
 
   const [monthShowAdd, setMonthShowAdd] = useState<boolean>(false)
   const [nextMonthShowAdd, setNextMonthShowAdd] = useState<boolean>(false)
-  const [isTyping, setIsTyping] = useState<boolean>(false)
   const [editingId, setEditingId] = useState<string>("")
 
   const monthStart = monthlyDate("start")
@@ -201,20 +200,13 @@ export default function MonthlyPage() {
         </DndContext>
 
         <div>
-            <h2>今週の振り返り</h2>
-            <textarea
+          <h2>今週の振り返り</h2>
+          <textarea
             placeholder="振り返りを入力..."
-            onBlur={() => {
-              updateMonthlyRecordReflection(reflectionText, monthStart),
-              setIsTyping(false)
-            }}
+            onBlur={() => updateMonthlyRecordReflection(reflectionText, monthStart)}
             value={reflectionText}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-              setReflectionText(e.target.value),
-              setIsTyping(true)
-            }}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReflectionText(e.target.value)}
           />
-          <p>{isTyping ? "入力中..." : "保存済み✓"}</p>
         </div>
 
         <DndContext onDragEnd={(event) =>
@@ -345,6 +337,7 @@ export default function MonthlyPage() {
         <div>
           <Link to="/daily">デイリーへ</Link>
           <Link to="/weekly">ウィークリーへ</Link>
+          <Link to="/longTerm">長期へ</Link>
         </div>
       </div>
     </>

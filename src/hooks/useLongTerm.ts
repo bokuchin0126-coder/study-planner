@@ -1,349 +1,400 @@
 import { useState, useEffect, useRef } from "react"
-import type { longTermRecord } from "../types/longTerm"
+import type { LongTermRecord } from "../types/longTerm"
 import type { Task } from "../types/baseTask"
 import { supabase } from "../lib/supabase"
 
 
 export default function useLongTerm() {
-
-  const today = new Date()
-  const format = (date: Date) => 
-    new  Intl.DateTimeFormat("sv-SE", {
-      timeZone: "Asia/Tokyo"
-  }).format(date)
-
-  const defaultStartDate = format(today)
-
-  const end = new Date(today)
-  end.setMonth(end.getMonth() + 6)
-
-  const defaultEndDate = format(end)
-
-  const [longTermRecords, setLongTermRecords] = useState<longTermRecord[]>([{
-    startDate: defaultStartDate,
-    endDate: defaultEndDate,
-    goal: "",
-    reflection: "",
-    completed: false,
-    tasks: []
-  }])
-
-  const [startDate, setStartDate] = useState<string>(defaultStartDate)
-  const [endDate, setEndDate] = useState<string>(defaultEndDate)
+  const [longTermRecord, setLongTermRecord] = useState<LongTermRecord | null>(null)
+  const initializingRef = useRef(false)
 
   const getCurrentUser = async () => {
     const { data: {user}, error } = await supabase.auth.getUser()
-        
+      
     if (error) throw error
     if (!user) throw new Error("ログインしてください")
     return user
   }
-
-  const addLongTermTasks = (text: string) => {
-    try {
-      const draft = localStorage.getItem("longTermDraft")
-      const orderIndex = longTermRecords[0].tasks.length
   
-      if (draft) {
-        setLongTermRecords(JSON.parse(draft))
-      }
+  const addLongTermTask = async (text: string) => {
+    try {
+      if (!longTermRecord) throw alert("データがありませんでした")
+      if (text.trim() === "") alert("タスク名を入力してください")
 
-      const insertTask: Task = {
-        id: crypto.randomUUID(),
-        title: text,
-        completed: false,
-        orderIndex: orderIndex
-      }
+      const user = await getCurrentUser()
+      const orderIndex = longTermRecord.tasks.length
 
-      setLongTermRecords(prev => [{
-        ...prev[0],
-        tasks: [...prev[0].tasks, insertTask]
-      }])
+      const { data: planData, error: planError } = await supabase
+        .from("long_term_plans")
+        .select()
+        .eq("user_id", user.id)
+        .eq("id", longTermRecord.id)
+        .single()
+
+      if (planError) throw planError
+
+      const { data: taskData, error: taskError } = await supabase
+        .from("long_term_tasks")
+        .insert({
+          user_id: user.id,
+          text: text,
+          plan_id: planData.id,
+          order_index: orderIndex
+        })
+        .select().single()
+
+      if (taskError) throw taskError
+
+      setLongTermRecord(prev => {
+        if (!prev) return null
+
+        return {
+          ...prev,
+          tasks: [...prev.tasks, {
+            id: taskData.id,
+            title: text,
+            completed: false,
+            orderIndex: orderIndex
+          }]
+        }
+      })
     } catch(e) {
       console.error(e)
       alert("タスクの追加に失敗しました")
     }
   }
 
-  const updateLongTermGoal = (text: string) => {
+  const updateLongTermGoal = async (text: string) => {
     try {
-      const draft = localStorage.getItem("longTermDraft")
+      if (!longTermRecord) throw alert("データがありませんでした")
+      if (text.trim() === "") alert("目標を 入力してください")
 
-      if (draft) {
-        setLongTermRecords(JSON.parse(draft))
-      }
-      setLongTermRecords(prev => [{
-        ...prev[0],
-        goal: text
-      }])
+      const user = await getCurrentUser()
+
+      const { error } = await supabase
+        .from("long_term_plans")
+        .update({
+          goal: text
+        })
+        .eq("user_id", user.id)
+        .eq("id", longTermRecord.id)
+
+      setLongTermRecord(prev => {
+        if (!prev) return null
+
+        return {
+          ...prev,
+          goal: text
+        }
+      })
     } catch(e) {
       console.error(e)
-      alert("目標の追加に失敗しました")
+      alert("目標の更新に失敗しました")
     }
   }
 
-  const updateLongTermStartDate = (date: string) => {
+  const updateLongTermEndDate = async (date: string) => {
     try {
-      const draft = localStorage.getItem("longTermDraft")
+      if (!longTermRecord) throw alert("データがありませんでした")
+      const user = await getCurrentUser()
       
-      if (draft) {
-        setLongTermRecords(JSON.parse(draft))
-      }
-      setLongTermRecords(prev => [{
-        ...prev[0],
-        startDate: date
-      }])
-      setStartDate(date)
+      const { error } = await supabase
+        .from("long_term_plans")
+        .update({
+          end_date: date
+        })
+        .eq("user_id", user.id)
+        .eq("id", longTermRecord.id)
 
+      if (error) throw error
+
+      setLongTermRecord(prev => {
+        if (!prev) return null
+
+        return {
+          ...prev,
+          endDate: date
+        }
+      })
+    } catch(e) {
+      console.error(e)
+      alert("終了日付の更新に失敗しました")
+    }
+  }
+
+  const updateLongTermStartDate = async (date: string) => {
+    try {
+      if (!longTermRecord) throw alert("データがありませんでした")
+      const user = await getCurrentUser()
+
+      const { error } = await supabase
+        .from("long_term_plans")
+        .update({
+          start_date: date
+        })
+        .eq("user_id", user.id)
+        .eq("id", longTermRecord.id)
+
+      if (error) throw error
+
+      setLongTermRecord(prev => {
+        if (!prev) return null
+
+        return {
+          ...prev,
+          startDate: date
+        }
+      })
     } catch(e) {
       console.error(e)
       alert("開始日の更新に失敗しました")
     }
   }
 
-  const updateLongTermEndDate = (date: string) => {
+  const updateLongTermReflection = async (text: string) => {
     try {
-      const draft = localStorage.getItem("longTermDraft")
-      
-      if (draft) {
-        setLongTermRecords(JSON.parse(draft))
-      }
-      setLongTermRecords(prev => [{
-        ...prev[0],
-        endDate: date
-      }])
-      setEndDate(date)
+      if (!longTermRecord) throw alert("データがありませんでした")
 
+      const user = await getCurrentUser()
+
+      const { error } = await supabase
+        .from("long_term_plans")
+        .update({
+          reflection: text
+        })
+        .eq("user_id", user.id)
+        .eq("id", longTermRecord.id)
+
+      if (error) throw error
+
+      setLongTermRecord(prev => {
+        if (!prev) return null
+
+        return {
+          ...prev,
+          reflection: text
+        }
+      })
     } catch(e) {
       console.error(e)
-      alert("開始日の更新に失敗しました")
-    }
-  }
-
-  const updateLongTermReflection = (text: string) => {
-    try {
-      const draft = localStorage.getItem("longTermDraft")
-      
-      if (draft) {
-        setLongTermRecords(JSON.parse(draft))
-      }
-      setLongTermRecords(prev => [{
-        ...prev[0],
-        reflection: text
-      }])
-    } catch(e) {
-      console.error(e) 
       alert("振り返りの更新に失敗しました")
     }
   }
 
-  const updateLongTermToggle = () => {
+  const updateLongTermToggle = async () => {
     try {
-      const draft = localStorage.getItem("longTermDraft")
-      
-      if (draft) {
-        setLongTermRecords(JSON.parse(draft))
-      }
-      setLongTermRecords(prev => [{
-        ...prev[0],
-        completed: !prev[0].completed
-      }])
+      if (!longTermRecord) throw alert("データがありませんでした")
+      const user = await getCurrentUser()
+
+      const { error } = await supabase
+        .from("long_term_plans")
+        .update({
+          completed: !longTermRecord.completed
+        })
+        .eq("user_id", user.id)
+        .eq("id", longTermRecord.id)
+
+      if (error) throw error
+
+      setLongTermRecord(prev => {
+        if (!prev) return null
+
+        return {
+          ...prev,
+          completed: !prev.completed
+        }
+      })
     } catch(e) {
       console.error(e)
-      alert("タグの切り替えに失敗しました")
+      alert("タグの更新に失敗しました")
     }
   }
 
-  const updateLongTermTaskTitle = (id: string, text: string) => {
+  const updateLongTermTaskTitle = async (id: string, text: string) => {
     try {
-      const draft = localStorage.getItem("longTermDraft")
-      
-      if (draft) {
-        setLongTermRecords(JSON.parse(draft))
-      }
-      setLongTermRecords(prev => [{
-        ...prev[0],
-        tasks: prev[0].tasks.map(task => (
-          task.id === id ? {...task, title: text} : task
-        ))
-      }])
+      if (!longTermRecord) throw alert("データがありませんでした")
+      if (text.trim() === "") alert("タスク名を入力してください")
+
+      const user = await getCurrentUser()
+
+      const { error } = await supabase
+        .from("long_term_tasks")
+        .update({
+          text: text
+        })
+        .eq("user_id", user.id)
+        .eq("id", id)
+
+      if (error) throw error
+
+      setLongTermRecord(prev => {
+        if (!prev) return null
+
+        return {
+          ...prev,
+          tasks: prev.tasks.map(task => task.id === id ? 
+            {
+              ...task,
+              title: text
+            }
+            : task
+          )
+        }
+      })
     } catch(e) {
       console.error(e)
       alert("タスク名の更新に失敗しました")
     }
   }
 
-  const updateLongTermTaskToggle = (id: string) => {
+  const updateLongTermTaskToggle = async (id: string) => {
     try {
-      const draft = localStorage.getItem("longTermDraft")
-      
-      if (draft) {
-        setLongTermRecords(JSON.parse(draft))
-      }
-      setLongTermRecords(prev => [{
-        ...prev[0],
-        tasks: prev[0].tasks.map(task => (
-          task.id === id ? {...task, completed: !task.completed} : task
-        ))
-      }])
+      if (!longTermRecord) throw alert("データがありませんでした")
+      const user = await getCurrentUser()
+      const completed = longTermRecord.tasks.find(task => task.id === id)
+
+      const { error } = await supabase
+        .from("long_term_tasks")
+        .update({
+          completed: !completed
+        })
+        .eq("user_id", user.id)
+        .eq("id", id)
+
+      if (error) throw error
+
+      setLongTermRecord(prev => {
+        if (!prev) return null
+
+        return {
+          ...prev,
+          tasks: prev.tasks.map(task => task.id === id ? 
+            {
+              ...task,
+              completed: !completed
+            }
+            : task
+          )
+        }
+      })
     } catch(e) {
       console.error(e)
-      alert("タスク名の更新に失敗しました")
+      alert("タグの更新に失敗しました")
     }
   }
 
-  const saveLongTermPlan = async () => {
+  const deleteLongTermTask = async (id: string) => {
+    try {
+      if (!longTermRecord) throw alert("データがありませんでした")
+      const user = await getCurrentUser()
+
+      const { error } = await supabase
+        .from("long_term_tasks")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("id", id)
+
+      if (error) throw error
+
+      setLongTermRecord(prev => {
+        if (!prev) return null
+
+        return {
+          ...prev,
+          tasks: prev.tasks.filter(task => task.id !== id)
+        }
+      })
+    } catch(e) {
+      console.error(e)
+      alert("タスクの削除に失敗しました")
+    }
+  }
+ 
+  const initializeLongTermPlan = async () => {
+    if (initializingRef.current) return
+    initializingRef.current = true
+
     try {
       const user = await getCurrentUser()
 
-      const planPayload = {
-        user_id: user.id,
-        start_date: longTermRecords[0].startDate,
-        end_date: longTermRecords[0].endDate,
-        goal: longTermRecords[0].goal,
-        completed: longTermRecords[0].completed,
-        reflection: longTermRecords[0].reflection
-      }
-
-      const { data: planData, error: planError } = await supabase
+      const { data: currentPlan, error: currentPlanError } = await supabase
         .from("long_term_plans")
-        .insert(planPayload)
-        .select().single()
+        .select()
+        .eq("user_id", user.id)
+        .eq("completed", false)
+        .maybeSingle()
 
-      if (planError) throw planError
+      if (currentPlanError) throw currentPlanError
 
-      const taskPayload = longTermRecords[0].tasks.map(task => ({
-        user_id: user.id,
-        id: task.id,
-        plan_id: planData.id,
-        text: task.title,
-        completed: task.completed,
-        order_index: task.orderIndex
-      }))
-
-      if (taskPayload.length > 0) {
-        const { error: tasksError } = await supabase
-        .from("long_term_tasks")
-        .insert(taskPayload)
+      if (currentPlan) {
+        const { data: tasksData, error: tasksError } = await supabase
+          .from("long_term_tasks")
+          .select()
+          .eq("user_id", user.id)
+          .eq("plan_id", currentPlan.id)
 
         if (tasksError) throw tasksError
-      }
 
-      localStorage.removeItem("longTermDraft")
-      setLongTermRecords([])
-      
+        const tasks: Task[] = tasksData.map(task => ({
+          id: task.id,
+          title: task.text,
+          completed: task.completed,
+          orderIndex: task.order_index
+        }))
+
+        setLongTermRecord({
+          id: currentPlan.id,
+          startDate: currentPlan.start_date,
+          endDate: currentPlan.end_date,
+          tasks: tasks,
+          reflection: currentPlan.reflection,
+          goal: currentPlan.goal,
+          completed: currentPlan.completed
+        })
+      } else {
+        const today = new Date()
+        const end = new Date(today)
+        end.setMonth(end.getMonth() + 6)
+        
+        const formatDate = (date: Date) => date.toISOString().split("T")[0]
+        const { data, error} = await supabase
+          .from("long_term_plans")
+          .insert({
+            user_id: user.id,
+            start_date: formatDate(today),
+            end_date: formatDate(end),
+            reflection: "",
+            goal: ""
+          })
+          .select().single()
+
+        if (error) throw error
+
+        setLongTermRecord({
+          id: data.id,
+          startDate: formatDate(today),
+          endDate: formatDate(end),
+          tasks: [],
+          reflection: "",
+          goal: "",
+          completed: false
+        })
+      }
     } catch(e) {
       console.error(e)
-      alert("データの保存に失敗しました")
-    }
-  }
-
-  const loadLongTermPlan = async () => {
-    try {
-      const user = await getCurrentUser()
-
-      const { data: planData, error: planError } = await supabase
-        .from("long_term_plans")
-        .select()
-        .eq("user_id", user.id)
-        .eq("start_date", startDate)
-        .eq("end_date", endDate)
-        .single()
-
-      if (planError) throw planError
-
-      const { data: tasksData, error: tasksError} = await supabase
-        .from("long_term_tasks")
-        .select()
-        .eq("user_id", user.id)
-        .eq("plan_id", planData.id)
-
-      if (tasksError) throw tasksError
-
-      const tasks: Task[] =  tasksData.map(task =>  ({
-        id: task.id,
-        title: task.text,
-        completed: task.completed,
-        orderIndex: task.order_index
-      }))
-
-      const longTermRecord: longTermRecord = {
-        startDate: planData.start_date,
-        endDate: planData.end_date,
-        goal: planData.goal,
-        completed: planData.completed,
-        reflection: planData.reflection,
-        tasks: tasks
-      }
-
-      setLongTermRecords([longTermRecord])
-    } catch(e) {
-      console.error(e)
-      alert("データの取得に失敗しました")
+      alert("データの取得か、初期データの作成に失敗しました")
+    } finally {
+      initializingRef.current = false
     }
   }
 
   useEffect(() => {
-    if (longTermRecords.length === 0) return 
-    localStorage.setItem("longTermDraft",JSON.stringify(longTermRecords))
-  }, [longTermRecords])
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const draft = localStorage.getItem("longTermDraft")
-
-        if (draft) {
-          setLongTermRecords(JSON.parse(draft))
-        } else {
-          const user = await getCurrentUser()
-
-          const { data: planData, error: planError } = await supabase
-            .from("long_term_plans")
-            .select()
-            .eq("user_id", user.id)
-            .eq("start_date", startDate)
-            .eq("end_date", endDate)
-            .single()
-
-          if (planError) throw planError
-
-          const { data: tasksData, error: tasksError} = await supabase
-            .from("long_term_tasks")
-            .select()
-            .eq("user_id", user.id)
-            .eq("plan_id", planData.id)
-  
-          if (tasksError) throw tasksError
-    
-          const tasks: Task[] =  tasksData.map(task =>  ({
-            id: task.id,
-            title: task.text,
-            completed: task.completed,
-            orderIndex: task.order_index
-          }))
-    
-          const longTermRecord: longTermRecord = {
-            startDate: planData.start_date,
-            endDate: planData.end_date,
-            goal: planData.goal,
-            completed: planData.completed,
-            reflection: planData.reflection,
-            tasks: tasks
-          }
-    
-          setLongTermRecords([longTermRecord])
-        }
-      } catch(e) {
-        console.error(e)
-        alert("データの取得に失敗しました")
-      }
-    }
-    fetch()
+    initializeLongTermPlan()
   }, [])
 
   return {
-    addLongTermTasks,
+    longTermRecord,
+    addLongTermTask,
     updateLongTermGoal,
     updateLongTermStartDate,
     updateLongTermEndDate,
@@ -351,7 +402,6 @@ export default function useLongTerm() {
     updateLongTermToggle,
     updateLongTermTaskTitle,
     updateLongTermTaskToggle,
-    saveLongTermPlan,
-    loadLongTermPlan
+    deleteLongTermTask
   }
 }

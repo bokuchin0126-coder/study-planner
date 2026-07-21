@@ -9,3 +9,8 @@ export interface LongTermRecord {
     goal: string
     completed: boolean
 }
+
+export interface CompletedTask {
+    month: string
+    text: string
+}

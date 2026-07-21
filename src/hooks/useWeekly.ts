@@ -262,7 +262,7 @@ export default function useWeekly() {
           .in("plan_id", planIds)
 
         if (tasksError) throw tasksError
-
+ 
         const weeklyRecord: WeeklyRecord[] = plansData.map(plan => {
           const tasks = tasksData
           .filter(task => task.plan_id === plan.id)

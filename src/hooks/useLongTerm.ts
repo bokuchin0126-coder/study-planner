@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from "react"
-import type { LongTermRecord } from "../types/longTerm"
+import type { LongTermRecord, CompletedTask } from "../types/longTerm"
 import type { Task } from "../types/baseTask"
 import { supabase } from "../lib/supabase"
 
 
 export default function useLongTerm() {
   const [longTermRecord, setLongTermRecord] = useState<LongTermRecord | null>(null)
+  const [monthlyCompletedTasks, setMonthlyCompletedTasks] = useState<CompletedTask[]>([])
+
   const initializingRef = useRef(false)
 
   const getCurrentUser = async () => {
@@ -388,12 +390,64 @@ export default function useLongTerm() {
     }
   }
 
+  const fetchCompletedTasks = async () => {
+    if (!longTermRecord) return
+    try {
+      const user = await getCurrentUser()
+
+      const startPeriod = longTermRecord.startDate
+      const endPeriod = longTermRecord.endDate
+
+      const { data: plansData, error: plansError } = await supabase
+        .from("monthly_plans")
+        .select()
+        .eq("user_id", user.id)
+        .gte("month_start", startPeriod)
+        .lte("month_start", endPeriod)
+
+      if (plansError) throw plansError
+      const planIds = plansData.map(plan => plan.id)
+
+      if (planIds.length === 0) {
+        setMonthlyCompletedTasks([])
+        return
+      }
+
+      const { data: tasksData, error: tasksError } = await supabase
+        .from("monthly_tasks")
+        .select()
+        .eq("user_id", user.id)
+        .in("plan_id", planIds)
+
+      if (tasksError) throw tasksError
+
+      const planMap = new Map(plansData.map(plan => 
+      [plan.id, plan.month_start]
+      ))
+
+      const completedTasks = (tasksData ?? [])
+        .filter(task => task.completed)
+        .map(task => ({
+          month: planMap.get(task.plan_id),
+          text: task.text
+        }))
+
+      setMonthlyCompletedTasks(completedTasks)
+      
+    } catch(e) {
+      console.error(e)
+      alert("データの取得に失敗しました")
+    }
+  }
+
   useEffect(() => {
     initializeLongTermPlan()
   }, [])
 
   return {
     longTermRecord,
+    monthlyCompletedTasks,
+    fetchCompletedTasks,
     addLongTermTask,
     updateLongTermGoal,
     updateLongTermStartDate,
@@ -402,6 +456,7 @@ export default function useLongTerm() {
     updateLongTermToggle,
     updateLongTermTaskTitle,
     updateLongTermTaskToggle,
-    deleteLongTermTask
+    deleteLongTermTask,
+    initializeLongTermPlan
   }
 }

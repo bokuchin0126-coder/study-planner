@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react"
 import type { MonthlyRecord } from "../types/monthly"
+import useLongTerm from "./useLongTerm"
 import type { Task } from "../types/baseTask"
 import { supabase } from "../lib/supabase"
 
 
 export default function useMonthly() {
   const [monthlyRecords, setMonthlyRecords] = useState<MonthlyRecord[]>([])
+  const { fetchCompletedTasks } = useLongTerm()
 
   const getCurrentUser = async () => {
     const { data: {user}, error } = await supabase.auth.getUser()
@@ -37,6 +39,7 @@ export default function useMonthly() {
 
   const addMonthlyRecord = async (text: string, date: string) => {
     try {
+      if (text.trim() === "") throw alert("タスク名を入力してください")
       const user = await getCurrentUser()
       const currentDate = monthlyRecords.find(month => month.month === date)
       const orderIndex = currentDate ? currentDate.tasks.length : 0
@@ -175,6 +178,9 @@ export default function useMonthly() {
         }
         : month
       ))
+      fetchCompletedTasks()
+      console.log("try終了")
+
     } catch(e) {
       console.error(e)
       alert("タグの切り替えに失敗しました")
@@ -265,7 +271,12 @@ export default function useMonthly() {
 
         const monthlyRecord: MonthlyRecord[] = plansData.map(plan => ({
           month: plan.month_start,
-          tasks: tasks,
+          tasks: tasks.filter(task =>
+            tasksData.find( t =>
+              t.id === task.id &&
+              t.plan_id === plan.id
+            )
+          ),
           reflection: plan.reflection
         }))
 
@@ -277,6 +288,7 @@ export default function useMonthly() {
     } 
     fetch()
   }, [])
+
 
   return {
     addMonthlyRecord,

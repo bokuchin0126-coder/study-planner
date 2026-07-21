@@ -6,8 +6,13 @@ import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import handleDragEnd from "../utils/dragAndDrop"
 import TaskItem from "../components/TaskItem"
-import { DndContext } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import {
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core"
 
 
 export default function MonthlyPage() {
@@ -70,6 +75,14 @@ export default function MonthlyPage() {
   const [monthTasks, setMonthTasks] = useState<Task[]>(month?.tasks ?? [])
   const [nextMonthTasks, setNextMonthTasks] = useState<Task[]>(nextMonth?.tasks ?? [])
 
+  const sensors = useSensors(
+  useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 8,
+    },
+  })
+)
+
   useEffect(() => {
     if (month) {
       setMonthTasks(month.tasks)
@@ -81,6 +94,10 @@ export default function MonthlyPage() {
       setNextMonthTasks(nextMonth.tasks)
     }
   }, [nextMonth])
+
+  useEffect(() => {
+    setReflectionText(month?.reflection ?? "")
+  }, [month])
 
   return (
     <>
@@ -101,14 +118,17 @@ export default function MonthlyPage() {
           }
         </div>
 
-        <DndContext onDragEnd={(event) =>
-          handleDragEnd(
-            event,
-            monthTasks,
-            "monthly_tasks",
-            setMonthTasks
-          )
-        }>
+        <DndContext
+          sensors={sensors}
+          onDragEnd={(event) =>
+            handleDragEnd(
+              event,
+              monthTasks,
+              "monthly_tasks",
+              setMonthTasks
+            )
+          }
+        >
 
           <div>
             <h2>今月の課題</h2>
@@ -209,14 +229,17 @@ export default function MonthlyPage() {
           />
         </div>
 
-        <DndContext onDragEnd={(event) =>
-          handleDragEnd(
-            event,
-            nextMonthTasks,
-            "monthly_tasks",
-            setNextMonthTasks
-          )
-        }>
+        <DndContext
+          sensors={sensors}
+          onDragEnd={(event) =>
+            handleDragEnd(
+              event,
+              nextMonthTasks,
+              "monthly_tasks",
+              setNextMonthTasks
+            )
+          }
+        >
 
         <div>
           <h2>来月の課題</h2>

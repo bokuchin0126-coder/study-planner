@@ -6,30 +6,39 @@ type Props = {
   children: React.ReactNode
 }
 
-export default function TaskItem({ id, children } : Props) {
+export default function TaskItem({ id, children }: Props) {
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
-    transition
+    transition,
   } = useSortable({
-    id
+    id,
   })
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition
+    transition,
   }
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
     >
-      {children}
+      <div 
+        {...attributes}
+        {...listeners}
+        style={{
+          cursor: "grab",
+          userSelect: "none",
+          marginBottom: "4px",
+        }}
+      >
+        {children}
+      </div>
+      
     </div>
   )
 }

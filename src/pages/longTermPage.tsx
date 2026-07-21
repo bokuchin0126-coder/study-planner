@@ -12,6 +12,7 @@ import "../css/longTerm.css"
 export default function LongTermPage() {
   const {
     longTermRecord,
+    monthlyCompletedTasks,
     addLongTermTask,
     updateLongTermGoal,
     updateLongTermStartDate,
@@ -20,7 +21,8 @@ export default function LongTermPage() {
     updateLongTermToggle,
     updateLongTermTaskTitle,
     updateLongTermTaskToggle,
-    deleteLongTermTask
+    deleteLongTermTask,
+    initializeLongTermPlan
   } = useLongTerm()
 
   const [addText, setAddText] = useState<string>("")
@@ -48,6 +50,7 @@ export default function LongTermPage() {
   const displayEndDate = `${endYear}年 ${endMonth}月 ${endDay}日`
 
   const pickerRef = useRef<HTMLDivElement | null>(null)
+  const lastYear = new Date().getFullYear() - 1
 
   const startDaysInMonth = new Date(startYear, startMonth, 0).getDate()
 
@@ -58,6 +61,17 @@ export default function LongTermPage() {
 
   const startDate = new Date(startYear, startMonth - 1, startDay)
   const endDate = new Date(endYear, endMonth - 1, endDay)
+
+  const groupedTasks = monthlyCompletedTasks.reduce((groups, task) => {
+    const month = task.month
+
+    if (!groups[month]) {
+      groups[month] = []
+    }
+    groups[month].push(task.text)
+
+    return groups
+  }, {} as Record<string, string[]>)
 
   useEffect(() => {
     const maxStartDay = new Date(startYear, startMonth, 0).getDate()
@@ -93,21 +107,6 @@ export default function LongTermPage() {
     setEndMonth(endMonth)
     setEndDay(endDay)
   }, [longTermRecord])
-
-  useEffect(() => {
-    if (endDate >= startDate) return
-
-    setEndYear(startYear)
-    setEndMonth(startMonth)
-    setEndDay(startDay)
-  }, [
-    startYear,
-    startMonth,
-    startDay,
-    endYear,
-    endMonth,
-    endDay
-  ])
 
   useEffect(() => {
     const handleClickOutside = async (e: MouseEvent) => {
@@ -181,8 +180,8 @@ export default function LongTermPage() {
                 <div className="year-list">
 
                   {Array.from({ length: 30}, (_, i) => (
-                    <div key={i} onClick={() => setStartYear(2020 + i)}>
-                      {2020 + i}年
+                    <div key={i} onClick={() => setStartYear(lastYear + i)}>
+                      {lastYear + i}年
                     </div>
                   ))}
 
@@ -222,7 +221,7 @@ export default function LongTermPage() {
 
                 <div className="year-list">
 
-                  {Array.from({ length: 2050 - endFirstYear + 1 },(_, i) => {
+                  {Array.from({ length: lastYear + 30 - endFirstYear + 1 },(_, i) => {
                     const year = endFirstYear + i
                     return (
                       <div key={year} onClick={() => setEndYear(year)}>
@@ -249,7 +248,7 @@ export default function LongTermPage() {
 
                 <div className="day-list">
 
-                  {Array.from({length:endDaysInMonth -endFirstDay +1},(_, i) => {
+                  {Array.from({length: endDaysInMonth - endFirstDay + 1},(_, i) => {
                     const day = endFirstDay + i
 
                     return (
@@ -356,8 +355,37 @@ export default function LongTermPage() {
 
         <div>
           <h2>達成したタスク</h2>
+          {Object.entries(groupedTasks).map(([month, tasks]) => (
+            <div key={month}>
+              <h3>
+                {new Date(month).getFullYear()}年
+                {new Date(month).getMonth() + 1}月
+              </h3>
+              {tasks.length === 0 && <p>この期間中に達成したmonthlyTaskはありません</p>}
+
+              {tasks.map(task => (
+                <div key={task}>
+                  {task}
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
 
+        <div>
+          <button onClick={async () => {
+            const isConfirmed = window.confirm(
+              "達成にすると今の長期目標の画面はなくなり、新しい長期目標の画面へと更新されますがよろしいですか？"
+            )
+            if (!isConfirmed) return
+
+            await updateLongTermToggle()
+            await initializeLongTermPlan()
+          }}>
+            完了
+          </button>
+        </div>
+        
         <div>
           <Link to="/daily">デイリーへ</Link>
           <Link to="/weekly">ウィークリーへ</Link>

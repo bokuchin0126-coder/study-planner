@@ -3,8 +3,13 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 import handleDragEnd from "../utils/dragAndDrop"
 import TaskItem from "../components/TaskItem"
-import { DndContext } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import {
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core"
 
 export default function DailyPage() {
  
@@ -26,7 +31,13 @@ export default function DailyPage() {
     carryOverRecords
   } = useDaily()
 
-  
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+      distance: 8,
+      },
+    })
+  )
 
   const [addText, setAddText] = useState<string>("")
   const [editText, setEditText] = useState<string>("")

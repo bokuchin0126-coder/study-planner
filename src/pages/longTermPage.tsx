@@ -1,12 +1,17 @@
 import useLongTerm from "../hooks/useLongTerm"
 import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
+import type { Task } from "../types/baseTask"
 import handleDragEnd from "../utils/dragAndDrop"
 import TaskItem from "../components/TaskItem"
-import { DndContext } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import {
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core"
 import "../css/longTerm.css"
-
 
 
 export default function LongTermPage() {
@@ -24,6 +29,16 @@ export default function LongTermPage() {
     deleteLongTermTask,
     initializeLongTermPlan
   } = useLongTerm()
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+      distance: 8,
+      },
+    })
+  )
+
+  const [longTermTasks, setLongTermTasks] = useState<Task[]>(longTermRecord?.tasks ?? [])
 
   const [addText, setAddText] = useState<string>("")
   const [editText, setEditText] = useState<string>("")
@@ -153,6 +168,11 @@ export default function LongTermPage() {
     updateLongTermEndDate
   ])
 
+  useEffect(() => {
+    if (!longTermRecord) return
+    setLongTermTasks(longTermRecord.tasks)
+  }, [longTermRecord?.tasks])
+
   return (
     <>
       <div>
@@ -264,84 +284,105 @@ export default function LongTermPage() {
           </div>
         </div>
 
-        <div>
-          <h2>タスク</h2>
+        <DndContext
+          sensors={sensors}
+          onDragEnd={(event) =>
+            handleDragEnd(
+              event,
+              longTermTasks,
+              "long_term_tasks",
+              setLongTermTasks
+            )
+          }
+        >
+          <div>
+            <h2>タスク</h2>
 
-          {longTermRecord?.tasks.map(task => 
-            <div key={task.id}>
+            <SortableContext
+              items={longTermTasks}
+              strategy={verticalListSortingStrategy}
+            >
 
-              <button onClick={() => updateLongTermTaskToggle(task.id)}>
-                {task.completed ? "☑" : "□"}
-              </button>
+              {longTermTasks.map(task => 
+                <TaskItem
+                  key={task.id}
+                  id={task.id}  
+                >
 
-              {editingId === task.id ? 
-                <div>
-                  <input
-                    value={editText}
-                    autoFocus
-                    onChange={(e) => setEditText(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
+                  <button onClick={() => updateLongTermTaskToggle(task.id)}>
+                    {task.completed ? "☑" : "□"}
+                  </button>
+
+                  {editingId === task.id ? 
+                    <div>
+                      <input
+                        value={editText}
+                        autoFocus
+                        onChange={(e) => setEditText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            updateLongTermTaskTitle(task.id, editText)
+                            setEditText("")
+                            setEditingId("")
+                          }
+                        }}
+                      />
+                      <button onClick={() => {
                         updateLongTermTaskTitle(task.id, editText)
                         setEditText("")
                         setEditingId("")
-                      }
-                    }}
-                  />
-                  <button onClick={() => {
-                    updateLongTermTaskTitle(task.id, editText)
-                    setEditText("")
-                    setEditingId("")
-                  }}>
-                    保存
-                  </button>
-                </div>
-              :
-                <div>
-                  {task.title}
-                  <button onClick={() => {
-                    setEditingId(task.id),
-                    setEditText(task.title)
-                  }}>
-                    編集
-                  </button>
-                </div>
-              }
-              <button onClick={() => deleteLongTermTask(task.id)}>
-                削除
-              </button>
-            </div>
-          )}
-
-          {showAdd ?
-            <div>
-              <input
-                value={addText}
-                autoFocus
-                onChange={(e) => setAddText(e.target.value)}
-                placeholder="タスクを入力"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    addLongTermTask(addText)
-                    setAddText("")
-                    setShowAdd(false)
+                      }}>
+                        保存
+                      </button>
+                    </div>
+                  :
+                    <div>
+                      {task.title}
+                      <button onClick={() => {
+                        setEditingId(task.id),
+                        setEditText(task.title)
+                      }}>
+                        編集
+                      </button>
+                    </div>
                   }
-                }}
-              />
-              <button onClick={() => {
-                addLongTermTask(addText),
-                setAddText("")
-                setShowAdd(false)
-              }}>
-                追加
+                  <button onClick={() => deleteLongTermTask(task.id)}>
+                    削除
+                  </button>
+                </TaskItem>
+              )}
+            </SortableContext>
+    
+            {showAdd ?
+              <div>
+                <input
+                  value={addText}
+                  autoFocus
+                  onChange={(e) => setAddText(e.target.value)}
+                  placeholder="タスクを入力"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      addLongTermTask(addText)
+                      setAddText("")
+                      setShowAdd(false)
+                    }
+                  }}
+                />
+                <button onClick={() => {
+                  addLongTermTask(addText),
+                  setAddText("")
+                  setShowAdd(false)
+                }}>
+                  追加
+                </button>
+              </div>
+            :
+              <button onClick={() => setShowAdd(true)}>
+                 新しいタスクを追加＋
               </button>
-            </div>
-          :
-            <button onClick={() => setShowAdd(true)}>
-              新しいタスクを追加＋
-            </button>
-          }
-        </div>
+            }
+          </div>
+        </DndContext>
 
         <div>
           <h2>振り返り</h2>

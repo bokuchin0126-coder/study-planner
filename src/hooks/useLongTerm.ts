@@ -253,12 +253,13 @@ export default function useLongTerm() {
     try {
       if (!longTermRecord) throw alert("データがありませんでした")
       const user = await getCurrentUser()
-      const completed = longTermRecord.tasks.find(task => task.id === id)
+      const targetTask = longTermRecord.tasks.find(task => task.id === id)
+      if (!targetTask) throw alert("選択されたタスクはすでに消えたか、IDが変わっています")
 
       const { error } = await supabase
         .from("long_term_tasks")
         .update({
-          completed: !completed
+          completed: !targetTask.completed
         })
         .eq("user_id", user.id)
         .eq("id", id)
@@ -273,7 +274,7 @@ export default function useLongTerm() {
           tasks: prev.tasks.map(task => task.id === id ? 
             {
               ...task,
-              completed: !completed
+              completed: !targetTask.completed
             }
             : task
           )

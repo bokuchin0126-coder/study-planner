@@ -6,8 +6,13 @@ import type { Task } from "../types/baseTask"
 import { Link } from "react-router-dom"
 import handleDragEnd from "../utils/dragAndDrop"
 import TaskItem from "../components/TaskItem"
-import { DndContext } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import {
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core"
 
 
 export default function WeeklyPage() {
@@ -21,6 +26,14 @@ export default function WeeklyPage() {
     weeklyRecords,
     weeklyDate
   } = useWeekly()
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+      distance: 8,
+      },
+    })
+  )
 
   const {dailyRecords} = useDaily()
 
@@ -88,14 +101,17 @@ export default function WeeklyPage() {
         }
       </div>
 
-      <DndContext onDragEnd={(event) =>
-        handleDragEnd(
-          event,
-          weekTasks,
-          "weekly_tasks",
-          setWeekTasks
-        )
-      }>
+      <DndContext 
+        sensors={sensors}
+        onDragEnd={(event) =>
+          handleDragEnd(
+            event,
+            weekTasks,
+            "weekly_tasks",
+            setWeekTasks
+          )
+        }
+      >
         <div>
             <h2>今週の課題</h2>
 
@@ -204,7 +220,7 @@ export default function WeeklyPage() {
         />
         <p>{isTyping ? "入力中..." : "保存済み✓"}</p>
       </div>
-
+ 
       <DndContext onDragEnd={(event) =>
         handleDragEnd(
           event,
@@ -220,7 +236,7 @@ export default function WeeklyPage() {
           strategy={verticalListSortingStrategy}
         >
 
-          {nextWeekPlan?.tasks.map(task =>
+          {nextWeekTasks.map(task =>
             <TaskItem 
               key={task.id}
               id={task.id}

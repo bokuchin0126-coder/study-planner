@@ -26,6 +26,14 @@ export default function MonthlyPage() {
     monthlyRecords
   } = useMonthly()
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+      distance: 8,
+      },
+    })
+  )
+
   const {weeklyRecords} = useWeekly()
 
   const [addText, setAddText] = useState<string>("")
@@ -74,14 +82,6 @@ export default function MonthlyPage() {
 
   const [monthTasks, setMonthTasks] = useState<Task[]>(month?.tasks ?? [])
   const [nextMonthTasks, setNextMonthTasks] = useState<Task[]>(nextMonth?.tasks ?? [])
-
-  const sensors = useSensors(
-  useSensor(PointerSensor, {
-    activationConstraint: {
-      distance: 8,
-    },
-  })
-)
 
   useEffect(() => {
     if (month) {

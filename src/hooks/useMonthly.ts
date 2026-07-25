@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react"
 import type { MonthlyRecord } from "../types/monthly"
-import useLongTerm from "./useLongTerm"
 import type { Task } from "../types/baseTask"
 import { supabase } from "../lib/supabase"
 
-
+ 
 export default function useMonthly() {
   const [monthlyRecords, setMonthlyRecords] = useState<MonthlyRecord[]>([])
-  const { fetchCompletedTasks } = useLongTerm()
 
   const getCurrentUser = async () => {
     const { data: {user}, error } = await supabase.auth.getUser()
@@ -44,12 +42,20 @@ export default function useMonthly() {
       const currentDate = monthlyRecords.find(month => month.month === date)
       const orderIndex = currentDate ? currentDate.tasks.length : 0
 
+      const startDate = new Date(date)
+      const endDate = new Date(startDate)
+      endDate.setMonth(endDate.getMonth() + 1)
+      endDate.setDate(0)
+
+      const monthEnd = endDate.toISOString().split("T")[0]
+
       if (!currentDate) {
         const { data: planData, error: planError } = await supabase
           .from("monthly_plans")
           .insert({
             user_id: user.id,
             month_start: date,
+            month_end: monthEnd,
             reflection: ""
           })
           .select().single()
@@ -178,8 +184,6 @@ export default function useMonthly() {
         }
         : month
       ))
-      fetchCompletedTasks()
-      console.log("try終了")
 
     } catch(e) {
       console.error(e)

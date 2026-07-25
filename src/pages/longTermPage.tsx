@@ -27,6 +27,7 @@ export default function LongTermPage() {
     updateLongTermTaskTitle,
     updateLongTermTaskToggle,
     deleteLongTermTask,
+    fetchCompletedTasks,
     initializeLongTermPlan
   } = useLongTerm()
 
@@ -172,6 +173,11 @@ export default function LongTermPage() {
     if (!longTermRecord) return
     setLongTermTasks(longTermRecord.tasks)
   }, [longTermRecord?.tasks])
+
+  useEffect(() => {
+     if (!longTermRecord) return
+    fetchCompletedTasks()
+  }, [longTermRecord])
 
   return (
     <>

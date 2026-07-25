@@ -265,7 +265,7 @@ export default function useLongTerm() {
         .eq("id", id)
 
       if (error) throw error
-
+ 
       setLongTermRecord(prev => {
         if (!prev) return null
 
@@ -392,18 +392,19 @@ export default function useLongTerm() {
   }
 
   const fetchCompletedTasks = async () => {
-    if (!longTermRecord) return
     try {
       const user = await getCurrentUser()
 
-      const startPeriod = longTermRecord.startDate
-      const endPeriod = longTermRecord.endDate
+      const startPeriod = longTermRecord?.startDate
+      const endPeriod = longTermRecord?.endDate
+      console.log(startPeriod)
+      console.log(endPeriod)
 
       const { data: plansData, error: plansError } = await supabase
         .from("monthly_plans")
         .select()
         .eq("user_id", user.id)
-        .gte("month_start", startPeriod)
+        .gte("month_end", startPeriod)
         .lte("month_start", endPeriod)
 
       if (plansError) throw plansError
@@ -432,6 +433,9 @@ export default function useLongTerm() {
           month: planMap.get(task.plan_id),
           text: task.text
         }))
+
+      console.log(plansData)
+      console.log(tasksData)
 
       setMonthlyCompletedTasks(completedTasks)
       

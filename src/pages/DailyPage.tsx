@@ -12,7 +12,7 @@ import {
 } from "@dnd-kit/core"
 
 export default function DailyPage() {
- 
+
   const { 
     today,
     todayTasks,
@@ -69,14 +69,17 @@ export default function DailyPage() {
         }
       </div>
 
-      <DndContext onDragEnd={(event) =>
-        handleDragEnd(
-          event,
-          todayTasks,
-          "daily_tasks",
-          setTodayTasks
-        )
-      }>
+      <DndContext 
+        sensors={sensors}
+        onDragEnd={(event) =>
+          handleDragEnd(
+            event,
+            todayTasks,
+            "daily_tasks",
+            setTodayTasks
+          )
+        }
+      >
 
         <div>
           <h2>今日の課題</h2>
@@ -213,14 +216,17 @@ export default function DailyPage() {
           <p>{isTyping ? "入力中..." : "保存済み✓"}</p>
         </div>
 
-        <DndContext onDragEnd={(event) =>
-          handleDragEnd(
-            event,
-            tomorrowTasks,
-            "daily_tasks",
-            setTomorrowTasks
-          )
-        }>
+        <DndContext
+          sensors={sensors} 
+          onDragEnd={(event) =>
+            handleDragEnd(
+              event,
+              tomorrowTasks,
+              "daily_tasks",
+              setTomorrowTasks
+            )
+          }
+        >
           <h2>明日の課題</h2>
           {tomorrowPlan ?
 
@@ -327,6 +333,7 @@ export default function DailyPage() {
         <Link to="/weekly">ウィークリーへ</Link>
         <Link to="/monthly">マンリーへ</Link>
         <Link to="/longTerm">長期へ</Link>
+        <Link to="/completed">達成タスク一覧へ</Link>
     </div>
     </>
   )

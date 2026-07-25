@@ -238,7 +238,7 @@ export default function useDaily() {
       alert("タスクの削除に失敗しました")
     }
   }
-
+ 
   const updateDailyRecordReflection = async (text: string, date: string) => {
     try {
       const user = await getCurrentUser()

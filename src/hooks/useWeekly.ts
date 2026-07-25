@@ -6,7 +6,7 @@ import { supabase } from "../lib/supabase"
 export default function useWeekly() {
 
   const [weeklyRecords, setWeeklyRecords] = useState<WeeklyRecord[]>([])
-
+ 
   const getCurrentUser = async () => {
     const { data: {user}, error } = await supabase.auth.getUser()
     

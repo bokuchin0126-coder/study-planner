@@ -1,6 +1,20 @@
+export interface Task {
+    title: string
+    completed: boolean
+}
+
 export interface CompletedRecord {
     startDate: string
     endDate: string
     reflection: string
-    tasks: string[]
+    tasks: Task[]
+}
+
+export interface LongTermCompletedRecord {
+    startDate: string
+    endDate: string
+    goal: string
+    reflection: string
+    tasks: Task[]
+    completed: boolean
 }

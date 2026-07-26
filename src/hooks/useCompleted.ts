@@ -1,5 +1,5 @@
-import type { CompletedRecord } from "../types/completed"
-import { useState, useEffect } from "react"
+import type { CompletedRecord, LongTermCompletedRecord } from "../types/completed"
+import { useState } from "react"
 import { supabase } from "../lib/supabase"
 
 
@@ -7,7 +7,7 @@ export default function useCompleted() {
   const [dailyCompletedRecords, setDailyCompletedRecords] = useState<CompletedRecord[]>([])
   const [weeklyCompletedRecords, setWeeklyCompletedRecords] = useState<CompletedRecord[]>([])
   const [monthlyCompletedRecords, setMonthlyCompletedRecords] = useState<CompletedRecord[]>([])
-  const [longTermCompletedRecords, setLongTermCompletedRecords] = useState<CompletedRecord[]>([])
+  const [longTermCompletedRecords, setLongTermCompletedRecords] = useState<LongTermCompletedRecord[]>([])
 
   const getCurrentUser = async () => {
     const { data: {user}, error } = await supabase.auth.getUser()
@@ -32,14 +32,16 @@ export default function useCompleted() {
         .from(taskTable)
         .select("*")
         .eq("user_id", user.id)
-
+ 
       if (tasksError) throw tasksError
 
       const completedRecords: CompletedRecord[] = plansData.map(plan => {
         const tasks = tasksData 
           .filter(task => task.plan_id === plan.id)
-          .filter(task => task.completed)
-          .map(task => task.text)
+          .map(task => ({
+            title: task.text,
+            completed: task.completed
+          }))
 
         return {
           startDate: plan.start_date,
@@ -77,8 +79,10 @@ export default function useCompleted() {
       const completedRecrods: CompletedRecord[] = plansData.map(plan => {
         const tasks = tasksData 
           .filter(task => task.plan_id === plan.id)
-          .filter(task => task.completed)
-          .map(task => task.text)
+          .map(task => ({
+            title: task.text,
+            completed: task.completed
+          }))
 
         return {
           startDate: plan.Date,
@@ -127,12 +131,39 @@ export default function useCompleted() {
 
   const fetchLongTermCompletedRecords = async () => {
     try {
-      const records = await fetchCompletedRecords(
-        "long_term_plans",
-        "long_term_tasks"
-      )
-      if (!records) return
+      const user = await getCurrentUser()
 
+      const { data: plansData, error: plansError } = await supabase
+        .from("long_term_plans")
+        .select("*")
+        .eq("user_id", user.id)
+
+      if (plansError) throw plansError
+
+      const { data: tasksData, error: tasksError } = await supabase
+        .from("long_term_tasks")
+        .select("*")
+        .eq("user_id", user.id)
+
+      if (tasksError) throw tasksError
+
+      const records = plansData.map(plan => {
+        const tasks = tasksData
+          .filter(task => task.plan_id === plan.id)
+          .map(task => ({
+            title: task.text,
+            completed: task.completed
+          }))
+
+        return {
+          startDate: plan.start_date,
+          endDate: plan.end_date,
+          goal: plan.goal,
+          reflection: plan.reflection,
+          tasks: tasks,
+          completed: plan.completed
+        }
+      })
       setLongTermCompletedRecords(records)
     } catch(e) {
       console.error(e)

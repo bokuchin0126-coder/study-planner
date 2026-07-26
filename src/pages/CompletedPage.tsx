@@ -14,6 +14,7 @@ export default function CompletedPage() {
   } = useCompleted()
 
   const [recordType, setRecordType] = useState<"day" | "week" | "month" | "longTerm">("day")
+  const [visibleCount, setVisibleCount] = useState(3)
 
   const records = 
     recordType === "day" ? dailyCompletedRecords :
@@ -116,6 +117,82 @@ export default function CompletedPage() {
         return "進捗率"
     }
   }
+
+  const sortedRecords = [...records].sort(
+    (a, b) =>
+      new Date(b.startDate).getTime() -
+      new Date(a.startDate).getTime()
+  )
+
+  const sortedLongTermRecords = [...longTermCompletedRecords].sort(
+    (a, b) =>
+      new Date(b.startDate).getTime() -
+      new Date(a.startDate).getTime()
+  )
+
+  const displayedRecords = sortedRecords.slice(0, visibleCount)
+
+  const displayedRecordsByYear = displayedRecords.reduce(
+    (acc, record) => {
+      const year = new Date(record.startDate).getFullYear()
+
+      if (!acc[year]) {
+        acc[year] = []
+      }
+
+      acc[year].push(record)
+
+      return acc
+    },
+    {} as Record<number, typeof displayedRecords>
+  )
+
+  const groupedByYear = sortedRecords.reduce(
+    (acc, record) => {
+      const year = new Date(record.startDate).getFullYear()
+
+      if (!acc[year]) {
+        acc[year] = []
+      }
+  
+      acc[year].push(record)
+
+      return acc
+    },
+    {} as Record<number, typeof sortedRecords>
+  )
+
+  const longTermRecordsByYear = sortedLongTermRecords.reduce(
+    (acc, record) => {
+      const year = new Date(record.startDate).getFullYear()
+
+      if (!acc[year]) {
+        acc[year] = []
+      }
+  
+      acc[year].push(record)
+
+      return acc
+    },
+    {} as Record<number, typeof sortedLongTermRecords>
+  )
+
+  const groupByMonth = (records: typeof sortedRecords) => {
+    return records.reduce(
+      (acc, record) => {
+        const month = new Date(record.startDate).getMonth()
+
+        if (!acc[month]) {
+          acc[month] = []
+        }
+
+        acc[month].push(record)
+
+        return acc
+      },
+      {} as Record<number, typeof records>
+    )
+  }
   
   useEffect(() => {
     fetchAllCompletedRecords()
@@ -155,6 +232,150 @@ export default function CompletedPage() {
 
       <div>
         <p>タスク一覧</p>
+
+        {recordType !== "longTerm" ? (
+          <>
+            {Object.entries(groupedByYear).map(([year, yearRecords]) => (
+              <div key={year}>
+                <h2>{year}年</h2>
+
+                {Object.entries(groupByMonth(yearRecords)).map(
+                  ([month, monthRecords]) => (
+                    <div key={month}>
+                      <h3>{Number(month) + 1}月</h3>
+
+                      {monthRecords.map(record => {
+                        const completed = record.tasks.filter(
+                          task => task.completed
+                       ).length
+   
+                        return (
+                         <div key={record.startDate}>
+                             <p>
+                              {record.startDate}
+                              {record.endDate && ` ～ ${record.endDate}`}
+                           </p>
+    
+                            <p>達成 {completed} / {record.tasks.length}</p>
+    
+                            <p>達成したタスク</p>
+                            <ul>
+                              {record.tasks
+                                .filter(task => task.completed)
+                                .map(task => (
+                                  <li key={task.title}>
+                                    {task.title}
+                                  </li>
+                                ))
+                              }
+                            </ul>
+    
+                            <p>振り返り</p>
+                            <p>{record.reflection}</p>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )
+                )}
+              </div>
+            ))}
+            {visibleCount < sortedRecords.length && (
+              <button onClick={() => setVisibleCount(prev => prev + 3)}>
+                もっと見る
+              </button>
+            )}
+          </>
+        ) : (
+          <>
+            {longTermCompletedRecords.find(record => !record.completed) && (
+              <div>
+                <h2>現在進行中</h2>
+   
+                {(() => {
+                  const record = longTermCompletedRecords.find(
+                    record => !record.completed
+                  )!
+   
+                  const completed = record.tasks.filter(
+                    task => task.completed
+                    ).length
+ 
+                  return (
+                    <>
+                      <p>
+                        {record.startDate} ～ {record.endDate}
+                      </p>
+ 
+                      <p>目標</p>
+                      <p>{record.goal}</p>
+
+                      <p>達成 {completed} / {record.tasks.length}</p>
+
+                      <p>達成したタスク</p>
+                      <ul>
+                        {record.tasks
+                          .filter(task => task.completed)
+                          .map(task => (
+                            <li key={task.title}>
+                              {task.title}
+                            </li>
+                          ))}
+                      </ul>
+
+                      <p>振り返り</p>
+                      <p>{record.reflection}</p>
+                    </>
+                 )
+                 })()}
+             </div>
+             )}
+
+            <h2>達成履歴</h2>
+
+            {Object.entries(longTermRecordsByYear).map(([year, yearRecords]) => (
+              <div key={year}>
+                <h3>{year}年</h3>
+      
+                {yearRecords
+                  .filter(record => record.completed)
+                  .map(record => {
+                    const completed = record.tasks.filter(
+                      task => task.completed
+                    ).length
+  
+                    return (
+                      <div key={record.startDate}>
+                        <p>
+                          {record.startDate} ～ {record.endDate}
+                       </p>
+  
+                         <p>目標</p>
+                        <p>{record.goal}</p>
+    
+                        <p>達成 {completed} / {record.tasks.length}</p>
+   
+                        <p>達成したタスク</p>
+                        <ul>
+                          {record.tasks
+                            .filter(task => task.completed)
+                            .map(task => (
+                              <li key={task.title}>
+                                {task.title}
+                              </li>
+                            ))}
+                        </ul>
+     
+                        <p>振り返り</p>
+                        <p>{record.reflection}</p>
+                      </div>
+                    )
+                  })
+                }
+              </div>
+            ))}
+          </>
+        )}
       </div>
 
       <div>

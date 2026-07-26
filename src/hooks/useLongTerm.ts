@@ -397,8 +397,6 @@ export default function useLongTerm() {
 
       const startPeriod = longTermRecord?.startDate
       const endPeriod = longTermRecord?.endDate
-      console.log(startPeriod)
-      console.log(endPeriod)
 
       const { data: plansData, error: plansError } = await supabase
         .from("monthly_plans")
@@ -433,9 +431,6 @@ export default function useLongTerm() {
           month: planMap.get(task.plan_id),
           text: task.text
         }))
-
-      console.log(plansData)
-      console.log(tasksData)
 
       setMonthlyCompletedTasks(completedTasks)
       

@@ -246,18 +246,20 @@ export default function useDaily() {
       const { error } = await supabase
         .from("daily_plans")
         .update({
-          reflectioin: text
+          reflection: text
         })
         .eq("user_id", user.id)
         .eq("date", date)
 
-        setDailyRecords(prev => prev.map(day => day.date === date ? 
-          {
-            ...day,
-            reflection: text
-          }
-          : day
-        ))
+      if (error) throw error
+
+      setDailyRecords(prev => prev.map(day => day.date === date ? 
+        {
+          ...day,
+          reflection: text
+        }
+        : day
+      ))
     } catch(e) {
       console.error(e)
       alert("振り返りの更新に失敗しました")
@@ -424,7 +426,6 @@ export default function useDaily() {
           .in("plan_id", planIds)
 
         if (tasksError) throw tasksError
-
         const taskFilter = tasksData.filter(task => task.source_task_id === null)
 
         const dailyRecords = planData.map(plan => {
@@ -443,6 +444,7 @@ export default function useDaily() {
             reflection: plan.reflection,
           }
         })
+        console.log(dailyRecords)
 
         setDailyRecords(dailyRecords)
       } catch(e) {

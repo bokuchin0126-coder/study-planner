@@ -1,5 +1,5 @@
 import useDaily from "../hooks/useDaily"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import handleDragEnd from "../utils/dragAndDrop"
 import TaskItem from "../components/TaskItem"
@@ -51,6 +51,11 @@ export default function DailyPage() {
 
   const completedYesterdayTasks = yesterdayPlan?.tasks.filter(task => task.completed)
 
+  useEffect(() => {
+    if (todayPlan) {
+      setReflectionText(todayPlan.reflection)
+    }
+  }, [todayPlan])
   
   return (
     <>

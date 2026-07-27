@@ -50,6 +50,7 @@ export default function WeeklyPage() {
   const weekStart = weeklyDate("start")
   const weekEnd = weeklyDate("end")
   const nextWeekStart = weeklyDate("start", 1)
+  const nextWeekEnd = weeklyDate("end", 1)
 
   const weekPlan = weeklyRecords.find(week => week.week === weekStart)
   const lastWeekPlan = weeklyRecords.find(week => week.week === weeklyDate("start", -1))
@@ -73,6 +74,7 @@ export default function WeeklyPage() {
   useEffect(() => {
     if (weekPlan) {
       setWeekTasks(weekPlan.tasks)
+      setReflectionText(weekPlan.reflection)
     }
   }, [weekPlan])
 
@@ -181,14 +183,14 @@ export default function WeeklyPage() {
                   onChange={(e) => setAddText(e.target.value)}
                   onKeyDown={async (e) => {
                     if (e.key === "Enter") {
-                      await addWeeklyRecord(addText, weekStart)
+                      await addWeeklyRecord(addText, weekStart, weekEnd)
                       setAddText("")
                       setWeekShowAdd(false)
                     }
                   }} 
                 />
                 <button onClick={async () => {
-                  await addWeeklyRecord(addText, weekStart),
+                  await addWeeklyRecord(addText, weekStart, weekEnd),
                   setAddText(""),
                   setWeekShowAdd(false)
                 }}>
@@ -292,14 +294,14 @@ export default function WeeklyPage() {
               onChange={(e) => setAddText(e.target.value)}
               onKeyDown={async (e) => {
                 if (e.key === "Enter") {
-                  await addWeeklyRecord(addText, nextWeekStart)
+                  await addWeeklyRecord(addText, nextWeekStart, nextWeekEnd)
                   setAddText("")
                   setNextWeekShowAdd(false)
                 }
               }} 
             />
             <button onClick={async () => {
-              await addWeeklyRecord(addText, nextWeekStart),
+              await addWeeklyRecord(addText, nextWeekStart, nextWeekEnd),
               setAddText(""),
               setNextWeekShowAdd(false)
             }}>

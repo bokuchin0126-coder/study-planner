@@ -22,15 +22,23 @@ export default function CompletedPage() {
     recordType === "month" ? monthlyCompletedRecords : longTermCompletedRecords
 
   const recordTasks = records.map(record => record.tasks)
+  const completedLomgTermRecord = longTermCompletedRecords.find(record => record.completed)
 
   const getTotalRate = () => {
-    const rate = records.map(record => {
-      const total = record.tasks.length
-      const completed = record.tasks.filter(task => task.completed).length
-      const rate = total === 0 ? 0 : Math.round((completed / total) * 100)
-      return rate
-    })
-    return rate
+    const total = filteredRecords.reduce(
+      (sum, record) => sum + record.tasks.length,
+      0
+    )
+
+    const completed = filteredRecords.reduce(
+      (sum, record) =>
+        sum + record.tasks.filter(task => task.completed).length,
+      0
+    )
+
+    return total === 0
+      ? 0
+      : Math.round((completed / total) * 100)
   }
 
   const getSubRate = () => {
@@ -38,7 +46,7 @@ export default function CompletedPage() {
       const currentMonth = new Date().getMonth()
       const currentYear = new Date().getFullYear()
 
-      const monthRecords = records.filter(record => {
+      const monthRecords = filteredRecords.filter(record => {
         const date = new Date(record.startDate)
 
         return (
@@ -118,7 +126,17 @@ export default function CompletedPage() {
     }
   }
 
-  const sortedRecords = [...records].sort(
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const filteredRecords = records.filter(record => {
+    const date = new Date(record.startDate)
+    date.setHours(0, 0, 0, 0)
+
+    return date <= today
+  })
+
+  const sortedRecords = [...filteredRecords].sort(
     (a, b) =>
       new Date(b.startDate).getTime() -
       new Date(a.startDate).getTime()
@@ -131,6 +149,7 @@ export default function CompletedPage() {
   )
 
   const displayedRecords = sortedRecords.slice(0, visibleCount)
+  const displayedLongTermRecords = sortedLongTermRecords.slice(0, visibleCount)
 
   const displayedRecordsByYear = displayedRecords.reduce(
     (acc, record) => {
@@ -147,34 +166,20 @@ export default function CompletedPage() {
     {} as Record<number, typeof displayedRecords>
   )
 
-  const groupedByYear = sortedRecords.reduce(
-    (acc, record) => {
-      const year = new Date(record.startDate).getFullYear()
+  const displayedLongTermRecordsByYear =
+    displayedLongTermRecords.reduce(
+      (acc, record) => {
+        const year = new Date(record.startDate).getFullYear()
 
-      if (!acc[year]) {
-        acc[year] = []
-      }
-  
-      acc[year].push(record)
+        if (!acc[year]) {
+          acc[year] = []
+        }
 
-      return acc
-    },
-    {} as Record<number, typeof sortedRecords>
-  )
+        acc[year].push(record)
 
-  const longTermRecordsByYear = sortedLongTermRecords.reduce(
-    (acc, record) => {
-      const year = new Date(record.startDate).getFullYear()
-
-      if (!acc[year]) {
-        acc[year] = []
-      }
-  
-      acc[year].push(record)
-
-      return acc
-    },
-    {} as Record<number, typeof sortedLongTermRecords>
+        return acc
+      },
+    {} as Record<number, typeof displayedLongTermRecords>
   )
 
   const groupByMonth = (records: typeof sortedRecords) => {
@@ -197,6 +202,10 @@ export default function CompletedPage() {
   useEffect(() => {
     fetchAllCompletedRecords()
   }, [])
+
+  useEffect(() => {
+    setVisibleCount(3)
+  }, [recordType])
  
   return (
     <>
@@ -235,7 +244,7 @@ export default function CompletedPage() {
 
         {recordType !== "longTerm" ? (
           <>
-            {Object.entries(groupedByYear).map(([year, yearRecords]) => (
+            {Object.entries(displayedRecordsByYear).map(([year, yearRecords]) => (
               <div key={year}>
                 <h2>{year}年</h2>
 
@@ -263,7 +272,7 @@ export default function CompletedPage() {
                               {record.tasks
                                 .filter(task => task.completed)
                                 .map(task => (
-                                  <li key={task.title}>
+                                  <li key={task.id}>
                                     {task.title}
                                   </li>
                                 ))
@@ -331,49 +340,58 @@ export default function CompletedPage() {
              </div>
              )}
 
-            <h2>達成履歴</h2>
+            {completedLomgTermRecord &&
+              <div>
+                <h2>達成履歴</h2>
 
-            {Object.entries(longTermRecordsByYear).map(([year, yearRecords]) => (
-              <div key={year}>
-                <h3>{year}年</h3>
+                {Object.entries(displayedLongTermRecordsByYear).map(([year, yearRecords]) => (
+                  <div key={year}>
+                    <h3>{year}年</h3>
       
-                {yearRecords
-                  .filter(record => record.completed)
-                  .map(record => {
-                    const completed = record.tasks.filter(
-                      task => task.completed
-                    ).length
+                    {yearRecords
+                      .filter(record => record.completed)
+                      .map(record => {
+                        const completed = record.tasks.filter(
+                          task => task.completed
+                        ).length
   
-                    return (
-                      <div key={record.startDate}>
-                        <p>
-                          {record.startDate} ～ {record.endDate}
-                       </p>
-  
-                         <p>目標</p>
-                        <p>{record.goal}</p>
+                        return (
+                          <div key={record.startDate}>
+                            <p>
+                              {record.startDate} ～ {record.endDate}
+                            </p>
     
-                        <p>達成 {completed} / {record.tasks.length}</p>
+                            <p>目標</p>
+                            <p>{record.goal}</p>
+        
+                            <p>達成 {completed} / {record.tasks.length}</p>
    
-                        <p>達成したタスク</p>
-                        <ul>
-                          {record.tasks
-                            .filter(task => task.completed)
-                            .map(task => (
-                              <li key={task.title}>
-                                {task.title}
-                              </li>
-                            ))}
-                        </ul>
-     
-                        <p>振り返り</p>
-                        <p>{record.reflection}</p>
-                      </div>
-                    )
-                  })
-                }
+                            <p>達成したタスク</p>
+                            <ul>
+                              {record.tasks
+                                .filter(task => task.completed)
+                                .map(task => (
+                                  <li key={task.title}>
+                                    {task.title}
+                                  </li>
+                                ))}
+                            </ul>
+        
+                            <p>振り返り</p>
+                            <p>{record.reflection}</p>
+                          </div>
+                        )
+                      })
+                    }
+                  </div>
+                ))}
+                {visibleCount < sortedLongTermRecords.length && (
+                  <button onClick={() => setVisibleCount(prev => prev + 3)}>
+                    もっと見る
+                  </button>
+                )}
               </div>
-            ))}
+            }
           </>
         )}
       </div>

@@ -39,11 +39,11 @@ export default function useWeekly() {
     else return ""
   }
 
-  const addWeeklyRecord = async (text: string, date: string) => {
+  const addWeeklyRecord = async (text: string, startDate: string, endDate: string) => {
     try {
       if (text.trim() === "") throw alert("タスクを入力して下さい")
 
-      const contentsDate = weeklyRecords.find(week => week.week === date)
+      const contentsDate = weeklyRecords.find(week => week.week === startDate)
       const orderIndex = contentsDate ? contentsDate.tasks.length : 0
       const user = await getCurrentUser()
 
@@ -52,7 +52,8 @@ export default function useWeekly() {
           .from("weekly_plans")
           .insert({
             user_id: user.id,
-            week_start: date,
+            week_start: startDate,
+            week_end: endDate,
             reflection: ""
           })
           .select().single()
@@ -79,7 +80,7 @@ export default function useWeekly() {
         }
 
         const weeklyRecord: WeeklyRecord = {
-          week: date,
+          week: startDate,
           tasks: [task],
           reflection: ""
         }
@@ -91,7 +92,7 @@ export default function useWeekly() {
           .from("weekly_plans")
           .select()
           .eq("user_id", user.id)
-          .eq("week_start", date)
+          .eq("week_start", startDate)
           .single()
 
         if (planError) throw planError
@@ -116,7 +117,7 @@ export default function useWeekly() {
         }
 
         setWeeklyRecords(prev => prev.map(week => 
-          week.week === date ? 
+          week.week === startDate ? 
           {
             ...week,
             tasks: [...week.tasks, task]

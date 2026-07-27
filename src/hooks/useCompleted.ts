@@ -17,47 +17,6 @@ export default function useCompleted() {
     return user
   }
 
-  const fetchCompletedRecords = async (planTable: string, taskTable:string) => {
-    try {
-      const user = await getCurrentUser()
-
-      const { data: plansData, error: plansError } = await supabase
-        .from(planTable)
-        .select("*")
-        .eq("user_id", user.id)
-
-      if (plansError) throw plansError
-
-      const { data: tasksData, error: tasksError } = await supabase
-        .from(taskTable)
-        .select("*")
-        .eq("user_id", user.id)
- 
-      if (tasksError) throw tasksError
-
-      const completedRecords: CompletedRecord[] = plansData.map(plan => {
-        const tasks = tasksData 
-          .filter(task => task.plan_id === plan.id)
-          .map(task => ({
-            title: task.text,
-            completed: task.completed
-          }))
-
-        return {
-          startDate: plan.start_date,
-          endDate: plan.end_date,
-          tasks: tasks,
-          reflection: plan.reflection
-        }
-      }) 
-      return completedRecords
-
-    } catch(e) {
-      console.error(e)
-      alert("データの取得に失敗しました")
-    } 
-  }
-
   const fetchDailyCompletedRecords = async () => {
     try {
       const user = await getCurrentUser()
@@ -80,12 +39,13 @@ export default function useCompleted() {
         const tasks = tasksData 
           .filter(task => task.plan_id === plan.id)
           .map(task => ({
+            id: task.id,
             title: task.text,
             completed: task.completed
           }))
 
         return {
-          startDate: plan.Date,
+          startDate: plan.date,
           endDate: "",
           tasks: tasks,
           reflection: plan.reflection
@@ -101,13 +61,40 @@ export default function useCompleted() {
 
   const fetchWeeklyCompletedRecords = async () => {
     try {
-      const records = await fetchCompletedRecords(
-        "weekly_plans",
-        "weekly_tasks"
-      )
-      if (!records) return
+      const user = await getCurrentUser()
 
-      setWeeklyCompletedRecords(records)
+      const { data: plansData, error: plansError } = await supabase
+        .from("weekly_plans")
+        .select("*")
+        .eq("user_id", user.id)
+
+      if (plansError) throw plansError
+
+      const { data: tasksData, error: tasksError } = await supabase
+        .from("weekly_tasks")
+        .select("*")
+        .eq("user_id", user.id)
+ 
+      if (tasksError) throw tasksError
+
+      const completedRecords: CompletedRecord[] = plansData.map(plan => {
+        const tasks = tasksData 
+          .filter(task => task.plan_id === plan.id)
+          .map(task => ({
+            id: task.id,
+            title: task.text,
+            completed: task.completed
+          }))
+
+        return {
+          startDate: plan.week_start,
+          endDate: plan.week_end,
+          tasks: tasks,
+          reflection: plan.reflection
+        }
+      })
+
+      setWeeklyCompletedRecords(completedRecords)
     } catch(e) {
       console.error(e)
       alert("データの取得に失敗しました")
@@ -116,13 +103,40 @@ export default function useCompleted() {
 
   const fetchMonthlyCompletedRecords = async () => {
     try {
-      const records = await fetchCompletedRecords(
-        "monthly_plans",
-        "monthly_tasks"
-      )
-      if (!records) return
+      const user = await getCurrentUser()
 
-      setMonthlyCompletedRecords(records)
+      const { data: plansData, error: plansError } = await supabase
+        .from("monthly_plans")
+        .select("*")
+        .eq("user_id", user.id)
+
+      if (plansError) throw plansError
+
+      const { data: tasksData, error: tasksError } = await supabase
+        .from("monthly_tasks")
+        .select("*")
+        .eq("user_id", user.id)
+ 
+      if (tasksError) throw tasksError
+
+      const completedRecords: CompletedRecord[] = plansData.map(plan => {
+        const tasks = tasksData 
+          .filter(task => task.plan_id === plan.id)
+          .map(task => ({
+            id: task.id,
+            title: task.text,
+            completed: task.completed
+          }))
+
+        return {
+          startDate: plan.month_start,
+          endDate: plan.month_end,
+          tasks: tasks,
+          reflection: plan.reflection
+        }
+      })
+
+      setMonthlyCompletedRecords(completedRecords)
     } catch(e) {
       console.error(e)
       alert("データの取得に失敗しました")
@@ -151,6 +165,7 @@ export default function useCompleted() {
         const tasks = tasksData
           .filter(task => task.plan_id === plan.id)
           .map(task => ({
+            id: task.id,
             title: task.text,
             completed: task.completed
           }))

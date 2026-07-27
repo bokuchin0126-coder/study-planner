@@ -1,5 +1,6 @@
 import useWeekly from "../hooks/useWeekly"
 import useDaily from "../hooks/useDaily"
+import Sidebar from "../components/Sidebar"
 import { useState, useEffect } from "react"
 import type { DailyRecord } from "../types/daily"
 import type { Task } from "../types/baseTask"
@@ -88,6 +89,11 @@ export default function WeeklyPage() {
   return (
     <>
     <div> 
+
+      <div>
+        <Sidebar />
+      </div>
+
       <div>
         <h2>先週達成した課題</h2>
         {lastWeekPlan ?
@@ -334,12 +340,6 @@ export default function WeeklyPage() {
         : 
           <p>今週達成したタスクはありません</p>
         }
-      </div>
-
-      <div>
-        <Link to="/daily">デイリーへ</Link>
-        <Link to="/monthly">マンリーへ</Link>
-        <Link to="/longTerm">長期へ</Link>
       </div>
 
     </div>

@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import type { Task } from "../types/baseTask"
 import handleDragEnd from "../utils/dragAndDrop"
+import Sidebar from "../components/Sidebar"
 import TaskItem from "../components/TaskItem"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import {
@@ -182,6 +183,10 @@ export default function LongTermPage() {
   return (
     <>
       <div>
+        <div>
+          <Sidebar />
+        </div>
+
         <div>
           <h2>目標</h2>
           <input
@@ -431,12 +436,6 @@ export default function LongTermPage() {
           }}>
             完了
           </button>
-        </div>
-        
-        <div>
-          <Link to="/daily">デイリーへ</Link>
-          <Link to="/weekly">ウィークリーへ</Link>
-          <Link to="/monthly">マンリーへ</Link>
         </div>
       </div>
     </>

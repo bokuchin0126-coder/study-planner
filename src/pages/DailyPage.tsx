@@ -1,5 +1,6 @@
 import useDaily from "../hooks/useDaily"
 import { useState, useEffect } from "react"
+import Sidebar from "../components/Sidebar"
 import { Link } from "react-router-dom"
 import handleDragEnd from "../utils/dragAndDrop"
 import TaskItem from "../components/TaskItem"
@@ -60,6 +61,10 @@ export default function DailyPage() {
   return (
     <>
     <div>
+      <div>
+        <Sidebar />
+      </div>
+
       <div>
         <h2>昨日達成した課題</h2>
         {yesterdayPlan ?
@@ -335,11 +340,7 @@ export default function DailyPage() {
           }
         </DndContext>
 
-        <Link to="/weekly">ウィークリーへ</Link>
-        <Link to="/monthly">マンリーへ</Link>
-        <Link to="/longTerm">長期へ</Link>
-        <Link to="/completed">達成タスク一覧へ</Link>
-    </div>
+      </div>
     </>
   )
 }

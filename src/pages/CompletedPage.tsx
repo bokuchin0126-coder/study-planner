@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import type { LongTermCompletedRecord } from "../types/completed"
 import useCompleted from "../hooks/useCompleted"
 import { Link } from "react-router-dom"
+import Sidebar from "../components/Sidebar"
 
 
 export default function CompletedPage() {
@@ -211,6 +212,10 @@ export default function CompletedPage() {
     <>
     <div>
       <div>
+        <Sidebar />
+      </div>
+
+      <div>
         <p>表示対象</p>
         <select 
           value={recordType}
@@ -396,12 +401,6 @@ export default function CompletedPage() {
         )}
       </div>
 
-      <div>
-        <Link to="daily">デイリーへ</Link>
-        <Link to="/weekly">ウィークリーへ</Link>
-        <Link to="/monthly">マンリーへ</Link>
-        <Link to="/longTerm">長期へ</Link>
-      </div>
     </div>
     </>
   )

@@ -4,6 +4,7 @@ import type { WeeklyRecord } from "../types/weekly"
 import type { Task } from "../types/baseTask"
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
+import Sidebar from "../components/Sidebar"
 import handleDragEnd from "../utils/dragAndDrop"
 import TaskItem from "../components/TaskItem"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
@@ -102,6 +103,10 @@ export default function MonthlyPage() {
   return (
     <>
       <div>
+
+        <div>
+          <Sidebar />
+        </div>
 
         <div>
           <h2>先週達成した課題</h2>
@@ -355,12 +360,6 @@ export default function MonthlyPage() {
           : 
             <p>今月達成したウィークリータスクはありません</p>
           }
-        </div>
-        
-        <div>
-          <Link to="/daily">デイリーへ</Link>
-          <Link to="/weekly">ウィークリーへ</Link>
-          <Link to="/longTerm">長期へ</Link>
         </div>
       </div>
     </>

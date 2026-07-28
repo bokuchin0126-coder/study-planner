@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react"
 import { supabase } from "../lib/supabase"
 import type { DailyRecord } from "../types/daily"
+import getCurrentUser from "../lib/auth"
 import type { Task } from "../types/baseTask"
+import {
+  createFirstDailyTaskInDB,
+  addDailyTaskInDB,
+  updateDailyTaskTitleInDB,
+  updateDailyTaskToggleInDB,
+  deleteDailyCopyTaskInDB,
+  daleteDailyTaskInDB,
+  updateDailyRecordReflectionInDB,
+  carryOverDailyTasksInDB
+} from "../api/dailyApi"
 
 export default function useDaily() {
-
-  const getCurrentUser = async () => {
-    const { data: {user}, error } = await supabase.auth.getUser()
-    
-    if (error) throw error
-    if (!user) throw new Error("ログインしてください")
-    return user
-  }
 
   const [dailyRecords, setDailyRecords] = useState<DailyRecord[]>([])
 
@@ -48,34 +51,10 @@ export default function useDaily() {
       if (text.trim() === "") return alert("タスク名を入力して下さい")
       const contentsDate = dailyRecords.find(day => day.date === date)
 
-      const user = await getCurrentUser()
-
       const orderIndex = todayPlan?.tasks.length ?? 0
 
       if (!contentsDate) {
-
-        const { data: planData, error: planError } = await supabase
-          .from("daily_plans")
-          .insert({
-            user_id: user.id,
-            date: date,
-            reflection: ""
-          })
-          .select().single()
-
-        if (planError) throw planError
-        
-        const { data: taskData, error: taskError } = await supabase
-        .from("daily_tasks")
-        .insert({
-          user_id: user.id,
-          plan_id: planData.id,
-          text: text,
-          order_index: orderIndex
-        })
-        .select().single()
-
-        if (taskError) throw taskError
+        const taskData = await createFirstDailyTaskInDB(text, date, orderIndex)
 
         const newTasks: DailyRecord = {
             date: date,
@@ -87,32 +66,11 @@ export default function useDaily() {
             }],
             reflection: ""
         }
-
         setDailyRecords(prev => [...prev, newTasks])
 
       } else {
-
-        const { data: planData, error: planError } = await supabase
-          .from("daily_plans")
-          .select()
-          .eq("user_id", user.id)
-          .eq("date", date)
-          .single()
-
-        if (planError) throw planError
+        const taskData = await addDailyTaskInDB(text, date, orderIndex)
         
-        const { data: taskData, error: taskError } = await supabase
-          .from("daily_tasks")
-          .insert({
-            user_id: user.id,
-            plan_id: planData.id,
-            text: text,
-            order_index: orderIndex
-          })
-          .select().single()
-        
-        if (taskError) throw taskError
-
         const newTasks: Task = {
           id: taskData.id,
           title: text,
@@ -128,27 +86,17 @@ export default function useDaily() {
           : day
         ))
       }
-    } catch(e: any) {
+    } catch(e) {
       console.error(e)
-      alert(e.message)
+      alert("タスクの追加に失敗しました")
     }
   }
 
   const updateDailyTaskTitle = async (id: string, text: string, date: string) => {
     try {
       if (text.trim() === "") alert("タスク名を入力して下さい")
-
-      const user = await getCurrentUser()
-
-      const { error } = await supabase
-        .from("daily_tasks")
-        .update({
-          text: text
-        })
-        .eq("user_id", user.id)
-        .eq("id", id)
-
-      if (error) throw error
+        
+      await updateDailyTaskTitleInDB(id, text)
 
       setDailyRecords(prev => prev.map(day => day.date === date ?
         {
@@ -168,29 +116,10 @@ export default function useDaily() {
 
   const updateDailyTaskToggle = async (id: string, completed: boolean, date: string) => {
     try {
-      const user = await getCurrentUser()
-
-      const { data: taskData, error: taskError } = await supabase
-        .from("daily_tasks")
-        .update({
-          completed: !completed
-        })
-        .eq("user_id", user.id)
-        .eq("id", id)
-        .select().single()
-
-      if (taskError) throw taskError
-
-      const { data: deleteTask, error: deleteError } = await supabase
-        .from("daily_tasks")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("source_task_id", taskData.id)
-        .select()
-
-      if (deleteError) throw deleteError
-
-      if (deleteTask.length > 0) {
+      const taskData = await updateDailyTaskToggleInDB(id, completed)
+      const deleteTask = await deleteDailyCopyTaskInDB(taskData.id)
+      
+      if (deleteTask && deleteTask.length > 0) {
         setDailyRecords(prev => prev.map(day => ({
           ...day,
           tasks: day.tasks.filter(task => 
@@ -218,13 +147,7 @@ export default function useDaily() {
 
   const deleteDailyTask = async (id: string, date: string) => {
     try {
-      const user = await getCurrentUser()
-
-      const { error } = await supabase
-        .from("daily_tasks")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("id", id)
+      await daleteDailyTaskInDB(id)
 
       setDailyRecords(prev => prev.map(day => day.date === date ? 
         {
@@ -241,17 +164,7 @@ export default function useDaily() {
  
   const updateDailyRecordReflection = async (text: string, date: string) => {
     try {
-      const user = await getCurrentUser()
-
-      const { error } = await supabase
-        .from("daily_plans")
-        .update({
-          reflection: text
-        })
-        .eq("user_id", user.id)
-        .eq("date", date)
-
-      if (error) throw error
+      await updateDailyRecordReflectionInDB(text, date)
 
       setDailyRecords(prev => prev.map(day => day.date === date ? 
         {
@@ -268,138 +181,54 @@ export default function useDaily() {
 
   const carryOverRecords = async () => {
     try {
-      if (!carryTasks) return  
-      if (carryTasks.length === 0) return
+      if (!carryTasks || carryTasks.length === 0) return
 
-      const user = await getCurrentUser()
       const orderIndex = todayPlan?.tasks.length ?? 0
 
-      const { data: tomorrowPlanData } = await supabase
-        .from("daily_plans")
-        .select()
-        .eq("user_id", user.id)
-        .eq("date", tomorrowDate)
-        .maybeSingle()
+      const taskData = await carryOverDailyTasksInDB(
+        carryTasks,
+        tomorrowDate,
+        orderIndex
+      )
 
-      if (!tomorrowPlanData) {
-        const { data: planData, error: planError } = await supabase
-          .from("daily_plans")
-          .insert({
-            user_id: user.id,
-            date: tomorrowDate,
-            reflection: ""
-          })
-          .select().single()
+      if (!taskData || taskData.length === 0) return
 
-        if (planError) throw planError
-
-        const { data: existsTasks, error: existsError } = await supabase
-          .from("daily_tasks")
-          .select("source_task_id")
-          .eq("plan_id", planData.id)
-
-        if (existsError) throw existsError
-
-        const filteredTasks = carryTasks.filter(task =>
-          !existsTasks.some(
-            copied => copied.source_task_id === task.id
-          )
-        )
-
-        if (filteredTasks.length === 0) return 
-
-        const insertTasks = filteredTasks.map(task => ({
-          user_id: user.id,
-          plan_id: planData.id,
-          text: task.title,
-          source_task_id: task.id,
-          order_index: orderIndex
+      if (today > dateData) {
+        const newTasks = taskData.map(task => ({
+          id: task.id,
+          title: task.text,
+          completed: false,
+          orderIndex: task.order_index
         }))
-
-        const { data: taskData, error: taskError } = await supabase
-          .from("daily_tasks")
-          .insert(insertTasks)
-          .select()
-
-        if (taskError) throw taskError
-
-        if (today > dateData) {
-          const newTasks = taskData.map(task => ({
-            id: task.id,
-            title: task.text,
-            completed: false,
-            orderIndex: task.order_index
-          }))
-
-          const copyDate = {
-            date: tomorrowDate,
-            tasks: newTasks,
-            reflection: ""
-          }
-
-          setDailyRecords(prev => [...prev, copyDate])
-          setDateData(today)
-        }
-
-      } else {
-        const { data: planData, error: planError } = await supabase
-          .from("daily_plans")
-          .select()
-          .eq("user_id", user.id)
-          .eq("date", tomorrowDate)
-          .single()
-
-        if (planError) throw planError
-
-        const { data: existsTasks, error: existsError } = await supabase
-          .from("daily_tasks")
-          .select("source_task_id")
-          .eq("plan_id", planData.id)
-
-        if (existsError) throw existsError
-
-        const filteredTasks = carryTasks.filter(task =>
-          !existsTasks.some(
-            copied => copied.source_task_id === task.id
-          )
-        )
-
-        if (filteredTasks.length === 0) return
-
-        const insertTasks = filteredTasks.map(task => ({
-          user_id: user.id,
-          plan_id: planData.id,
-          text: task.title,
-          source_task_id: task.id,
-          order_index: orderIndex
-        }))
-
-        const { data: taskData, error: taskError } = await supabase
-          .from("daily_tasks")
-          .insert(insertTasks)
-          .select()
-
-        if (taskError) throw taskError
-
-        if (today > dateData) {
-          const newTasks = taskData.map(task => ({
-            id: task.id,
-            title: task.text,
-            completed: false,
-            orderIndex: task.order_index
-          }))
   
-          setDailyRecords(prev => prev.map(day => day.date === tomorrowDate ?
+        const exists = dailyRecords.some(
+          day => day.date === tomorrowDate
+        )
+  
+        if (exists) {
+          setDailyRecords(prev =>
+            prev.map(day =>
+              day.date === tomorrowDate
+                ? {
+                    ...day,
+                    tasks: [...day.tasks, ...newTasks]
+                  }
+                : day
+            )
+          )
+        } else {
+          setDailyRecords(prev => [
+            ...prev,
             {
-              ...day,
-              tasks: [...day.tasks, ...newTasks]
+              date: tomorrowDate,
+              tasks: newTasks,
+              reflection: ""
             }
-            : day
-          ))
-          setDateData(today)
+          ])
         }
+        setDateData(today)
       }
-    } catch(e) {
+    } catch (e) {
       console.error(e)
       alert("タスクのコピーに失敗しました")
     }

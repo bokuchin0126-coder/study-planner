@@ -2,18 +2,12 @@ import { useState, useEffect } from "react"
 import type { WeeklyRecord } from "../types/weekly"
 import type { Task } from "../types/baseTask"
 import { supabase } from "../lib/supabase"
+import getCurrentUser from "../lib/auth"
+
 
 export default function useWeekly() {
 
   const [weeklyRecords, setWeeklyRecords] = useState<WeeklyRecord[]>([])
- 
-  const getCurrentUser = async () => {
-    const { data: {user}, error } = await supabase.auth.getUser()
-    
-    if (error) throw error
-    if (!user) throw new Error("ログインしてください")
-    return user
-  }
 
   const weeklyDate = (date: "start" | "end", offset = 0) => {
     const today = new Date()

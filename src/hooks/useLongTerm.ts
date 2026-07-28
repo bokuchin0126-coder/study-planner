@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react"
 import type { LongTermRecord, CompletedTask } from "../types/longTerm"
 import type { Task } from "../types/baseTask"
 import { supabase } from "../lib/supabase"
+import getCurrentUser from "../lib/auth"
+
 
 
 export default function useLongTerm() {
@@ -9,14 +11,6 @@ export default function useLongTerm() {
   const [monthlyCompletedTasks, setMonthlyCompletedTasks] = useState<CompletedTask[]>([])
 
   const initializingRef = useRef(false)
-
-  const getCurrentUser = async () => {
-    const { data: {user}, error } = await supabase.auth.getUser()
-      
-    if (error) throw error
-    if (!user) throw new Error("ログインしてください")
-    return user
-  }
   
   const addLongTermTask = async (text: string) => {
     try {

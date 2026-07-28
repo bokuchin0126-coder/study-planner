@@ -1,6 +1,8 @@
 import type { CompletedRecord, LongTermCompletedRecord } from "../types/completed"
 import { useState } from "react"
 import { supabase } from "../lib/supabase"
+import getCurrentUser from "../lib/auth"
+
 
 
 export default function useCompleted() {
@@ -8,15 +10,7 @@ export default function useCompleted() {
   const [weeklyCompletedRecords, setWeeklyCompletedRecords] = useState<CompletedRecord[]>([])
   const [monthlyCompletedRecords, setMonthlyCompletedRecords] = useState<CompletedRecord[]>([])
   const [longTermCompletedRecords, setLongTermCompletedRecords] = useState<LongTermCompletedRecord[]>([])
-
-  const getCurrentUser = async () => {
-    const { data: {user}, error } = await supabase.auth.getUser()
-      
-    if (error) throw error
-    if (!user) throw new Error("ログインしてください")
-    return user
-  }
-
+  
   const fetchDailyCompletedRecords = async () => {
     try {
       const user = await getCurrentUser()

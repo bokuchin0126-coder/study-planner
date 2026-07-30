@@ -3,6 +3,16 @@ import type { WeeklyRecord } from "../types/weekly"
 import type { Task } from "../types/baseTask"
 import { supabase } from "../lib/supabase"
 import getCurrentUser from "../lib/auth"
+import {
+  createdFirstWeeklyTaskInDB,
+  addWeeklyTaskInDB,
+  updateWeeklyTaskTitleInDB,
+  updateWeeklyTaskToggleInDB,
+  updateWeeklyReflectionInDB,
+  daleteWeeklyTaskInDB,
+  getWeeklyRecords,
+  getNextOrderIndex
+} from "../api/weeklyApi"
 
 
 export default function useWeekly() {
@@ -38,33 +48,11 @@ export default function useWeekly() {
       if (text.trim() === "") throw alert("タスクを入力して下さい")
 
       const contentsDate = weeklyRecords.find(week => week.week === startDate)
-      const orderIndex = contentsDate ? contentsDate.tasks.length : 0
-      const user = await getCurrentUser()
 
       if (!contentsDate) {
-        const { data: planData, error: planError } = await supabase
-          .from("weekly_plans")
-          .insert({
-            user_id: user.id,
-            week_start: startDate,
-            week_end: endDate,
-            reflection: ""
-          })
-          .select().single()
+        const orderIndex = 0
 
-        if (planError) throw planError
-
-        const { data: taskData, error: taskError } = await supabase
-          .from("weekly_tasks")
-          .insert({
-            user_id: user.id,
-            plan_id: planData.id,
-            text: text,
-            order_index: orderIndex
-          })
-          .select().single()
-
-        if (taskError) throw taskError
+        const taskData = await createdFirstWeeklyTaskInDB(startDate, endDate, text, orderIndex)
 
         const task: Task = {
           id: taskData.id,
@@ -82,26 +70,9 @@ export default function useWeekly() {
         setWeeklyRecords(prev => [...prev, weeklyRecord])
    
       } else {
-        const { data: planData, error: planError } = await supabase
-          .from("weekly_plans")
-          .select()
-          .eq("user_id", user.id)
-          .eq("week_start", startDate)
-          .single()
-
-        if (planError) throw planError
-
-        const { data: taskData, error: taskError } = await supabase
-          .from("weekly_tasks")
-          .insert({
-            user_id: user.id,
-            plan_id: planData.id,
-            text: text,
-            order_index: orderIndex
-          })
-          .select().single()
-
-        if (taskError) throw taskError
+        const orderIndex = await getNextOrderIndex(startDate)
+        
+        const taskData = await addWeeklyTaskInDB(startDate, text, orderIndex)
 
         const task: Task = {
           id: taskData.id,
@@ -128,17 +99,7 @@ export default function useWeekly() {
   const updateWeeklyTaskTitle = async (id: string, text: string, date: string) => {
     try {
       if (text.trim() === "") throw alert("タスク名を入力してください")
-      const user = await getCurrentUser()
-
-      const { error } = await supabase
-        .from("weekly_tasks")
-        .update({
-          text: text
-        })
-        .eq("user_id", user.id)
-        .eq("id", id)
-
-      if (error) throw error
+      await updateWeeklyTaskTitleInDB(id, text)
 
       setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
@@ -157,17 +118,7 @@ export default function useWeekly() {
 
   const updateTaskToggle = async (id: string, completed: boolean, date: string) => {
     try {
-      const user = await getCurrentUser()
-
-      const { error } = await supabase
-        .from("weekly_tasks")
-        .update({
-          completed: !completed
-        })
-        .eq("user_id", user.id)
-        .eq("id", id)
-
-      if (error) throw error
+      await updateWeeklyTaskToggleInDB(id, completed)
 
       setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
@@ -186,17 +137,7 @@ export default function useWeekly() {
 
   const updateWeeklyRecordReflection = async (text: string, date: string) => {
     try {
-      const user = await getCurrentUser()
-
-      const { error } = await supabase
-        .from("weekly_plans")
-        .update({
-          reflection: text
-        })
-        .eq("user_id", user.id)
-        .eq("week_start", date)
-
-      if (error) throw error
+      await updateWeeklyReflectionInDB(text, date)
 
       setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
@@ -213,15 +154,7 @@ export default function useWeekly() {
 
   const deleteWeeklyTask = async (id: string, date: string) => {
     try {
-      const user = await getCurrentUser()
-
-      const { error } = await supabase
-        .from("weekly_tasks")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("id", id)
-
-      if (error) throw error
+      await daleteWeeklyTaskInDB(id)
 
       setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
@@ -239,24 +172,11 @@ export default function useWeekly() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const user = await getCurrentUser()
-
-        const { data: plansData, error: plansError } = await supabase
-          .from("weekly_plans")
-          .select()
-          .eq("user_id", user.id)
-          .in("week_start", [weeklyDate("start"), weeklyDate("start", -1), weeklyDate("start", 1)])
-
-        if (plansError) throw plansError
-        const planIds = plansData.map(plan => plan.id)
-
-        const { data: tasksData, error: tasksError } = await supabase
-          .from("weekly_tasks")
-          .select()
-          .eq("user_id", user.id)
-          .in("plan_id", planIds)
-
-        if (tasksError) throw tasksError
+        const { plansData, tasksData } = await getWeeklyRecords(
+          weeklyDate("start"), 
+          weeklyDate("start", -1), 
+          weeklyDate("start", 1)
+        )
  
         const weeklyRecord: WeeklyRecord[] = plansData.map(plan => {
           const tasks = tasksData

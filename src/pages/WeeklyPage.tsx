@@ -229,14 +229,16 @@ export default function WeeklyPage() {
         <p>{isTyping ? "入力中..." : "保存済み✓"}</p>
       </div>
  
-      <DndContext onDragEnd={(event) =>
-        handleDragEnd(
-          event,
-          nextWeekTasks,
-          "weekly_tasks",
-          setNextWeekTasks
-        )
-      }>
+      <DndContext 
+        sensors={sensors}
+        onDragEnd={(event) =>
+          handleDragEnd(
+            event,
+            nextWeekTasks,
+            "weekly_tasks",
+            setNextWeekTasks
+          )
+        }>
         <h2>来週の課題</h2>
 
         <SortableContext

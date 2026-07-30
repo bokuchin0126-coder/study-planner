@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react"
-import { supabase } from "../lib/supabase"
 import type { DailyRecord, DailyTaskRow } from "../types/daily"
-import getCurrentUser from "../lib/auth"
 import type { Task } from "../types/baseTask"
 import {
   createFirstDailyTaskInDB,
@@ -51,9 +49,9 @@ export default function useDaily() {
       if (text.trim() === "") return alert("タスク名を入力して下さい")
       const contentsDate = dailyRecords.find(day => day.date === date)
 
-      const orderIndex = await getNextOrderIndex(date)
-
       if (!contentsDate) {
+        const orderIndex = 0
+        
         const taskData = await createFirstDailyTaskInDB(text, date, orderIndex)
 
         const newTasks: DailyRecord = {
@@ -70,6 +68,8 @@ export default function useDaily() {
         return taskData
 
       } else {
+        const orderIndex = await getNextOrderIndex(date)
+
         const taskData = await addDailyTaskInDB(text, date, orderIndex)
         
         const newTasks: Task = {
@@ -208,8 +208,6 @@ export default function useDaily() {
         await activateCarryOverTasks(today)
         
         const {planData, tasksData} = await getDailyRecords(today, tomorrowDate, yesterdayDate)
-        console.log("getRecord")
-
         const taskFilter = tasksData.filter(task => task.source_task_id === null)
 
         const dailyRecords = planData.map(plan => {

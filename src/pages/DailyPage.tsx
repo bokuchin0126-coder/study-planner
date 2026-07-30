@@ -107,8 +107,7 @@ export default function DailyPage() {
                 >
                   <button 
                     onClick={async () => {
-                      await updateDailyTaskToggle(task.id, task.completed, today),
-                      await carryOverRecords()
+                      await updateDailyTaskToggle(task.id, task.completed, today)
                     }}
                   >
                     {task.completed ? "☑" : "□"}
@@ -180,8 +179,8 @@ export default function DailyPage() {
                 onChange={(e) => setAddText(e.target.value)}
                 onKeyDown={async (e) => {
                   if (e.key === "Enter") {
-                    await addDailyRecord(addText, today)
-                    await carryOverRecords()
+                    const task = await addDailyRecord(addText, today)
+                    await carryOverRecords(task)
                     setAddText("")
                     setTodayShowAdd(false)
                   }
@@ -189,8 +188,8 @@ export default function DailyPage() {
               />
               <button 
                 onClick={async () => {
-                  await addDailyRecord(addText, today),
-                  await carryOverRecords()
+                  const task = await addDailyRecord(addText, today)
+                  await carryOverRecords(task)
                   setAddText(""),
                   setTodayShowAdd(false)}}
               >

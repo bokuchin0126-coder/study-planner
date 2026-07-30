@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react"
 import type { WeeklyRecord } from "../types/weekly"
 import type { Task } from "../types/baseTask"
-import { supabase } from "../lib/supabase"
-import getCurrentUser from "../lib/auth"
 import {
   createdFirstWeeklyTaskInDB,
   addWeeklyTaskInDB,
@@ -71,7 +69,7 @@ export default function useWeekly() {
    
       } else {
         const orderIndex = await getNextOrderIndex(startDate)
-        
+
         const taskData = await addWeeklyTaskInDB(startDate, text, orderIndex)
 
         const task: Task = {

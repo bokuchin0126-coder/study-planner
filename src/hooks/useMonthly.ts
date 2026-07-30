@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react"
 import type { MonthlyRecord } from "../types/monthly"
 import type { Task } from "../types/baseTask"
-import { supabase } from "../lib/supabase"
-import getCurrentUser from "../lib/auth"
+import {
+  createdFirstMonthlyTaskInDB,
+  addMonthlyTaskInDB,
+  updatemMonthlyTaskTitleInDB,
+  updateMonthlyTaskToggleInDB,
+  updateMonthlyReflectionInDB,
+  daleteMonthyTaskInDB,
+  getMonthlyRecords,
+  getNextOrderIndex
+} from "../api/monthlyApi"
 
 
  
@@ -32,9 +40,7 @@ export default function useMonthly() {
   const addMonthlyRecord = async (text: string, date: string) => {
     try {
       if (text.trim() === "") throw alert("タスク名を入力してください")
-      const user = await getCurrentUser()
       const currentDate = monthlyRecords.find(month => month.month === date)
-      const orderIndex = currentDate ? currentDate.tasks.length : 0
 
       const startDate = new Date(date)
       const endDate = new Date(startDate)
@@ -44,29 +50,8 @@ export default function useMonthly() {
       const monthEnd = endDate.toISOString().split("T")[0]
 
       if (!currentDate) {
-        const { data: planData, error: planError } = await supabase
-          .from("monthly_plans")
-          .insert({
-            user_id: user.id,
-            month_start: date,
-            month_end: monthEnd,
-            reflection: ""
-          })
-          .select().single()
-
-        if (planError) throw planError
-
-        const { data: taskData, error: taskError } = await supabase
-          .from("monthly_tasks")
-          .insert({
-            user_id: user.id,
-            plan_id: planData.id,
-            text: text,
-            order_index: orderIndex
-          })
-          .select().single()
-
-        if (taskError) throw taskError
+        const orderIndex = 0
+        const taskData = await createdFirstMonthlyTaskInDB(date, monthEnd, text, orderIndex)
 
         const task: Task = {
           id: taskData.id,
@@ -84,26 +69,8 @@ export default function useMonthly() {
         setMonthlyRecords(prev => [...prev, monthlyRecord])
 
       } else {
-        const { data: planData, error: planError } = await supabase
-          .from("monthly_plans")
-          .select()
-          .eq("user_id", user.id)
-          .eq("month_start", date)
-          .single()
-
-        if (planError) throw planError
-
-        const { data: taskData, error: taskError } = await supabase
-          .from("monthly_tasks")
-          .insert({
-            user_id: user.id,
-            plan_id: planData.id,
-            text: text,
-            order_index: orderIndex
-          })
-          .select().single()
-
-        if (taskError) throw taskError
+        const orderIndex = await getNextOrderIndex(date)
+        const taskData = await addMonthlyTaskInDB(date, text, orderIndex)
 
         const task: Task = {
           id: taskData.id,
@@ -128,17 +95,7 @@ export default function useMonthly() {
 
   const updateMonthlyTaskTitle = async (id: string, text: string, date: string) => {
     try {
-      const user = await getCurrentUser()
-
-      const { error } = await supabase
-        .from("monthly_tasks")
-        .update({
-          text: text
-        })
-        .eq("user_id", user.id)
-        .eq("id", id)
-
-      if (error) throw error
+      await updatemMonthlyTaskTitleInDB(id, text)
 
       setMonthlyRecords(prev => prev.map(month => month.month === date ? 
         {
@@ -157,17 +114,7 @@ export default function useMonthly() {
 
   const updateMonthlyTaskToggle = async (id: string, completed: boolean, date: string) => {
     try {
-      const user = await getCurrentUser()
-
-      const { error } = await supabase
-        .from("monthly_tasks")
-        .update({
-          completed: !completed
-        })
-        .eq("user_id", user.id)
-        .eq("id", id)
-
-      if (error) throw error
+      await updateMonthlyTaskToggleInDB(id, completed)
 
       setMonthlyRecords(prev => prev.map(month => month.month === date ? 
         {
@@ -187,17 +134,7 @@ export default function useMonthly() {
 
   const updateMonthlyRecordReflection = async (text: string, date: string) => {
     try {
-      const user = await getCurrentUser()
-
-      const { error } = await supabase
-        .from("monthly_plans")
-        .update({
-          reflection: text
-        })
-        .eq("user_id", user.id)
-        .eq("month_start", date)
-
-      if (error) throw error
+      await updateMonthlyReflectionInDB(text, date)
 
       setMonthlyRecords(prev => prev.map(month => month.month === date ? 
         {
@@ -214,15 +151,7 @@ export default function useMonthly() {
 
   const deleteMonthlyTask = async (id: string, date: string) => {
     try {
-      const user = await getCurrentUser()
-
-      const { error } = await supabase
-        .from("monthly_tasks")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("id", id)
-        
-      if (error) throw error
+     await daleteMonthyTaskInDB(id)
 
       setMonthlyRecords(prev => prev.map(month => month.month === date ? 
         {
@@ -240,25 +169,11 @@ export default function useMonthly() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const user = await getCurrentUser()
-
-        const { data: plansData, error: plansError } = await supabase
-          .from("monthly_plans")
-          .select()
-          .eq("user_id", user.id)
-          .in("month_start", [monthlyDate("start", -1), monthlyDate("start"), monthlyDate("start", 1)])
-
-        if (plansError) throw plansError
-
-        const planIds = plansData.map(plan => plan.id)
-
-        const { data: tasksData, error: tasksError } = await supabase
-         .from("monthly_tasks")
-         .select()
-         .eq("user_id", user.id)
-         .in("plan_id", planIds) 
-
-        if (tasksError) throw tasksError
+        const { plansData, tasksData } = await getMonthlyRecords(
+          monthlyDate("start"),
+          monthlyDate("start", -1),
+          monthlyDate("start", 1)
+        )
 
         const tasks: Task[] = tasksData?.map(task => ({
           id: task.id,

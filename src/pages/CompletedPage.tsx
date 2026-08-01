@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react"
-import type { LongTermCompletedRecord } from "../types/completed"
 import useCompleted from "../hooks/useCompleted"
-import { Link } from "react-router-dom"
 import Sidebar from "../components/Sidebar"
+import { groupByYear, groupByMonth } from "../utils/completed/group"
+import {
+  calculateRate,
+  getCurrentMonthRate,
+  getCurrentYearRate,
+  getLongTermProgress,
+} from "../utils/completed/rate"
 
 
 export default function CompletedPage() {
@@ -25,104 +30,32 @@ export default function CompletedPage() {
   const recordTasks = records.map(record => record.tasks)
   const completedLomgTermRecord = longTermCompletedRecords.find(record => record.completed)
 
-  const getTotalRate = () => {
-    const total = filteredRecords.reduce(
-      (sum, record) => sum + record.tasks.length,
-      0
-    )
-
-    const completed = filteredRecords.reduce(
-      (sum, record) =>
-        sum + record.tasks.filter(task => task.completed).length,
-      0
-    )
-
-    return total === 0
-      ? 0
-      : Math.round((completed / total) * 100)
-  }
+  const getTotalRate = () => calculateRate(filteredRecords)
 
   const getSubRate = () => {
-    if (recordType === "day" || recordType === "week") {
-      const currentMonth = new Date().getMonth()
-      const currentYear = new Date().getFullYear()
-
-      const monthRecords = filteredRecords.filter(record => {
-        const date = new Date(record.startDate)
-
-        return (
-          date.getFullYear() === currentYear &&
-          date.getMonth() === currentMonth
-        )
-      })
-
-      const total = monthRecords.reduce(
-        (sum, record) => sum + record.tasks.length,
-        0
-      )
-
-      const completed = monthRecords.reduce(
-        (sum, record) =>
-          sum + record.tasks.filter(task => task.completed).length,
-        0
-      )
+    switch (recordType) {
+      case "day":
+      case "week":
+        return getCurrentMonthRate(filteredRecords)
   
-      return total === 0
-        ? 0
-        : Math.round((completed / total) * 100)
+      case "month":
+        return getCurrentYearRate(records)
+  
+      case "longTerm":
+        return getLongTermProgress(longTermCompletedRecords)
     }
-  
-    if (recordType === "month") {
-      const currentYear = new Date().getFullYear()
-  
-      const yearRecords = records.filter(record =>
-        new Date(record.startDate).getFullYear() === currentYear
-      )
-  
-      const total = yearRecords.reduce(
-        (sum, record) => sum + record.tasks.length,
-        0
-      )
-  
-      const completed = yearRecords.reduce(
-        (sum, record) =>
-          sum + record.tasks.filter(task => task.completed).length,
-        0
-      )
-  
-      return total === 0
-        ? 0
-        : Math.round((completed / total) * 100)
-    }
-  
-    if (recordType === "longTerm") {
-      const record = longTermCompletedRecords.find(record => !record.completed)
-  
-      if (!record) return 100
-  
-      const start = new Date(record.startDate).getTime()
-      const end = new Date(record.endDate).getTime()
-      const now = Date.now()
-  
-      if (now <= start) return 0
-      if (now >= end) return 100
-  
-      return Math.round(((now - start) / (end - start)) * 100)
-    }
-  
-    return 0
   }
 
   const getSubRateTitle = () => {
     switch (recordType) {
-      case "day" :
-      case "week" :
+      case "day":
+      case "week":
         return "今月の達成率"
-
-      case "month" :
+  
+      case "month":
         return "今年の達成率"
 
-      case "longTerm" :
+      case "longTerm":
         return "進捗率"
     }
   }
@@ -152,53 +85,8 @@ export default function CompletedPage() {
   const displayedRecords = sortedRecords.slice(0, visibleCount)
   const displayedLongTermRecords = sortedLongTermRecords.slice(0, visibleCount)
 
-  const displayedRecordsByYear = displayedRecords.reduce(
-    (acc, record) => {
-      const year = new Date(record.startDate).getFullYear()
-
-      if (!acc[year]) {
-        acc[year] = []
-      }
-
-      acc[year].push(record)
-
-      return acc
-    },
-    {} as Record<number, typeof displayedRecords>
-  )
-
-  const displayedLongTermRecordsByYear =
-    displayedLongTermRecords.reduce(
-      (acc, record) => {
-        const year = new Date(record.startDate).getFullYear()
-
-        if (!acc[year]) {
-          acc[year] = []
-        }
-
-        acc[year].push(record)
-
-        return acc
-      },
-    {} as Record<number, typeof displayedLongTermRecords>
-  )
-
-  const groupByMonth = (records: typeof sortedRecords) => {
-    return records.reduce(
-      (acc, record) => {
-        const month = new Date(record.startDate).getMonth()
-
-        if (!acc[month]) {
-          acc[month] = []
-        }
-
-        acc[month].push(record)
-
-        return acc
-      },
-      {} as Record<number, typeof records>
-    )
-  }
+  const displayedRecordsByYear = groupByYear(displayedRecords)
+  const displayedLongTermRecordsByYear = groupByYear(displayedLongTermRecords)
   
   useEffect(() => {
     fetchAllCompletedRecords()

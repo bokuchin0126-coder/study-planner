@@ -19,3 +19,7 @@ export interface LongTermCompletedRecord {
     tasks: Task[]
     completed: boolean
 }
+
+export type GroupRecord =
+  | CompletedRecord
+  | LongTermCompletedRecord

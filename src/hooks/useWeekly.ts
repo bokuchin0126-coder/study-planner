@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import type { WeeklyRecord } from "../types/weekly"
 import type { Task } from "../types/baseTask"
+import { getNextOrderIndex } from "../api/orderIndexApi"
 import {
   createdFirstWeeklyTaskInDB,
   addWeeklyTaskInDB,
@@ -8,8 +9,7 @@ import {
   updateWeeklyTaskToggleInDB,
   updateWeeklyReflectionInDB,
   daleteWeeklyTaskInDB,
-  getWeeklyRecords,
-  getNextOrderIndex
+  getWeeklyRecords
 } from "../api/weeklyApi"
 
 
@@ -68,7 +68,12 @@ export default function useWeekly() {
         setWeeklyRecords(prev => [...prev, weeklyRecord])
    
       } else {
-        const orderIndex = await getNextOrderIndex(startDate)
+        const orderIndex = await getNextOrderIndex(
+          "weekly_plans", 
+          "weekly_tasks", 
+          "week_start", 
+          startDate
+        )
 
         const taskData = await addWeeklyTaskInDB(startDate, text, orderIndex)
 

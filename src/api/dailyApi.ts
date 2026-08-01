@@ -274,29 +274,3 @@ export async function activateCarryOverTasks(date: string) {
     throw e
   }
 }
-
-export async function getNextOrderIndex(date: string) {
-  try {
-    const user = await getCurrentUser()
-
-    const { data: planData, error: planError } = await supabase
-      .from("daily_plans")
-      .select()
-      .eq("user_id", user.id)
-      .eq("date", date)
-      .single()
-      
-    if (planError) throw planError
-
-    const { data: taskData, error: taskError } = await supabase
-      .from("daily_tasks")
-      .select("order_index")
-      .eq("plan_id", planData.id)
-
-    if (taskError) throw taskError
-
-    return taskData.length
-  } catch(e) {
-    throw e
-  }
-}

@@ -268,30 +268,3 @@ export async function getMonthlyPlansInLongTerm(startPeriod: string, endPeriod: 
     throw e
   }
 }
-
-export async function getNextOrderIndex(startDate: string) {
-  try {
-    const user = await getCurrentUser()
-
-    const { data: planData, error: planError } = await supabase
-      .from("long_term_plans")
-      .select()
-      .eq("user_id", user.id)
-      .eq("start_date", startDate)
-      .eq("completed", false)
-      .single()
-      
-    if (planError) throw planError
-
-    const { data: taskData, error: taskError } = await supabase
-      .from("long_term_tasks")
-      .select("order_index")
-      .eq("plan_id", planData.id)
-
-    if (taskError) throw taskError
-    return taskData.length
-
-  } catch(e) {
-    throw e
-  }
-}

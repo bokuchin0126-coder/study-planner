@@ -1,8 +1,11 @@
 import type { CompletedRecord, LongTermCompletedRecord } from "../types/completed"
 import { useState } from "react"
-import { supabase } from "../lib/supabase"
-import getCurrentUser from "../lib/auth"
-
+import {
+  getCompltedDailyDataInDB,
+  getCompltedWeeklyDataInDB,
+  getCompltedMonthlyDataInDB,
+  getCompltedLongTermDataInDB
+} from "../api/completedApi"
 
 
 export default function useCompleted() {
@@ -11,23 +14,14 @@ export default function useCompleted() {
   const [monthlyCompletedRecords, setMonthlyCompletedRecords] = useState<CompletedRecord[]>([])
   const [longTermCompletedRecords, setLongTermCompletedRecords] = useState<LongTermCompletedRecord[]>([])
   
-  const fetchDailyCompletedRecords = async () => {
+  const getCompltedDailyData = async () => {
     try {
-      const user = await getCurrentUser()
+      const { plansData, tasksData } = await getCompltedDailyDataInDB()
 
-      const { data: plansData, error: plansError } = await supabase
-        .from("daily_plans")
-        .select("*")
-        .eq("user_id", user.id)
-
-      if (plansError) throw plansError
-
-      const { data: tasksData, error: tasksError } = await supabase
-        .from("daily_tasks")
-        .select("*")
-        .eq("user_id", user.id)
-
-      if (tasksError) throw tasksError
+      if (!plansData) {
+        setDailyCompletedRecords([])
+        return
+      }
 
       const completedRecrods: CompletedRecord[] = plansData.map(plan => {
         const tasks = tasksData 
@@ -53,23 +47,14 @@ export default function useCompleted() {
     }
   }
 
-  const fetchWeeklyCompletedRecords = async () => {
+  const getCompltedWeeklyData = async () => {
     try {
-      const user = await getCurrentUser()
+      const { plansData, tasksData } = await getCompltedWeeklyDataInDB()
 
-      const { data: plansData, error: plansError } = await supabase
-        .from("weekly_plans")
-        .select("*")
-        .eq("user_id", user.id)
-
-      if (plansError) throw plansError
-
-      const { data: tasksData, error: tasksError } = await supabase
-        .from("weekly_tasks")
-        .select("*")
-        .eq("user_id", user.id)
- 
-      if (tasksError) throw tasksError
+      if (!plansData) {
+        setWeeklyCompletedRecords([])
+        return
+      }
 
       const completedRecords: CompletedRecord[] = plansData.map(plan => {
         const tasks = tasksData 
@@ -95,23 +80,14 @@ export default function useCompleted() {
     }
   }
 
-  const fetchMonthlyCompletedRecords = async () => {
+  const getCompltedMonthlyData = async () => {
     try {
-      const user = await getCurrentUser()
+      const { plansData, tasksData } = await getCompltedMonthlyDataInDB()
 
-      const { data: plansData, error: plansError } = await supabase
-        .from("monthly_plans")
-        .select("*")
-        .eq("user_id", user.id)
-
-      if (plansError) throw plansError
-
-      const { data: tasksData, error: tasksError } = await supabase
-        .from("monthly_tasks")
-        .select("*")
-        .eq("user_id", user.id)
- 
-      if (tasksError) throw tasksError
+      if (!plansData) {
+        setMonthlyCompletedRecords([])
+        return
+      }
 
       const completedRecords: CompletedRecord[] = plansData.map(plan => {
         const tasks = tasksData 
@@ -137,23 +113,14 @@ export default function useCompleted() {
     }
   }
 
-  const fetchLongTermCompletedRecords = async () => {
+  const getCompltedLongTermData = async () => {
     try {
-      const user = await getCurrentUser()
+      const { plansData, tasksData } = await getCompltedLongTermDataInDB()
 
-      const { data: plansData, error: plansError } = await supabase
-        .from("long_term_plans")
-        .select("*")
-        .eq("user_id", user.id)
-
-      if (plansError) throw plansError
-
-      const { data: tasksData, error: tasksError } = await supabase
-        .from("long_term_tasks")
-        .select("*")
-        .eq("user_id", user.id)
-
-      if (tasksError) throw tasksError
+      if (!plansData) {
+        setLongTermCompletedRecords([])
+        return
+      }
 
       const records = plansData.map(plan => {
         const tasks = tasksData
@@ -181,10 +148,10 @@ export default function useCompleted() {
   }
 
   const fetchAllCompletedRecords = async () => {
-    await fetchDailyCompletedRecords()
-    await fetchWeeklyCompletedRecords()
-    await fetchMonthlyCompletedRecords()
-    await fetchLongTermCompletedRecords()
+    await getCompltedDailyData()
+    await getCompltedWeeklyData()
+    await getCompltedMonthlyData()
+    await getCompltedLongTermData()
   }
 
   return {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import type { MonthlyRecord } from "../types/monthly"
 import type { Task } from "../types/baseTask"
+import { getNextOrderIndex } from "../api/orderIndexApi"
 import {
   createdFirstMonthlyTaskInDB,
   addMonthlyTaskInDB,
@@ -8,8 +9,7 @@ import {
   updateMonthlyTaskToggleInDB,
   updateMonthlyReflectionInDB,
   daleteMonthyTaskInDB,
-  getMonthlyRecords,
-  getNextOrderIndex
+  getMonthlyRecords
 } from "../api/monthlyApi"
 
 
@@ -69,7 +69,12 @@ export default function useMonthly() {
         setMonthlyRecords(prev => [...prev, monthlyRecord])
 
       } else {
-        const orderIndex = await getNextOrderIndex(date)
+        const orderIndex = await getNextOrderIndex(
+          "monthly_plans", 
+          "monthly_tasks", 
+          "month_start", 
+          date
+        )
         const taskData = await addMonthlyTaskInDB(date, text, orderIndex)
 
         const task: Task = {

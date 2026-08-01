@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import type { DailyRecord, DailyTaskRow } from "../types/daily"
 import type { Task } from "../types/baseTask"
+import { getNextOrderIndex } from "../api/orderIndexApi"
 import {
   createFirstDailyTaskInDB,
   addDailyTaskInDB,
@@ -11,8 +12,7 @@ import {
   updateDailyRecordReflectionInDB,
   carryOverDailyTasksInDB,
   getDailyRecords,
-  activateCarryOverTasks,
-  getNextOrderIndex
+  activateCarryOverTasks
 } from "../api/dailyApi"
 
 export default function useDaily() {
@@ -68,7 +68,12 @@ export default function useDaily() {
         return taskData
 
       } else {
-        const orderIndex = await getNextOrderIndex(date)
+        const orderIndex = await getNextOrderIndex(
+          "daily_plans", 
+          "daily_tasks", 
+          "date", 
+          date
+        )
 
         const taskData = await addDailyTaskInDB(text, date, orderIndex)
         
@@ -187,7 +192,12 @@ export default function useDaily() {
     try {
       if (!task) return
 
-      const orderIndex = await getNextOrderIndex(tomorrowDate)
+      const orderIndex = await getNextOrderIndex(
+          "daily_plans", 
+          "daily_tasks", 
+          "date", 
+          tomorrowDate
+        )
 
       const taskData = await carryOverDailyTasksInDB(
         task,

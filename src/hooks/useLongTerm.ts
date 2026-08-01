@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react"
 import type { LongTermRecord, CompletedTask } from "../types/longTerm"
 import type { Task } from "../types/baseTask"
+import { getNextOrderIndex } from "../api/orderIndexApi"
 import {
   addLongTermTaskInDB,
-  getNextOrderIndex,
   updateLongTermGoalInDB,
   updateLongTermEndDateInDB,
   updateLongTermStartDateInDB,
@@ -29,7 +29,13 @@ export default function useLongTerm() {
       if (!longTermRecord) throw alert("データがありませんでした")
       if (text.trim() === "") alert("タスク名を入力してください")
 
-      const orderIndex = await getNextOrderIndex(longTermRecord.startDate)
+      const orderIndex = await getNextOrderIndex(
+        "long_term_plans",
+        "long_term_tasks",
+        "start_date",
+        longTermRecord.startDate
+      )
+      
       const taskData = await addLongTermTaskInDB(longTermRecord.id, text, orderIndex)
 
       setLongTermRecord(prev => {

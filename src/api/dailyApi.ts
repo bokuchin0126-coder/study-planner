@@ -254,10 +254,12 @@ export async function activateCarryOverTasks(date: string) {
       .select("id")
       .eq("user_id", user.id)
       .eq("date", date)
-      .single()
+      .maybeSingle()
 
     if (planError) throw planError
 
+    if (!planData) return
+    
     const { error } = await supabase
       .from("daily_tasks")
       .update({

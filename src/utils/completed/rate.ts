@@ -60,12 +60,19 @@ export const getLongTermProgress = (
 
   if (!record) return 100
 
-  const start = new Date(record.startDate).getTime()
-  const end = new Date(record.endDate).getTime()
-  const now = Date.now()
+  const start = new Date(record.startDate)
+  const end = new Date(record.endDate)
+  const now = new Date()
+
+  start.setHours(0, 0, 0, 0)
+  end.setHours(0, 0, 0, 0)
+  now.setHours(0, 0, 0, 0)
 
   if (now <= start) return 0
   if (now >= end) return 100
 
-  return Math.round(((now - start) / (end - start)) * 100)
+  return Math.round(
+    ((now.getTime() - start.getTime()) /
+    (end.getTime() - start.getTime())) * 100
+  )
 }

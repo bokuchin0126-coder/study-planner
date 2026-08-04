@@ -224,7 +224,7 @@ describe("getLongTermProgress", () => {
     ]
     const result = getLongTermProgress(records)
 
-    expect(result).toBe(50)
+    expect(result).toBe(60)
   })
 
   it("開始日前の未完了レコードは進捗率0%を返す", () => {

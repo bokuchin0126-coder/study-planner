@@ -191,6 +191,7 @@ export async function carryOverDailyTasksInDB(
     const { data: existsTasks } = await supabase
       .from("daily_tasks")
       .select("id")
+      .eq("user_id", user.id)
       .eq("plan_id", planData.id)
       .eq("source_task_id", carryTasks.id)
       .maybeSingle()

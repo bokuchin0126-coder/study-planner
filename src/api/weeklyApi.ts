@@ -152,7 +152,7 @@ export async function getWeeklyRecords(
       .in("week_start", [currentWeekStart, previousWeekStart, nextWeekStart])
     
     if (plansError) throw plansError
-    const planIds = plansData.map(plan => plan.id)
+    const planIds = (plansData ?? []).map(plan => plan.id)
     
     const { data: tasksData, error: tasksError } = await supabase
       .from("weekly_tasks")

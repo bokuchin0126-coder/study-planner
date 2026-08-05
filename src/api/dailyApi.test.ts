@@ -45,7 +45,6 @@ const mockDelete = vi.fn()
 
 const mockEq = vi.fn()
 const mockIn = vi.fn()
-const mockLt = vi.fn()
 const mockNot = vi.fn()
 
 const mockSingle = vi.fn()
@@ -66,7 +65,6 @@ beforeEach(() => {
   mockSelect.mockReturnValue({
     eq: mockEq,
     in: mockIn,
-    lt: mockLt,
     single: mockSingle,
   })
 
@@ -81,7 +79,6 @@ beforeEach(() => {
   mockEq.mockReturnValue({
     eq: mockExecute,
     in: mockIn,
-    lt: mockLt,
     not: mockNot,
     select: mockSelect,
     single: mockSingle,
@@ -586,7 +583,7 @@ describe("getDailyRecords", () => {
       ["today", "yesterday", "tomorrow"]
     )
     expect(result).toEqual({
-      planData: [todayPlan, yesterdayPlan, tomorrowPlan],
+      plansData: [todayPlan, yesterdayPlan, tomorrowPlan],
       tasksData: [todayTask, yesterdayTask, tomorrowTask]
     })
   })

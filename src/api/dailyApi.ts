@@ -224,14 +224,14 @@ export async function getDailyRecords(today: string, tomorrow: string, yesterday
   try {
     const user = await getCurrentUser()
 
-    const { data: planData, error: planError } = await supabase
+    const { data: plansData, error: planError } = await supabase
       .from("daily_plans")
       .select()
       .eq("user_id", user.id)
       .in("date", [today, tomorrow, yesterday])
 
     if (planError) throw planError
-    const planIds = (planData ?? []).map(plan => plan.id)
+    const planIds = (plansData ?? []).map(plan => plan.id)
 
     const { data: tasksData, error: tasksError } = await supabase
       .from("daily_tasks")
@@ -240,7 +240,7 @@ export async function getDailyRecords(today: string, tomorrow: string, yesterday
       .in("plan_id", planIds)
 
     if (tasksError) throw tasksError
-    return {planData, tasksData}
+    return {plansData, tasksData}
   } catch(e) {
     throw e
   }

@@ -152,7 +152,7 @@ export async function getMonthlyRecords(
       .in("month_start", [currentMonthStart, previousMonthStart, nextMonthStart])
     
     if (plansError) throw plansError
-    const planIds = plansData.map(plan => plan.id)
+    const planIds = (plansData ?? []).map(plan => plan.id)
     
     const { data: tasksData, error: tasksError } = await supabase
       .from("monthly_tasks")

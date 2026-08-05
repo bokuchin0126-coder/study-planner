@@ -242,3 +242,140 @@ describe("updatemMonthlyTaskTitleInDB", () => {
     })
   })
 })
+
+describe("updateMonthlyTaskToggleInDB", () => {
+  it("指定したidを目印にタグを更新する", async () => {
+    await updateMonthlyTaskToggleInDB(
+      "task-id",
+      true
+    )
+    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
+    expect(mockedFrom).toHaveBeenCalledWith("monthly_tasks")
+
+    expect(mockEq).toHaveBeenCalledWith( 
+      "user_id",
+      "user-id"
+    )
+    expect(mockExecute).toHaveBeenCalledWith( 
+      "id",
+      "task-id"
+    )
+    expect(mockUpdate).toHaveBeenCalledWith({
+      completed: false
+    })
+  })
+})
+
+describe("updateMonthlyReflectionInDB", () => {
+  it("指定した期間のplanの振り返りを更新する", async () => {
+    await updateMonthlyReflectionInDB(
+      "plan-reflection",
+      monthlyDate("start")
+    )
+    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
+    expect(mockedFrom).toHaveBeenCalledWith("monthly_plans")
+
+    expect(mockEq).toHaveBeenCalledWith( 
+      "user_id",
+      "user-id"
+    )
+    expect(mockExecute).toHaveBeenCalledWith( 
+      "month_start",
+      monthlyDate("start")
+    )
+    expect(mockUpdate).toHaveBeenCalledWith({
+      reflection: "plan-reflection"
+    })
+  })
+})
+
+describe("daleteMonthyTaskInDB", () => {
+  it("指定したidを目印にタスクを削除する", async () => {
+    await daleteMonthyTaskInDB("task-id")
+
+    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
+    expect(mockedFrom).toHaveBeenCalledWith("monthly_tasks")
+
+    expect(mockEq).toHaveBeenCalledWith( 
+      "user_id",
+      "user-id"
+    )
+    expect(mockExecute).toHaveBeenCalledWith( 
+      "id",
+      "task-id"
+    )
+    expect(mockDelete).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe("getMonthlyRecords", () => {
+  it("指定した期間のplanとタスクをDBから持ってくる", async () => {
+    const monthPlan = {
+      user_id: "user-id",
+      id: "month",
+      month_start: monthlyDate("start")
+    }
+    const lastMonthPlan = {
+      user_id: "user-id",
+      id: "lastMonth",
+      month_start: monthlyDate("start", -1)
+    }
+    const nextMonthPlan = {
+      user_id: "user-id",
+      id: "nextMonth",
+      month_start: monthlyDate("start", 1)
+    }
+    const monthTask = {
+      user_id: "user-id",
+      plan_id: "month",
+    }
+    const lastMonthTask = {
+      user_id: "user-id",
+      plan_id: "lastMonth",
+    }
+    const nextMonthTask = {
+      user_id: "user-id",
+      plan_id: "nextMonth",
+    }
+
+    mockIn.mockResolvedValueOnce({
+      data: [monthPlan, lastMonthPlan, nextMonthPlan],
+      error: null
+    })
+    mockIn.mockResolvedValueOnce({
+      data: [monthTask, lastMonthTask, nextMonthTask],
+      error: null
+    })
+
+    const result = await getMonthlyRecords(
+      monthlyDate("start"),
+      monthlyDate("start", -1),
+      monthlyDate("start", 1)
+    )
+
+    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
+    expect(mockedFrom).toHaveBeenNthCalledWith(1, "monthly_plans")
+    expect(mockedFrom).toHaveBeenNthCalledWith(2, "monthly_tasks")
+
+    expect(mockEq).toHaveBeenNthCalledWith(1,
+      "user_id",
+      "user-id"
+    )
+    expect(mockEq).toHaveBeenNthCalledWith(2,
+      "user_id",
+      "user-id"
+    )
+    expect(mockIn).toHaveBeenNthCalledWith(1, 
+      "month_start",
+      [monthlyDate("start"), monthlyDate("start", -1), monthlyDate("start", 1)]
+    )
+    expect(mockIn).toHaveBeenNthCalledWith(2, 
+      "plan_id",
+      ["month", "lastMonth", "nextMonth"]
+    )
+    expect(result).toEqual({
+      plansData: [monthPlan, lastMonthPlan, nextMonthPlan],
+      tasksData: [monthTask, lastMonthTask, nextMonthTask]
+    })
+  })
+})

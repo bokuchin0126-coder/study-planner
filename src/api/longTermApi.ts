@@ -248,7 +248,7 @@ export async function getMonthlyPlansInLongTerm(startPeriod: string, endPeriod: 
 
     if (plansError) throw plansError
 
-    if (!plansData) {
+    if (plansData.length === 0) {
       return {
         plansData: [],
         tasksData: []

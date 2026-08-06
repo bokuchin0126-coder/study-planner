@@ -8,7 +8,7 @@ export async function getCompltedDailyDataInDB() {
     
     const { data: plansData, error: plansError } = await supabase
       .from("daily_plans")
-       .select("*")
+      .select("*")
       .eq("user_id", user.id)
     
     if (plansError) throw plansError
@@ -20,12 +20,6 @@ export async function getCompltedDailyDataInDB() {
     
     if (tasksError) throw tasksError
 
-    if (!plansData) {
-      return {
-        planData: null,
-        tasksData: null
-      }
-    }
     return { plansData, tasksData } 
 
   } catch(e) {
@@ -51,12 +45,6 @@ export async function getCompltedWeeklyDataInDB() {
      
     if (tasksError) throw tasksError
 
-    if (!plansData) {
-      return {
-        plansData: null,
-        tasksData: null
-      }
-    }
     return { plansData, tasksData }
 
   } catch(e) {
@@ -82,12 +70,6 @@ export async function getCompltedMonthlyDataInDB() {
      
     if (tasksError) throw tasksError
 
-    if (!plansData) {
-      return {
-        plansData: null,
-        tasksData: null
-      }
-    }
     return { plansData, tasksData } 
 
   } catch(e) {
@@ -112,13 +94,7 @@ export async function getCompltedLongTermDataInDB() {
       .eq("user_id", user.id)
 
     if (tasksError) throw tasksError
-    
-    if (!plansData) {
-      return {
-        plansData: null,
-        tasksData: null
-      }
-    }
+
     return { plansData, tasksData }
     
   } catch(e) {

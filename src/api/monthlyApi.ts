@@ -67,7 +67,7 @@ export async function addMonthlyTaskInDB(startDate: string, text: string, orderI
   }
 }
 
-export async function updatemMonthlyTaskTitleInDB(id: string, text: string) {
+export async function updateMonthlyTaskTitleInDB(id: string, text: string) {
   try {
     const user = await getCurrentUser()
 
@@ -121,7 +121,7 @@ export async function updateMonthlyReflectionInDB(text: string, date: string) {
   }
 }
 
-export async function daleteMonthyTaskInDB(id: string) {
+export async function deleteMonthlyTaskInDB(id: string) {
   try {
     const user = await getCurrentUser()
 

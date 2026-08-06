@@ -8,7 +8,7 @@ import {
   updateLongTermEndDateInDB,
   updateLongTermStartDateInDB,
   updateLongTermReflectionInDB,
-  updateLonTermToggleInDB,
+  updateLongTermToggleInDB,
   updateLongTermTaskTitleInDB,
   updateLongTermTaskToggleInDB,
   deleteLongTermTaskInDB,
@@ -142,7 +142,7 @@ export default function useLongTerm() {
     try {
       if (!longTermRecord) throw alert("データがありませんでした")
       
-      await updateLonTermToggleInDB(longTermRecord.completed, longTermRecord.id)
+      await updateLongTermToggleInDB(longTermRecord.completed, longTermRecord.id)
 
       setLongTermRecord(prev => {
         if (!prev) return null

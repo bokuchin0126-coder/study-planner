@@ -5,10 +5,10 @@ import { getNextOrderIndex } from "../api/orderIndexApi"
 import {
   createdFirstMonthlyTaskInDB,
   addMonthlyTaskInDB,
-  updatemMonthlyTaskTitleInDB,
+  updateMonthlyTaskTitleInDB,
   updateMonthlyTaskToggleInDB,
   updateMonthlyReflectionInDB,
-  daleteMonthyTaskInDB,
+  deleteMonthlyTaskInDB,
   getMonthlyRecords
 } from "../api/monthlyApi"
 
@@ -100,7 +100,7 @@ export default function useMonthly() {
 
   const updateMonthlyTaskTitle = async (id: string, text: string, date: string) => {
     try {
-      await updatemMonthlyTaskTitleInDB(id, text)
+      await updateMonthlyTaskTitleInDB(id, text)
 
       setMonthlyRecords(prev => prev.map(month => month.month === date ? 
         {
@@ -156,7 +156,7 @@ export default function useMonthly() {
 
   const deleteMonthlyTask = async (id: string, date: string) => {
     try {
-     await daleteMonthyTaskInDB(id)
+     await deleteMonthlyTaskInDB(id)
 
       setMonthlyRecords(prev => prev.map(month => month.month === date ? 
         {

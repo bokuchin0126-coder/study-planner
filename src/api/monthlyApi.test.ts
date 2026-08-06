@@ -4,10 +4,10 @@ import { supabase } from "../lib/supabase"
 import {
   createdFirstMonthlyTaskInDB,
   addMonthlyTaskInDB,
-  updatemMonthlyTaskTitleInDB,
+  updateMonthlyTaskTitleInDB,
   updateMonthlyTaskToggleInDB,
   updateMonthlyReflectionInDB,
-  daleteMonthyTaskInDB,
+  deleteMonthlyTaskInDB,
   getMonthlyRecords
 } from "./monthlyApi"
 
@@ -125,7 +125,7 @@ describe("createdFirstMonthlyTaskInDB", () => {
       user_id: "user-id",
       plan_id: "plan-id",
       text: "task-text",
-      orderIndex: 0
+      order_index: 0
     }
     mockSingle.mockResolvedValueOnce({
       data: plan,
@@ -163,7 +163,7 @@ describe("createdFirstMonthlyTaskInDB", () => {
 })
 
 describe("addMonthlyTaskInDB", () => {
-  it("指定した期間のplanのidで作ったタスクを返す", async () => {
+  it("指定した期間のplanにタスクを追加して返す", async () => {
     const plan = {
       user_id: "user-id",
       id: "plan-id",
@@ -219,9 +219,9 @@ describe("addMonthlyTaskInDB", () => {
   })
 })
 
-describe("updatemMonthlyTaskTitleInDB", () => {
+describe("updateMonthlyTaskTitleInDB", () => {
   it("指定したidを目印にタスク名を更新する", async () => {
-    await updatemMonthlyTaskTitleInDB(
+    await updateMonthlyTaskTitleInDB(
       "task-id",
       "task-text"
     )
@@ -289,9 +289,9 @@ describe("updateMonthlyReflectionInDB", () => {
   })
 })
 
-describe("daleteMonthyTaskInDB", () => {
+describe("daleteMonthlyTaskInDB", () => {
   it("指定したidを目印にタスクを削除する", async () => {
-    await daleteMonthyTaskInDB("task-id")
+    await deleteMonthlyTaskInDB("task-id")
 
     expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("monthly_tasks")

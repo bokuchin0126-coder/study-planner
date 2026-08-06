@@ -106,7 +106,7 @@ export async function updateLongTermReflectionInDB(text: string, id: string) {
   }
 }
 
-export async function updateLonTermToggleInDB(completed: boolean, id: string) {
+export async function updateLongTermToggleInDB(completed: boolean, id: string) {
   try {
     const user = await getCurrentUser()
 
@@ -190,6 +190,13 @@ export async function getCurrentLongTermPlanInDB() {
       .maybeSingle()
     
     if (currentPlanError) throw currentPlanError
+
+    if (!currentPlan) {
+      return {
+        currentPlan: null,
+        tasksData: []
+      }
+    }
     
     const { data: tasksData, error: tasksError } = await supabase
       .from("long_term_tasks")
@@ -199,12 +206,6 @@ export async function getCurrentLongTermPlanInDB() {
     
     if (tasksError) throw tasksError
 
-    if (!currentPlan) {
-      return {
-        currentPlan: null,
-        tasksData: []
-      }
-    }
     return { currentPlan, tasksData }
 
   } catch(e) {
@@ -242,19 +243,19 @@ export async function getMonthlyPlansInLongTerm(startPeriod: string, endPeriod: 
       .from("monthly_plans")
       .select()
       .eq("user_id", user.id)
-      .gte("month_end", startPeriod)
-      .lte("month_start", endPeriod)
+      .gte("month_start", startPeriod)
+      .lte("month_end", endPeriod)
 
-      if (plansError) throw plansError
+    if (plansError) throw plansError
 
-    const planIds = plansData.map(plan => plan.id)
-
-    if (planIds.length === 0) {
+    if (!plansData) {
       return {
         plansData: [],
         tasksData: []
       }
-    }
+    } 
+    const planIds = plansData.map(plan => plan.id)
+
     const { data: tasksData, error: tasksError } = await supabase
       .from("monthly_tasks")
       .select()

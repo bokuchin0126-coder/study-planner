@@ -168,7 +168,7 @@ describe("createdFirstWeeklyTaskInDB", () => {
 })
 
 describe("addWeeklyTaskInDB", () => {
-  it("指定した期間のplanのidで作成したタスクを返す", async () => {
+  it("指定した期間のplanにタスクを追加して返す", async () => {
     const plan = {
       user_id: "user-id",
       id: "plan-id",

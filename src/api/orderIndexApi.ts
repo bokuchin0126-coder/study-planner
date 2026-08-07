@@ -24,6 +24,7 @@ export async function getNextOrderIndex(
     const { data: taskData, error: taskError } = await supabase
       .from(taskTableName)
       .select("order_index")
+      .eq("user_id", user.id)
       .eq("plan_id", planData.id)
 
     if (taskError) throw taskError

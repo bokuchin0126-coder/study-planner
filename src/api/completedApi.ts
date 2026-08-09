@@ -1,5 +1,5 @@
 import { supabase } from "../lib/supabase"
-import getCurrentUser from "../lib/auth"
+import getCurrentUser from "./authApi"
 
 
 export async function getCompltedDailyDataInDB() {

@@ -1,5 +1,5 @@
 import { supabase } from "../lib/supabase"
-import getCurrentUser from "../lib/auth"
+import getCurrentUser from "./authApi"
 import type { DailyTaskRow } from "../types/daily"
 
 export async function createFirstDailyTaskInDB(text: string, date: string, orderIndex: number) {

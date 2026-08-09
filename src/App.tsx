@@ -7,6 +7,7 @@ import WeeklyPage from "./pages/WeeklyPage"
 import MonthlyPage from "./pages/MonthlyPage"
 import LongTermPage from "./pages/LongTermPage"
 import CompletedPage from "./pages/CompletedPage"
+import Settingspage from "./pages/SettingsPage"
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/monthly" element={<MonthlyPage />} />
         <Route path="/longTerm" element={<LongTermPage />} />
         <Route path="/completed" element={<CompletedPage />} />
+        <Route path="/settings" element={<Settingspage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/daily" replace />} />

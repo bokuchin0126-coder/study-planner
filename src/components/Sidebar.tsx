@@ -26,6 +26,10 @@ export default function Sidebar() {
           <li>
             <Link to="/completed">完了履歴</Link>
           </li>
+
+          <li>
+            <Link to="/settings">設定</Link>
+          </li>
         </ul>
       </nav>
     </aside>

@@ -217,10 +217,10 @@ export default function useDaily() {
       try {
         await activateCarryOverTasks(today)
         
-        const {planData, tasksData} = await getDailyRecords(today, tomorrowDate, yesterdayDate)
+        const {plansData, tasksData} = await getDailyRecords(today, tomorrowDate, yesterdayDate)
         const taskFilter = tasksData.filter(task => task.source_task_id === null)
 
-        const dailyRecords = planData.map(plan => {
+        const dailyRecords = plansData.map(plan => {
           const tasks = taskFilter
             .filter(task => task.plan_id === plan.id)
             .map(task => ({

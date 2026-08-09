@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react"
-import { useAuth } from "../hooks/useAuth"
+import { signIn } from "../api/authApi"
 import { Link, useNavigate } from "react-router-dom"
 import { supabase } from "../lib/supabase"
 
 
 export default function LoginPage() {
-  const { signIn } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const navigate = useNavigate()
@@ -23,7 +22,9 @@ export default function LoginPage() {
 
     } catch (e) {
       console.error(e)
-      alert("ログイン失敗")
+      alert(
+        "メールアドレスまたはパスワードが間違っています。\nアカウントをお持ちでない場合は新規登録してください。"
+      )
       return
 
     } finally {
@@ -67,7 +68,10 @@ export default function LoginPage() {
 
       <button onClick={handleSignIn}>ログイン</button>
 
-      <Link to="/signup">サインインへ</Link>
+      <div>
+        <p>アカウントをお持ちでない方はこちら↓</p>
+        <Link to="/signup">サインインへ</Link>
+      </div>
     </>
   )
 }

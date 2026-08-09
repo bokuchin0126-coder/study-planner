@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest"
-import getCurrentUser from "../lib/auth"
+import getCurrentUser from "./authApi"
 import { supabase } from "../lib/supabase"
 import {
   getCompltedDailyDataInDB,

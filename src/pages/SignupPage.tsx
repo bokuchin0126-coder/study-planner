@@ -1,9 +1,8 @@
 import { useState } from "react"
-import { useAuth } from "../hooks/useAuth"
+import { signUp } from "../api/authApi"
 import { Link, useNavigate } from "react-router-dom"
 
 export default function SignupPage() {
-  const { signUp } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const navigate = useNavigate()

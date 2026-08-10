@@ -1,7 +1,7 @@
 import { supabase } from "../lib/supabase"
 
 
-export default async function getCurrentUser() {
+export async function getCurrentUser() {
   const { data: {user}, error } = await supabase.auth.getUser()
     
   if (error) throw error

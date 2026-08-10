@@ -1,5 +1,5 @@
 import { supabase } from "../lib/supabase"
-import getCurrentUser from "./authApi"
+import { getCurrentUser } from "./authApi"
 
 
 export async function getNextOrderIndex(

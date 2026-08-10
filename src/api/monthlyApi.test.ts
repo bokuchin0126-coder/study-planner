@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest"
-import getCurrentUser from "./authApi"
+import { getCurrentUser } from "./authApi"
 import { supabase } from "../lib/supabase"
 import {
   createdFirstMonthlyTaskInDB,
@@ -32,8 +32,8 @@ const monthlyDate = (date: "start" | "end", offset = 0) => {
   else return ""
 }
 
-vi.mock("../lib/auth", () => ({
-  default: vi.fn(),
+vi.mock("./authApi", () => ({
+  getCurrentUser: vi.fn(),
 }))
 
 vi.mock("../lib/supabase", () => ({

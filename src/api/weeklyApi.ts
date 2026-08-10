@@ -1,4 +1,4 @@
-import getCurrentUser from "./authApi"
+import { getCurrentUser } from "./authApi"
 import { supabase } from "../lib/supabase"
 
 

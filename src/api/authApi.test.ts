@@ -13,7 +13,8 @@ vi.mock("../lib/supabase", () => ({
     auth: {
       getUser: vi.fn(),
       signUp: vi.fn(),
-      signInWithPassword: vi.fn()
+      signInWithPassword: vi.fn(),
+      signOut: vi.fn()
     }
   }
 }))
@@ -21,6 +22,7 @@ vi.mock("../lib/supabase", () => ({
 const mockedGetUser = vi.mocked(supabase.auth.getUser)
 const mockedSignUp = vi.mocked(supabase.auth.signUp)
 const mockedSignIn = vi.mocked(supabase.auth.signInWithPassword)
+const mockedSignOut = vi.mocked(supabase.auth.signOut)
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -66,13 +68,9 @@ describe("getCurrentUser", () => {
 
 describe("signUp", () => {
   it("ユーザーを新規登録できる", async () => {
-    const user = {
-      id: "user-123",
-      email: "test@example.com"
-    }
 
     mockedSignUp.mockResolvedValue({
-      data: { user },
+      data: { user: null },
       error: null
     } as any)
 
@@ -100,19 +98,15 @@ describe("signUp", () => {
   })
 
   it("SupabaseのsignUpが正しい値で呼ばれる", async () => {
-    const user = {
-      id: "user-123",
-      email: "test@example.com"
-    }
     mockedSignUp.mockResolvedValue({
-      data: { user },
+      data: { user: null },
       error: null
     } as any)
 
-    await signUp(
-      "test@example.com",
-      "password123"
-    )
+    await expect(
+      signUp("test@example.com", "password123")
+    ).resolves.toBeUndefined()
+      
 
     expect(mockedSignUp).toHaveBeenCalledWith({
       email: "test@example.com",
@@ -123,16 +117,14 @@ describe("signUp", () => {
 
 describe("signIn", () => {
   it("ユーザーがログインできる", async () => {
-    const user = {
-      id: "user-123",
-      email: "test@example.com"
-    }
     mockedSignIn.mockResolvedValue({
-      data: { user },
+      data: { user: null },
       error: null
     } as any)
 
-    await signIn("test@example.com", "password123")
+    await expect(
+      signIn("test@example.com", "password123")
+    ).resolves.toBeUndefined()
 
     expect(mockedSignIn).toHaveBeenCalledWith({
       email: "test@example.com",
@@ -154,23 +146,42 @@ describe("signIn", () => {
   })
 
   it("SupabaseのsignInが正しい値で呼ばれる", async () => {
-    const user = {
-      id: "user-123",
-      email: "test@example.com"
-    }
     mockedSignIn.mockResolvedValue({
-      data: { user },
+      data: { user: null },
       error: null
     } as any)
 
-    await signIn(
-      "test@example.com",
-      "password123"
-    )
+    await expect(
+      signIn("test@example.com", "password123")
+    ).resolves.toBeUndefined()
 
     expect(mockedSignIn).toHaveBeenCalledWith({
       email: "test@example.com",
       password: "password123"
     })
   })
-}) 
+})
+
+describe("signOut", () => {
+  it("ユーザーをログアウトさせることができる", async () => {
+    mockedSignOut.mockResolvedValue({
+      error: null
+    } as any)
+
+    await expect(
+      signOut()
+    ).resolves.toBeUndefined()
+
+    expect(mockedSignOut).toHaveBeenCalled()
+  })
+
+  it("Supabaseでエラーが発生たらエラーを投げる", async () => {
+    const error = new Error("ログアウトに失敗しました")
+
+    mockedSignOut.mockResolvedValue({
+      error
+    } as any)
+
+    await expect(signOut()).rejects.toThrow(error)
+  })
+})

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import type { Task } from "../../types/completed"
 import { 
   calculateRate,
@@ -218,13 +218,17 @@ describe("getLongTermProgress", () => {
   })
 
   it("進行中の未完了レコードから進捗率を正しく計算できる", () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date(2026, 7, 13))
     const records = [
-      createLongTermRecord(getDate(0, 0, -5), getDate(0, 0, 5), false),
-      createLongTermRecord(getDate(-5), getDate(-2), true)
+      createLongTermRecord("2026-08-08", "2026-08-18", false),
+      createLongTermRecord("2026-08-08", "2026-08-10", true)
     ]
     const result = getLongTermProgress(records)
 
     expect(result).toBe(50)
+
+    vi.useRealTimers()
   })
 
   it("開始日前の未完了レコードは進捗率0%を返す", () => {

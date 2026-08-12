@@ -8,6 +8,7 @@ import {
   deleteAccount
 } from "./authApi"
 
+
 vi.mock("../lib/supabase", () => ({
   supabase: {
     auth: {
@@ -15,6 +16,9 @@ vi.mock("../lib/supabase", () => ({
       signUp: vi.fn(),
       signInWithPassword: vi.fn(),
       signOut: vi.fn()
+    },
+    functions: {
+      invoke: vi.fn()
     }
   }
 }))
@@ -22,6 +26,7 @@ vi.mock("../lib/supabase", () => ({
 const mockedGetUser = vi.mocked(supabase.auth.getUser)
 const mockedSignUp = vi.mocked(supabase.auth.signUp)
 const mockedSignIn = vi.mocked(supabase.auth.signInWithPassword)
+const mockedInvoke = vi.mocked(supabase.functions.invoke)
 const mockedSignOut = vi.mocked(supabase.auth.signOut)
 
 beforeEach(() => {
@@ -183,5 +188,35 @@ describe("signOut", () => {
     } as any)
 
     await expect(signOut()).rejects.toThrow(error)
+  })
+})
+
+describe("deleteAccount", () => {
+  it("アカウント削除後にログアウトできる", async () => {
+    mockedInvoke.mockResolvedValue({
+      data: null,
+      error: null
+    })
+
+    mockedSignOut.mockResolvedValue({
+      error: null
+    })
+    await deleteAccount()
+
+    expect(mockedInvoke).toHaveBeenCalledWith("delete-account")
+    expect(mockedSignOut).toHaveBeenCalled()
+  })
+
+  it("アカウント削除でエラーが発生したらログアウトしない", async () => {
+    const error = new Error("アカウント削除に失敗しました")
+
+    mockedInvoke.mockResolvedValue({
+      data: null,
+      error
+    })
+
+    await expect(deleteAccount()).rejects.toThrow(error)
+
+    expect(mockedSignOut).not.toHaveBeenCalled()
   })
 })

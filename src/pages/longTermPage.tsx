@@ -180,264 +180,594 @@ export default function LongTermPage() {
     fetchCompletedTasks()
   }, [longTermRecord])
 
-  return (
-    <>
-      <div>
-        <div>
-          <Sidebar />
-        </div>
+  return ( 
+  <div className="long-term-page"> 
+    <Sidebar /> 
+ 
+    <main className="long-term-content"> 
+ 
+      <header className="long-term-header"> 
+        <p className="long-term-label"> 
+          長期目標 
+        </p> 
+ 
+        <h1 className="long-term-title"> 
+          今の目標 
+        </h1> 
+      </header> 
 
-        <div>
-          <h2>目標</h2>
-          <input
-            value={goalText}
-            onChange={(e) => setGoalText(e.target.value)}
-            placeholder="目標を入力..."
-            onBlur={async () => await updateLongTermGoal(goalText)}
-          />
-        </div>
+ 
+      <section className="long-term-section goal-section"> 
+ 
+        <div className="section-header"> 
+          <div> 
+            <h2>目標</h2> 
+            <p className="section-description"> 
+              この期間で達成したいこと
+            </p> 
+          </div> 
+        </div> 
+ 
+        <input 
+          className="goal-input" 
+          value={goalText} 
+          onChange={(e) => setGoalText(e.target.value)} 
+          placeholder="目標を入力..." 
+          onBlur={async () => 
+            await updateLongTermGoal(goalText)
+          } 
+        /> 
+ 
+      </section> 
+ 
 
-        <div>
-          <h2>期間</h2>
+      <section className="long-term-section period-section"> 
+ 
+        <div className="section-header">
+          <div> 
+            <h2>期間</h2> 
+            <p className="section-description">
+              長期目標に取り組む期間 
+            </p> 
+          </div> 
+        </div> 
+ 
 
-          <div>
-            <button onClick={() => {setEditingType("start")}}>
-              {displayStartDate}
-            </button>
+        <div className="period-picker"> 
+          <div className="period-date"> 
 
-            {editingType === "start" && (
-              <div className="date-picker" ref={pickerRef}>
-                
-                <div className="year-list">
-
-                  {Array.from({ length: 30}, (_, i) => (
-                    <div key={i} onClick={() => setStartYear(lastYear + i)}>
-                      {lastYear + i}年
-                    </div>
-                  ))}
-
-                </div>
-
-                <div className="month-list">
-
-                  {Array.from({ length: 12}, (_, i) => (
-                    <div key={i} onClick={() => setStartMonth(i + 1)}>
-                      {i + 1}月
-                    </div>
-                  ))}
-                  
-                </div>
-
-                <div className="day-list">
-
-                  {Array.from({ length: startDaysInMonth}, (_, i) => (
-                    <div key={i} onClick={() => setStartDay(i + 1)}>
-                      {i + 1}日
-                    </div>
-                  ))}
-                  
-                </div>
-
-              </div>
-            )}
-
-            ~
-
-            <button onClick={() => {setEditingType("end")}}>
-              {displayEndDate}
-            </button>
-
-            {editingType === "end" && (
-              <div className="date-picker" ref={pickerRef}>
-
-                <div className="year-list">
-
-                  {Array.from({ length: lastYear + 30 - endFirstYear + 1 },(_, i) => {
-                    const year = endFirstYear + i
-                    return (
-                      <div key={year} onClick={() => setEndYear(year)}>
-                        {year}年
-                      </div>
-                    )
-                  })}
-
-                </div>
-
-                <div className="month-list">
-
-                  {Array.from({ length: 12 - endFirstMonth + 1 },(_, i) => {
-                    const month = endFirstMonth + i
-
-                    return (
-                      <div key={month} onClick={() => setEndMonth(month)}>
-                        {month}月
-                      </div>
-                    )
-                  })}
-                  
-                </div>
-
-                <div className="day-list">
-
-                  {Array.from({length: endDaysInMonth - endFirstDay + 1},(_, i) => {
-                    const day = endFirstDay + i
-
-                    return (
-                      <div key={day} onClick={() => setEndDay(day)}>
-                        {day}日
-                      </div>
-                    )
-                  })}
-              
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <DndContext
-          sensors={sensors}
-          onDragEnd={(event) =>
-            handleDragEnd(
-              event,
-              longTermTasks,
-              "long_term_tasks",
-              setLongTermTasks
-            )
-          }
-        >
-          <div>
-            <h2>タスク</h2>
-
-            <SortableContext
-              items={longTermTasks}
-              strategy={verticalListSortingStrategy}
+            <button 
+              className="date-button"
+              onClick={() => { 
+                setEditingType("start") 
+              }} 
             >
+              {displayStartDate}
+            </button> 
+ 
+            {editingType === "start" && ( 
+              <div 
+               className="date-picker" 
+               ref={pickerRef} 
+             > 
+             
+                <div className="year-list">
+ 
+                  {Array.from( 
+                    { length: 30 }, 
+                    (_, i) => ( 
+                      <div 
+                        key={i} 
+                        className="date-option"
+                        onClick={() => 
+                          setStartYear(lastYear + i) 
+                        } 
+                      > 
+                        {lastYear + i}年 
+                      </div> 
+                    ) 
+                  )} 
+ 
+                </div> 
+ 
+ 
+                <div className="month-list"> 
 
-              {longTermTasks.map(task => 
-                <TaskItem
-                  key={task.id}
-                  id={task.id}  
-                >
+                  {Array.from(
+                    { length: 12 }, 
+                    (_, i) => (
+                      <div
+                        key={i} 
+                        className="date-option" 
+                        onClick={() => 
+                          setStartMonth(i + 1) 
+                        } 
+                      > 
+                        {i + 1}月
+                      </div> 
+                    ) 
+                  )} 
+ 
+                </div> 
 
-                  <button onClick={() => updateLongTermTaskToggle(task.id)}>
-                    {task.completed ? "☑" : "□"}
-                  </button>
+ 
+                <div className="day-list"> 
+ 
+                  {Array.from( 
+                    { length: startDaysInMonth }, 
+                    (_, i) => ( 
+                      <div 
+                        key={i} 
+                        className="date-option" 
+                        onClick={() => 
+                          setStartDay(i + 1) 
+                        } 
+                      >
+                        {i + 1}日 
+                      </div> 
+                    ) 
+                  )} 
+ 
+                </div> 
 
-                  {editingId === task.id ? 
-                    <div>
-                      <input
-                        value={editText}
-                        autoFocus
-                        onChange={(e) => setEditText(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            updateLongTermTaskTitle(task.id, editText)
-                            setEditText("")
-                            setEditingId("")
-                          }
-                        }}
-                      />
-                      <button onClick={() => {
-                        updateLongTermTaskTitle(task.id, editText)
-                        setEditText("")
-                        setEditingId("")
-                      }}>
-                        保存
-                      </button>
-                    </div>
-                  :
-                    <div>
-                      {task.title}
-                      <button onClick={() => {
-                        setEditingId(task.id),
-                        setEditText(task.title)
-                      }}>
-                        編集
-                      </button>
-                    </div>
-                  }
-                  <button onClick={() => deleteLongTermTask(task.id)}>
-                    削除
-                  </button>
-                </TaskItem>
-              )}
-            </SortableContext>
-    
-            {showAdd ?
-              <div>
-                <input
-                  value={addText}
-                  autoFocus
-                  onChange={(e) => setAddText(e.target.value)}
-                  placeholder="タスクを入力"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      addLongTermTask(addText)
-                      setAddText("")
-                      setShowAdd(false)
-                    }
-                  }}
-                />
-                <button onClick={() => {
-                  addLongTermTask(addText),
-                  setAddText("")
-                  setShowAdd(false)
-                }}>
-                  追加
-                </button>
               </div>
-            :
-              <button onClick={() => setShowAdd(true)}>
-                 新しいタスクを追加＋
-              </button>
-            }
-          </div>
-        </DndContext>
+            )}
 
-        <div>
-          <h2>振り返り</h2>
-          <textarea
-            placeholder="振り返りを入力..."
-            onBlur={() => updateLongTermReflection(reflectionText)}
-            value={reflectionText}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReflectionText(e.target.value)}
-          />
-        </div>
+          </div> 
 
-        <div>
-          <h2>達成したタスク</h2>
-          {Object.entries(groupedTasks).map(([month, tasks]) => (
-            <div key={month}>
-              <h3>
-                {new Date(month).getFullYear()}年
-                {new Date(month).getMonth() + 1}月
-              </h3>
-              {tasks.length === 0 && <p>この期間中に達成したmonthlyTaskはありません</p>}
+          <span className="period-separator"> 
+            〜 
+          </span>  
 
-              {tasks.map(task => (
-                <div key={task}>
-                  {task}
+          <div className="period-date">  
+
+            <button 
+              className="date-button" 
+              onClick={() => { 
+                setEditingType("end") 
+              }} 
+            > 
+              {displayEndDate} 
+            </button> 
+ 
+            {editingType === "end" && ( 
+              <div 
+                className="date-picker" 
+                ref={pickerRef} 
+              > 
+ 
+                <div className="year-list"> 
+
+                  {Array.from( 
+                    { 
+                      length: 
+                        lastYear + 
+                        30 - 
+                        endFirstYear + 
+                        1 
+                    }, 
+                    (_, i) => { 
+ 
+                      const year = 
+                        endFirstYear + i
+ 
+                      return ( 
+                        <div 
+                          key={year} 
+                          className="date-option" 
+                          onClick={() => 
+                            setEndYear(year) 
+                          } 
+                        > 
+                          {year}年 
+                        </div>
+                      ) 
+                    } 
+                  )} 
+ 
                 </div>
-              ))}
-            </div>
-          ))}
+
+ 
+                <div className="month-list"> 
+ 
+                  {Array.from( 
+                    { 
+                      length: 
+                        12 - 
+                        endFirstMonth + 
+                        1 
+                    }, 
+                    (_, i) => { 
+ 
+                      const month = 
+                        endFirstMonth + i 
+ 
+                      return ( 
+                        <div 
+                          key={month} 
+                          className="date-option" 
+                          onClick={() => 
+                            setEndMonth(month) 
+                          } 
+                        > 
+                          {month}月 
+                        </div> 
+                      ) 
+                    } 
+                  )}
+
+                </div> 
+
+                <div className="day-list"> 
+ 
+                  {Array.from(
+                    { 
+                      length: 
+                        endDaysInMonth - 
+                        endFirstDay + 
+                        1 
+                    }, 
+                    (_, i) => { 
+ 
+                      const day = 
+                        endFirstDay + i 
+ 
+                      return ( 
+                        <div 
+                          key={day} 
+                          className="date-option" 
+                          onClick={() => 
+                            setEndDay(day) 
+                          } 
+                        >
+                          {day}日 
+                        </div>
+                      ) 
+                    } 
+                  )} 
+ 
+                </div> 
+ 
+              </div> 
+            )} 
+
+          </div>
+ 
         </div>
+ 
+      </section> 
+ 
+ 
+      <DndContext 
+        sensors={sensors} 
+        onDragEnd={(event) => 
+          handleDragEnd(
+            event, 
+            longTermTasks,
+            "long_term_tasks",
+            setLongTermTasks 
+          ) 
+        } 
+      > 
+ 
+        <section className="long-term-section task-section"> 
+ 
+          <div className="section-header"> 
 
-        <div>
-          <button onClick={async () => {
-            const isConfirmed = window.confirm(
-              "達成にすると今の長期目標の画面はなくなり、新しい長期目標の画面へと更新されますがよろしいですか？"
-            )
-            if (!isConfirmed) return
+            <div> 
+              <h2>タスク</h2> 
+              <p className="section-description"> 
+                長期目標を達成するためのタスク 
+              </p> 
+            </div> 
+ 
+          </div> 
+ 
+          <SortableContext 
+            items={longTermTasks} 
+            strategy={verticalListSortingStrategy} 
+          >
+ 
+            <div className="task-list"> 
+ 
+              {longTermTasks.map(task => ( 
+                <TaskItem 
+                  key={task.id} 
+                  id={task.id} 
+                > 
+ 
+                  <button
+                    className="task-toggle" 
+                    onClick={() => 
+                      updateLongTermTaskToggle(task.id) 
+                    }
+                  > 
+                    {task.completed ? "☑" : "□"} 
+                  </button> 
+ 
 
+                  {editingId === task.id ? ( 
+                    <div className="task-edit">  
+
+                      <input 
+                        value={editText} 
+                        autoFocus 
+                        onChange={(e) => 
+                          setEditText(e.target.value) 
+                        } 
+                        onKeyDown={(e) => { 
+ 
+                          if (e.key === "Enter") {
+ 
+                            updateLongTermTaskTitle( 
+                              task.id, 
+                              editText 
+                            )
+ 
+                            setEditText("") 
+                            setEditingId("")
+                          } 
+ 
+                        }} 
+                      /> 
+
+                      <button 
+                        className="task-action" 
+                        onClick={() => {
+ 
+                          updateLongTermTaskTitle( 
+                            task.id, 
+                            editText 
+                          )
+ 
+                          setEditText("") 
+                          setEditingId("") 
+ 
+                        }} 
+                      > 
+                        保存 
+                      </button> 
+ 
+                    </div> 
+ 
+                  ) : ( 
+ 
+                    <div className="task-content"> 
+ 
+                      <p className="task-title"> 
+                        {task.title}
+                      </p> 
+ 
+                      <button 
+                        className="task-action" 
+                        onClick={() => {
+ 
+                          setEditingId(task.id) 
+                          setEditText(task.title) 
+ 
+                        }} 
+                      > 
+                        編集 
+                      </button> 
+ 
+                    </div>
+ 
+                  )} 
+ 
+
+                  <button 
+                    className="task-delete" 
+                    onClick={() => 
+                      deleteLongTermTask(task.id) 
+                    } 
+                  > 
+                    削除
+                  </button> 
+
+                </TaskItem>
+              ))} 
+
+            </div> 
+
+          </SortableContext>
+ 
+ 
+          <div className="task-add"> 
+            {showAdd ? ( 
+
+
+              <div className="task-add-form"> 
+
+                <input
+                  className="task-add-input"
+                  value={addText} 
+                  autoFocus
+                  placeholder="タスクを入力..." 
+                  onChange={(e) => 
+                    setAddText(e.target.value) 
+                  } 
+                  onKeyDown={(e) => { 
+
+                    if (e.key === "Enter") { 
+                      addLongTermTask(addText) 
+                      setAddText("") 
+                      setShowAdd(false) 
+                    }
+
+                  }} 
+                /> 
+ 
+                <button 
+                  className="task-add-button" 
+                  onClick={() => { 
+ 
+                    addLongTermTask(addText) 
+                    setAddText("") 
+                    setShowAdd(false) 
+ 
+                  }} 
+                >
+                  追加 
+                </button> 
+              </div> 
+ 
+            ) : ( 
+               <button 
+
+                className="add-task-button" 
+                onClick={() =>
+                  setShowAdd(true) 
+                }
+              >
+                新しいタスクを追加 
+              </button> 
+ 
+            )}
+ 
+          </div> 
+ 
+        </section> 
+ 
+      </DndContext> 
+
+ 
+      <section className="long-term-section reflection-section"> 
+ 
+        <div className="section-header"> 
+ 
+
+          <div> 
+
+            <h2>振り返り</h2> 
+            <p className="section-description"> 
+              長期目標への取り組みを振り返る 
+            </p> 
+          </div> 
+ 
+        </div> 
+ 
+ 
+        <textarea 
+          className="reflection-input" 
+          placeholder="振り返りを入力..." 
+          onBlur={() => 
+            updateLongTermReflection( 
+              reflectionText 
+            ) 
+          } 
+          value={reflectionText} 
+          onChange={( 
+            e: React.ChangeEvent<HTMLTextAreaElement> 
+          ) => 
+            setReflectionText(e.target.value) 
+          } 
+        /> 
+ 
+      </section> 
+ 
+
+      <section className="long-term-section completed-task-section"> 
+ 
+        <div className="section-header"> 
+ 
+          <div> 
+            <h2>達成したタスク</h2> 
+            <p className="section-description"> 
+              この長期目標の期間中に達成したMonthlyタスク 
+            </p> 
+          </div>  
+
+        </div> 
+
+        {Object.entries(groupedTasks).length > 0 ? (  
+
+          <div className="completed-task-groups"> 
+ 
+            {Object.entries(groupedTasks).map( 
+              ([month, tasks]) => ( 
+ 
+                <div 
+                  className="completed-task-group" 
+                  key={month} 
+                > 
+ 
+                  <h3 className="completed-task-month"> 
+                    {new Date(month).getFullYear()}年 
+                    {new Date(month).getMonth() + 1}月 
+                  </h3>
+ 
+ 
+                  {tasks.length === 0 ? ( 
+ 
+                    <p className="section-message"> 
+                      この期間中に達成したMonthlyタスクはありません 
+                    </p> 
+ 
+                  ) : ( 
+ 
+                    <ul className="completed-task-list"> 
+ 
+                      {tasks.map(task => ( 
+                        <li key={task}> 
+                          {task}
+                        </li> 
+                      ))} 
+ 
+                    </ul> 
+ 
+                  )} 
+
+                </div> 
+ 
+              ) 
+            )} 
+ 
+          </div> 
+ 
+        ) : ( 
+ 
+          <p className="section-message"> 
+            この期間中に達成したMonthlyタスクはありません 
+          </p> 
+ 
+        )}
+ 
+      </section>
+
+ 
+      <section className="long-term-section completion-section"> 
+ 
+        <div className="section-header"> 
+ 
+          <div> 
+            <h2>目標を完了する</h2> 
+            <p className="section-description"> 
+              長期目標の達成状況を確定します 
+            </p> 
+          </div> 
+ 
+        </div> 
+ 
+ 
+        <button
+          className="completion-button" 
+          onClick={async () => { 
+ 
+            const isConfirmed = window.confirm( 
+              "達成にすると今の長期目標の画面はなくなり、新しい長期目標の画面へと更新されますがよろしいですか？" 
+            ) 
+            if (!isConfirmed) return 
             await updateLongTermToggle()
-            await initializeLongTermPlan()
-          }}>
-            完了
-          </button>
-        </div>
-      </div>
-    </>
-  )
+            await initializeLongTermPlan() 
+ 
+          }} 
+        > 
+          完了
+        </button> 
+
+      </section> 
+
+    </main> 
+  </div> 
+  ) 
 }

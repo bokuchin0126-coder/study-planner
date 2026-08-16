@@ -1,37 +1,41 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom" 
 
-export default function Sidebar() {
-  return (
-    <aside>
-      <h2>Study Planner</h2>
+const navigationItems = [ 
+  { path: "/daily", label: "デイリー" }, 
+  { path: "/weekly", label: "ウィークリー" }, 
+  { path: "/monthly", label: "マンスリー" }, 
+  { path: "/longTerm", label: "長期目標" }, 
+  { path: "/completed", label: "完了履歴" }, 
+  { path: "/settings", label: "設定" }, 
+] 
 
-      <nav>
-        <ul>
-          <li>
-            <Link to="/daily">デイリー</Link>
-          </li>
+export default function Sidebar() { 
+  const location = useLocation() 
 
-          <li>
-            <Link to="/weekly">ウィークリー</Link>
-          </li>
+  return ( 
+    <aside className="sidebar"> 
+      <Link to="/daily" className="sidebar-logo"> 
+        Study Planner 
+      </Link> 
 
-          <li>
-            <Link to="/monthly">マンスリー</Link>
-          </li>
-
-          <li>
-            <Link to="/longTerm">長期</Link>
-          </li>
-
-          <li>
-            <Link to="/completed">完了履歴</Link>
-          </li>
-
-          <li>
-            <Link to="/settings">設定</Link>
-          </li>
-        </ul>
-      </nav>
-    </aside>
-  )
-}
+      <nav className="sidebar-nav"> 
+        <ul> 
+          {navigationItems.map((item) => ( 
+            <li key={item.path}> 
+              <Link 
+                to={item.path} 
+                className={ 
+                  location.pathname === item.path 
+                    ? "sidebar-link active" 
+                    : "sidebar-link" 
+                } 
+              > 
+                {item.label} 
+              </Link> 
+            </li> 
+          ))} 
+        </ul> 
+      </nav> 
+    </aside> 
+  ) 
+} 

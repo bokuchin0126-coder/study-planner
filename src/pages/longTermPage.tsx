@@ -1,6 +1,5 @@
 import useLongTerm from "../hooks/useLongTerm"
 import { useState, useEffect, useRef } from "react"
-import { Link } from "react-router-dom"
 import type { Task } from "../types/baseTask"
 import handleDragEnd from "../utils/dragAndDrop"
 import Sidebar from "../components/Sidebar"

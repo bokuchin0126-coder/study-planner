@@ -42,6 +42,7 @@ const mockInsert = vi.fn()
 const mockSelect = vi.fn()
 const mockUpdate = vi.fn()
 const mockDelete = vi.fn()
+const mockUpsert = vi.fn()
 
 const mockEq = vi.fn()
 const mockIn = vi.fn()
@@ -60,6 +61,10 @@ beforeEach(() => {
 
   mockInsert.mockReturnValue({
     select: mockSelect,
+  })
+
+  mockUpsert.mockReturnValue({
+    select: mockSelect
   })
 
   mockSelect.mockReturnValue({
@@ -101,6 +106,7 @@ beforeEach(() => {
 
   mockedFrom.mockReturnValue({
     insert: mockInsert,
+    upsert: mockUpsert,
     select: mockSelect,
     update: mockUpdate,
     delete: mockDelete,
@@ -141,13 +147,19 @@ describe("createFirstDailyTaskInDB", () => {
     expect(mockedFrom).toHaveBeenNthCalledWith(1, "daily_plans")
     expect(mockedFrom).toHaveBeenNthCalledWith(2, "daily_tasks")
 
-    expect(mockInsert).toHaveBeenNthCalledWith(1, {
-      user_id: "user-id",
-      date: "2026-08-03",
-      reflection: "",
-    })
+    expect(mockUpsert).toHaveBeenCalledWith(
+      {
+        user_id: "user-id",
+        date: "2026-08-03",
+        reflection: "",
+      },
+      {
+        onConflict: "user_id,date",
+        ignoreDuplicates: true
+      }
+    )
 
-    expect(mockInsert).toHaveBeenNthCalledWith(2, {
+    expect(mockInsert).toHaveBeenCalledWith({
       user_id: "user-id",
       plan_id: "plan-id",
       text: "Study React",

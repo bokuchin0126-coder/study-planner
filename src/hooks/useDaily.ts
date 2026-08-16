@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import type { DailyRecord, DailyTaskRow } from "../types/daily"
 import type { Task } from "../types/baseTask"
 import { getNextOrderIndex } from "../api/orderIndexApi"
@@ -18,6 +18,7 @@ import {
 export default function useDaily() {
 
   const [dailyRecords, setDailyRecords] = useState<DailyRecord[]>([])
+  const addingDatesRef = useRef<Set<string>>(new Set())
 
   const today = new Intl.DateTimeFormat("sv-SE", {
     timeZone: "Asia/Tokyo"
@@ -45,8 +46,13 @@ export default function useDaily() {
   const [tomorrowTasks, setTomorrowTasks] = useState<Task[]>(tomorrowPlan?.tasks ?? [])
 
   const addDailyRecord = async (text: string, date: string) => {
+    if (text.trim() === "") return alert("タスク名を入力して下さい")
+
+    if (addingDatesRef.current.has(date)) return
+
+    addingDatesRef.current.add(date)
+
     try {
-      if (text.trim() === "") return alert("タスク名を入力して下さい")
       const contentsDate = dailyRecords.find(day => day.date === date)
 
       if (!contentsDate) {
@@ -97,6 +103,8 @@ export default function useDaily() {
     } catch(e) {
       console.error(e)
       alert("タスクの追加に失敗しました")
+    } finally {
+      addingDatesRef.current.delete(date)
     }
   }
 

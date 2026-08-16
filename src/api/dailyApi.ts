@@ -8,11 +8,17 @@ export async function createFirstDailyTaskInDB(text: string, date: string, order
 
     const { data: planData, error: planError } = await supabase
       .from("daily_plans")
-      .insert({
-        user_id: user.id,
-        date: date,
-        reflection: ""
-      })
+      .upsert(
+        {
+          user_id: user.id,
+          date: date,
+          reflection: ""
+        },
+        {
+          onConflict: "user_id,date",
+          ignoreDuplicates: true
+        }
+      )
       .select().single()
 
     if (planError) throw planError

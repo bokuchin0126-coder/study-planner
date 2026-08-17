@@ -72,6 +72,25 @@ export async function addDailyTaskInDB(text: string, date: string, orderIndex: n
   }
 }
 
+export async function getDailyPlanByDateInDB(date: string) {
+  try {
+    const user = await getCurrentUser()
+
+    const { data, error } = await supabase
+      .from("daily_plans")
+      .select()
+      .eq("user_id", user.id)
+      .eq("date", date)
+      .maybeSingle()
+
+    if (error) throw error
+
+    return data
+  } catch(e) {
+    throw(e)
+  }
+}
+
 export async function updateDailyTaskTitleInDB(id: string, text: string) {
   try {
     const user = await getCurrentUser()

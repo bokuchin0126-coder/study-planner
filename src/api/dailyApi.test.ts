@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase"
 import {
   createFirstDailyTaskInDB,
   addDailyTaskInDB,
+  getDailyPlanByDateInDB,
   updateDailyTaskTitleInDB,
   updateDailyTaskToggleInDB,
   deleteDailyCopyTaskInDB,
@@ -229,6 +230,66 @@ describe("addDailyTaskInDB", () => {
     })
 
     expect(result).toEqual(task)
+  })
+})
+
+describe("getDailyPlanByDateInDB", () => {
+  it("指定したdateのプランを返す", async () => {
+    const plan = {
+      user_id: "user-id",
+      date: "2026-05-06"
+    }
+    mockEq.mockReturnValueOnce({
+      eq: mockEq
+    })
+    mockEq.mockReturnValueOnce({
+      maybeSingle: mockMaybeSingle
+    })
+    mockMaybeSingle.mockResolvedValueOnce({
+      data: plan,
+      error: null
+    })
+
+    const result = await getDailyPlanByDateInDB("2026-05-06")
+
+    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
+    expect(mockedFrom).toHaveBeenCalledWith("daily_plans")
+    expect(mockEq).toHaveBeenNthCalledWith(1, 
+      "user_id",
+      "user-id"
+    )
+    expect(mockEq).toHaveBeenNthCalledWith(2, 
+      "date",
+      "2026-05-06"
+    )
+    expect(result).toEqual(plan)
+  })
+
+  it("指定したdateのプランがない場合はnullを返す", async () => {
+    mockEq.mockReturnValueOnce({
+      eq: mockEq
+    })
+    mockEq.mockReturnValueOnce({
+      maybeSingle: mockMaybeSingle
+    })
+    mockMaybeSingle.mockResolvedValueOnce({
+      data: null,
+      error: null
+    })
+
+    const result = await getDailyPlanByDateInDB("2026-05-06")
+
+    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
+    expect(mockedFrom).toHaveBeenCalledWith("daily_plans")
+    expect(mockEq).toHaveBeenNthCalledWith(1, 
+      "user_id",
+      "user-id"
+    )
+    expect(mockEq).toHaveBeenNthCalledWith(2, 
+      "date",
+      "2026-05-06"
+    )
+    expect(result).toBeNull()
   })
 })
 

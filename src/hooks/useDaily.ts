@@ -5,6 +5,7 @@ import { getNextOrderIndex } from "../api/orderIndexApi"
 import {
   createFirstDailyTaskInDB,
   addDailyTaskInDB,
+  getDailyPlanByDateInDB,
   updateDailyTaskTitleInDB,
   updateDailyTaskToggleInDB,
   deleteDailyCopyTaskInDB,
@@ -53,7 +54,7 @@ export default function useDaily() {
     addingDatesRef.current.add(date)
 
     try {
-      const contentsDate = dailyRecords.find(day => day.date === date)
+      const contentsDate = await getDailyPlanByDateInDB(date)
 
       if (!contentsDate) {
         const orderIndex = 0

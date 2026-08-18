@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom" 
+import "../css/sidebar.css"
 
 const navigationItems = [ 
-  { path: "/daily", label: "デイリー" }, 
-  { path: "/weekly", label: "ウィークリー" }, 
-  { path: "/monthly", label: "マンスリー" }, 
-  { path: "/longTerm", label: "長期目標" }, 
-  { path: "/completed", label: "完了履歴" }, 
+  { path: "/daily", label: "日" }, 
+  { path: "/weekly", label: "週" }, 
+  { path: "/monthly", label: "月" }, 
+  { path: "/longTerm", label: "長期" }, 
+  { path: "/completed", label: "達成履歴" }, 
   { path: "/settings", label: "設定" }, 
 ] 
 

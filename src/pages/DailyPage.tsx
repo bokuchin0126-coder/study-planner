@@ -10,6 +10,7 @@ import {
   useSensor, 
   useSensors, 
 } from "@dnd-kit/core" 
+import "../css/daily.css"
 
 export default function DailyPage() { 
  

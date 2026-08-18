@@ -8,6 +8,7 @@ import MonthlyPage from "./pages/MonthlyPage"
 import LongTermPage from "./pages/LongTermPage"
 import CompletedPage from "./pages/CompletedPage"
 import Settingspage from "./pages/SettingsPage"
+import "./css/common.css"
 
 
 function App() {

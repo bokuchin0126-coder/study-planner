@@ -1,0 +1,9 @@
+.monthly-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+}
+
+.monthly-content {
+    flex: 1;
+}

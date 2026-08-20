@@ -1,0 +1,9 @@
+.weekly-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+}
+
+.weekly-content {
+    flex: 1;
+}

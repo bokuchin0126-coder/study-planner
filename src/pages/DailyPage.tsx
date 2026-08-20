@@ -62,38 +62,7 @@ export default function DailyPage() {
     <div className="daily-page"> 
       <Sidebar /> 
  
-      <main className="daily-content"> 
- 
-        <header className="daily-header"> 
-          <p className="daily-date">{today}</p> 
-          <h1 className="daily-title">今日の学習</h1> 
-        </header> 
- 
-        <section className="daily-section yesterday-section"> 
-          <div className="section-header"> 
-            <h2>昨日の達成</h2> 
-          </div> 
- 
-          {yesterdayPlan ? ( 
-            completedYesterdayTasks && completedYesterdayTasks.length > 0 ? ( 
-              <ul className="completed-task-list"> 
-                {completedYesterdayTasks.map(task => ( 
-                  <li key={task.id}> 
-                    {task.title} 
-                  </li> 
-                ))} 
-              </ul> 
-            ) : ( 
-              <p className="section-message"> 
-                昨日達成したタスクはありません 
-              </p> 
-            ) 
-          ) : ( 
-            <p className="section-message"> 
-              昨日のタスクはありません 
-            </p> 
-          )} 
-        </section> 
+      <main className="daily-content">  
  
         <DndContext  
           sensors={sensors} 
@@ -281,6 +250,32 @@ export default function DailyPage() {
             {isTyping ? "入力中..." : "保存済み ✓"} 
           </p> 
         </section> 
+
+        <section className="daily-section yesterday-section"> 
+          <div className="section-header"> 
+            <h2>昨日の達成</h2> 
+          </div> 
+ 
+          {yesterdayPlan ? ( 
+            completedYesterdayTasks && completedYesterdayTasks.length > 0 ? ( 
+              <ul className="completed-task-list"> 
+                {completedYesterdayTasks.map(task => ( 
+                  <li key={task.id}> 
+                    {task.title} 
+                  </li> 
+                ))} 
+              </ul> 
+            ) : ( 
+              <p className="section-message"> 
+                昨日達成したタスクはありません 
+              </p> 
+            ) 
+          ) : ( 
+            <p className="section-message"> 
+              昨日のタスクはありません 
+            </p> 
+          )} 
+        </section>
  
         <DndContext 
           sensors={sensors}  

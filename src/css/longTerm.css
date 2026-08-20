@@ -1,0 +1,9 @@
+.long-term-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+}
+
+.long-term-content {
+    flex: 1;
+}

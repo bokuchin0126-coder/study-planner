@@ -1,0 +1,9 @@
+.completed-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+}
+
+.completed-content {
+    flex: 1;
+}

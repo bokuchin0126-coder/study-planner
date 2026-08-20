@@ -97,78 +97,80 @@ export default function DailyPage() {
                       key={task.id} 
                       id={task.id} 
                     > 
-                      <button  
-                        className="task-toggle" 
-                        onClick={async () => { 
-                          await updateDailyTaskToggle( 
-                            task.id, 
-                            task.completed, 
-                            today 
-                          ) 
-                        }} 
-                      > 
-                        {task.completed ? "☑" : "□"}
-                      </button> 
- 
-                      {editingId === task.id ? ( 
-                        <div className="task-edit"> 
-                          <input 
-                            autoFocus 
-                            value={editText} 
-                            onChange={(e) => setEditText(e.target.value)}
-                            onKeyDown={async (e) => { 
-                              if (e.key === "Enter") {
+                      <div className="task-row">
+                        <button  
+                          className="task-toggle" 
+                          onClick={async () => { 
+                            await updateDailyTaskToggle( 
+                              task.id, 
+                              task.completed, 
+                              today 
+                            ) 
+                          }} 
+                        > 
+                          {task.completed ? "☑" : "□"}
+                        </button> 
+   
+                        {editingId === task.id ? ( 
+                          <div className="task-edit"> 
+                            <input 
+                              autoFocus 
+                              value={editText} 
+                              onChange={(e) => setEditText(e.target.value)}
+                              onKeyDown={async (e) => { 
+                                if (e.key === "Enter") {
+                                  await updateDailyTaskTitle( 
+                                    task.id, 
+                                    editText,
+                                    today 
+                                 ) 
+                                  setEditText("") 
+                                  setEditingId(null)
+                                } 
+                              }} 
+                            /> 
+   
+                            <button  
+                              className="task-action"
+                              onClick={async () => { 
                                 await updateDailyTaskTitle( 
                                   task.id, 
                                   editText,
-                                  today 
+                                  today
                                 ) 
                                 setEditText("") 
-                                setEditingId(null)
-                              } 
-                            }} 
-                          /> 
- 
-                          <button  
-                            className="task-action"
-                            onClick={async () => { 
-                              await updateDailyTaskTitle( 
-                                task.id, 
-                                editText,
-                                today
-                              ) 
-                              setEditText("") 
-                              setEditingId(null) 
-                            }}
-                          >
-                            保存 
-                          </button> 
-                        </div> 
-                      ) : (
-                        <div className="task-content"> 
-                          <p className="task-title">
-                            {task.title}
-                          </p> 
-                          <button 
-                            className="task-action" 
-                            onClick={() => { 
-                              setEditingId(task.id) 
-                              setEditText(task.title) 
-                            }} 
-                          > 
-                            編集 
-                          </button> 
-                        </div> 
-                      )} 
- 
-                      <button  
-                        className="task-delete" 
-                        onClick={async () => { 
-                          await deleteDailyTask(task.id, today) 
-                        }} 
-                      > 
-                        削除 
-                      </button> 
+                                setEditingId(null) 
+                              }}
+                            >
+                              保存 
+                            </button> 
+                          </div> 
+                        ) : (
+                          <div className="task-content"> 
+                            <p className="task-title">
+                              {task.title}
+                            </p> 
+                            <button 
+                              className="task-action" 
+                              onClick={() => { 
+                                setEditingId(task.id) 
+                                setEditText(task.title) 
+                              }} 
+                            > 
+                              編集 
+                            </button> 
+                          </div> 
+                        )} 
+   
+                        <button  
+                          className="task-delete" 
+                          onClick={async () => { 
+                            await deleteDailyTask(task.id, today) 
+                          }} 
+                        > 
+                          削除 
+                        </button> 
+                      </div>
                     </TaskItem> 
                   )} 
                 </div> 
@@ -310,16 +312,31 @@ export default function DailyPage() {
                       key={task.id} 
                       id={task.id} 
                     > 
+                      <div className="task-row">
  
-                      {editingId === task.id ? ( 
-                        <div className="task-edit"> 
- 
-                          <input 
-                            autoFocus 
-                            value={editText} 
-                            onChange={(e) => setEditText(e.target.value)} 
-                            onKeyDown={async (e) => { 
-                              if (e.key === "Enter") { 
+                        {editingId === task.id ? ( 
+                          <div className="task-edit"> 
+   
+                            <input 
+                              autoFocus 
+                              value={editText} 
+                              onChange={(e) => setEditText(e.target.value)} 
+                              onKeyDown={async (e) => { 
+                                if (e.key === "Enter") { 
+                                  await updateDailyTaskTitle( 
+                                    task.id, 
+                                    editText, 
+                                    tomorrowDate 
+                                  ) 
+                                  setEditText("") 
+                                  setEditingId(null) 
+                                } 
+                              }} 
+                            /> 
+   
+                            <button  
+                              className="task-action"
+                              onClick={async () => { 
                                 await updateDailyTaskTitle( 
                                   task.id, 
                                   editText, 
@@ -327,55 +344,42 @@ export default function DailyPage() {
                                 ) 
                                 setEditText("") 
                                 setEditingId(null) 
-                              } 
-                            }} 
-                          /> 
- 
-                          <button  
-                            className="task-action"
-                            onClick={async () => { 
-                              await updateDailyTaskTitle( 
-                                task.id, 
-                                editText, 
-                                tomorrowDate 
-                              ) 
-                              setEditText("") 
-                              setEditingId(null) 
-                            }} 
-                          > 
-                            保存 
-                          </button> 
- 
-                        </div> 
-                      ) : ( 
-                        <div className="task-content"> 
- 
-                          <p className="task-title">
-                            {task.title} 
-                          </p> 
- 
-                          <button 
-                            className="task-action" 
-                            onClick={() => { 
-                              setEditingId(task.id) 
-                              setEditText(task.title) 
-                            }} 
-                          > 
-                            編集 
-                          </button> 
- 
-                        </div> 
-                      )} 
+                              }} 
+                            > 
+                              保存 
+                            </button> 
+   
+                          </div> 
+                        ) : ( 
+                          <div className="task-content"> 
+   
+                            <p className="task-title">
+                              {task.title} 
+                            </p> 
+   
+                            <button 
+                              className="task-action" 
+                              onClick={() => { 
+                                setEditingId(task.id) 
+                                setEditText(task.title) 
+                              }} 
+                            > 
+                              編集 
+                            </button> 
+   
+                          </div> 
+                        )} 
+  
+                        <button 
+                          className="task-delete" 
+                          onClick={() => { 
+                            deleteDailyTask(task.id, tomorrowDate) 
+                          }} 
+                        > 
+                          削除 
+                        </button> 
 
-                      <button 
-                        className="task-delete" 
-                        onClick={() => { 
-                          deleteDailyTask(task.id, tomorrowDate) 
-                        }} 
-                      > 
-                        削除 
-                      </button> 
-
+                      </div>
                     </TaskItem> 
                   )} 
                 </div> 

@@ -48,7 +48,6 @@ export default function DailyPage() {
   const [tomorrowShowAdd, setTomorrowShowAdd] = useState<boolean>(false) 
  
   const [editingId, setEditingId] = useState<string | null>(null) 
-  const [isTyping, setIsTyping] = useState<boolean>(false) 
  
   const completedYesterdayTasks = yesterdayPlan?.tasks.filter(task => task.completed) 
  
@@ -80,9 +79,6 @@ export default function DailyPage() {
             <div className="section-header">
               <div>
                 <h2>今日の課題</h2>
-                <p className="section-description"> 
-                  今日取り組むタスク 
-                </p> 
               </div> 
             </div> 
 
@@ -228,7 +224,7 @@ export default function DailyPage() {
  
           </section> 
         </DndContext> 
- 
+
         <section className="daily-section reflection-section"> 
           <div className="section-header"> 
             <h2>今日の振り返り</h2> 
@@ -239,46 +235,15 @@ export default function DailyPage() {
             placeholder="今日の学習で気づいたこと、できたこと、改善したいこと..." 
             onBlur={() => { 
               updateDailyRecordReflection(reflectionText, today) 
-              setIsTyping(false) 
             }} 
             value={reflectionText} 
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => { 
               setReflectionText(e.target.value) 
-              setIsTyping(true)
             }} 
           />
- 
-          <p className="reflection-status"> 
-            {isTyping ? "入力中..." : "保存済み ✓"} 
-          </p> 
+
         </section> 
 
-        <section className="daily-section yesterday-section"> 
-          <div className="section-header"> 
-            <h2>昨日の達成</h2> 
-          </div> 
- 
-          {yesterdayPlan ? ( 
-            completedYesterdayTasks && completedYesterdayTasks.length > 0 ? ( 
-              <ul className="completed-task-list"> 
-                {completedYesterdayTasks.map(task => ( 
-                  <li key={task.id}> 
-                    {task.title} 
-                  </li> 
-                ))} 
-              </ul> 
-            ) : ( 
-              <p className="section-message"> 
-                昨日達成したタスクはありません 
-              </p> 
-            ) 
-          ) : ( 
-            <p className="section-message"> 
-              昨日のタスクはありません 
-            </p> 
-          )} 
-        </section>
- 
         <DndContext 
           sensors={sensors}  
           onDragEnd={(event) => 
@@ -295,9 +260,6 @@ export default function DailyPage() {
             <div className="section-header"> 
               <div>
                 <h2>明日の課題</h2> 
-                <p className="section-description"> 
-                  明日取り組むタスクを準備しておきましょう 
-                </p> 
               </div> 
             </div> 
  
@@ -427,10 +389,37 @@ export default function DailyPage() {
                   新しいタスクを追加 
                 </button> 
               )} 
+
             </div> 
  
           </section> 
-        </DndContext> 
+        </DndContext>
+
+        <section className="daily-section yesterday-section"> 
+          <div className="section-header"> 
+            <h2>昨日の達成</h2> 
+          </div> 
+ 
+          {yesterdayPlan ? ( 
+            completedYesterdayTasks && completedYesterdayTasks.length > 0 ? ( 
+              <ul className="completed-task-list"> 
+                {completedYesterdayTasks.map(task => ( 
+                  <li key={task.id}> 
+                    {task.title} 
+                  </li> 
+                ))} 
+              </ul> 
+            ) : ( 
+              <p className="section-message"> 
+                昨日達成したタスクはありません 
+              </p> 
+            ) 
+          ) : ( 
+            <p className="section-message"> 
+              昨日のタスクはありません 
+            </p> 
+          )} 
+        </section>
  
       </main> 
     </div> 

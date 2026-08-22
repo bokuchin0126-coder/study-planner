@@ -1,127 +1,894 @@
-/*===Layout===*/
+/* ========================================
+   Layout
+======================================== */
 
 .daily-page {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+
+  overflow: hidden;
+
+  background-color: #ffffff;
+  color: #111111;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Noto Sans JP",
+    "Hiragino Kaku Gothic ProN",
+    "Yu Gothic",
+    "YuGothic",
+    sans-serif;
 }
+
+
+/* ========================================
+   Main Content
+======================================== */
 
 .daily-content {
-    position: relative;
-    flex: 1;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
 
-    width: 100%;
-    height: 100vh;
+  height: 100vh;
 
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto 1fr 1fr;
+  box-sizing: border-box;
+
+  display: grid;
+
+  /* 左60% : 右40% */
+  grid-template-columns: 5.5fr 4.5fr;
+
+  /*
+    全体を10分割。
+    左：
+      今日の課題 7
+      振り返り 3
+
+    右：
+      明日の課題 5
+      昨日の達成 5
+  */
+  grid-template-rows: repeat(10, minmax(0, 1fr));
+
+  gap: 15px;
+  padding: 20px;
+
+  overflow: hidden;
+  background-color: #f4f5f6;
 }
 
-/*===Section===*/
 
-.daily-content section:nth-of-type(1) {
-    position: absolute;
-    overflow: auto;
+/* ========================================
+   Section
+======================================== */
 
-    left: 0;
-    top: 2%;
+.daily-section {
+  position: relative;
 
-    width: 50%;
-    height: 68%;
+  min-width: 0;
+  min-height: 0;
 
-    grid-column: 1;
-    grid-row: 1;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 20px 16px 60px;
+
+  background-color: #ffffff;
+
+  border-radius: 2px;
+
+  overflow: hidden;
 }
 
-.daily-content section:nth-of-type(2) {
-    position: absolute;
 
-    left: 0;
-    bottom: 2%;
+/* ========================================
+   Section Position
+======================================== */
 
-    width: 50%;
-    height: 28%;
+/*
+  左側
+  今日の課題 70%
+*/
 
-    grid-column: 1;
-    grid-row: 2;
+.today-section {
+  grid-column: 1;
+  grid-row: 1 / 7;
+
+  margin-bottom: -20px;
 }
 
-.daily-content section:nth-of-type(3) {
-    position: absolute;
-    overflow: auto;
 
-    right: 2%;
-    top: 2%;
+/*
+  左側
+  振り返り 30%
+*/
 
-    width: 48%;
-    height: 38%;
+.reflection-section {
+  grid-column: 1;
+  grid-row: 7 / 11;
 
-    grid-column: 2;
-    grid-row: 1;
+  padding-bottom: 15px;
+  border-top: 1px solid #dddddd;
 }
 
-.daily-content section:nth-of-type(4) {
-    position: absolute;
-    overflow: auto;
 
-    right: 2%;
-    bottom: 2%;
+/*
+  右側
+  明日の課題 50%
+*/
 
-    width: 48%;
-    height: 58%;
-
-    grid-column: 2;
-    grid-row: 2;
+.tomorrow-section {
+  grid-column: 2;
+  grid-row: 1 / 6;
 }
 
-/*===Task===*/
+
+/*
+  右側
+  昨日の達成 50%
+*/
+
+.yesterday-section {
+  grid-column: 2;
+  grid-row: 6 / 11;
+}
+
+
+/* ========================================
+   Section Header
+======================================== */
+
+.section-header {
+  flex-shrink: 0;
+
+  margin-bottom: 18px;
+}
+
+.section-header h2 {
+  margin: 0;
+
+  color: #111111;
+
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+
+/*
+  説明文は使用しない
+*/
+
+.section-description {
+  display: none;
+}
+
+
+/* ========================================
+   Task List
+======================================== */
 
 .task-list {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #eeeeee;
+  min-width: 0;
+  min-height: 0;
+
+  flex: 1;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 2px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  background-color: #ffffff;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cccccc transparent;
 }
+
+.task-list > * {
+  border-bottom: 1px solid #dddddd;
+}
+
+/* ========================================
+   Task List Scrollbar
+======================================== */
+
+.task-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.task-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.task-list::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+  border-radius: 2px;
+}
+
+
+/* ========================================
+   Task Row
+======================================== */
 
 .task-row {
-    display: grid;
-    align-items: center;
-    column-gap: 16px;
+  width: 100%;
 
-    padding: 8px 12px;
-    border: 1px solid #eeeeee;
+  min-height: 54px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 12px;
+
+  background-color: #ffffff;
 }
+
+
+/*
+  最後のタスクは外枠の線を使用
+*/
 
 .task-row:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
-.today-section .task-row {
-    grid-template-columns: 28px minmax(0, 1fr) auto auto;
+
+/* ========================================
+   Task Toggle Button
+======================================== */
+
+.task-toggle {
+  width: 28px;
+  height: 28px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-right: 7px;
+  padding: 0;
+
+  border: 1px solid transparent;
+  border-radius: 2px;
+
+  background-color: transparent;
+  color: #111111;
+
+  font-family: inherit;
+  font-size: 20px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
-.tomorrow-section .task-row {
-    grid-template-columns: minmax(0, 1fr) auto auto;
+.task-toggle:hover {
+  background-color: #eeeeee;
+  border-color: #cccccc;
 }
 
-.task-edit {
-    display: contents;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    column-gap: 12px;
-    min-width: 0;
-}
+
+/* ========================================
+   Task Content
+======================================== */
 
 .task-content {
-    display: contents;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    min-width: 0;
-    text-align: left;
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
 }
 
-/*===Button===*/
+.task-title {
+  min-width: 0;
 
-/*===Input===*/
+  flex: 1;
 
-/*===Message===*/
+  margin: 0;
+
+  color: #111111;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+
+/* ========================================
+   Edit / Delete Button
+======================================== */
+
+.task-action,
+.task-delete {
+  flex-shrink: 0;
+
+  padding: 5px 7px;
+
+  border: 1px solid transparent;
+  border-radius: 2px;
+
+  background-color: #ffffff;
+  color: #555555;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
+
+  text-decoration: none;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.task-action:hover,
+.task-delete:hover {
+  background-color: #eeeeee;
+  border-color: #c8c8c8;
+
+  text-decoration: none;
+}
+
+.task-action:focus-visible,
+.task-delete:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 1px;
+
+  text-decoration: none;
+}
+
+.task-delete {
+  margin-left: 3px;
+}
+
+
+/* ========================================
+   Task Edit
+======================================== */
+
+.task-edit {
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+}
+
+.task-edit input {
+  min-width: 0;
+
+  flex: 1;
+
+  height: 32px;
+
+  box-sizing: border-box;
+
+  padding: 0 8px;
+
+  border: 1px solid #cccccc;
+  border-radius: 2px;
+
+  background-color: #ffffff;
+  color: #111111;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  outline: none;
+}
+
+.task-edit input:focus {
+  border-color: #111111;
+}
+
+
+/* ========================================
+   Task Bottom Area
+======================================== */
+
+.today-section .task-add,
+.tomorrow-section .task-add {
+  position: absolute;
+
+  right: 18px;
+  bottom: 17px;
+
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+
+  margin: 0;
+}
+
+
+/* ========================================
+   Carry Over Message
+======================================== */
+
+.today-section .carryover-note,
+.tomorrow-section .carryover-note {
+  position: absolute;
+
+  left: 18px;
+  bottom: 17px;
+
+  margin: 0;
+
+  /*
+    前回より濃く
+  */
+  color: #555555;
+
+  font-size: 13px;
+  line-height: 34px;
+}
+
+
+/* ========================================
+   Add Task Button
+======================================== */
+
+.add-task-button {
+  height: 34px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 12px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #dddddd;
+  border-radius: 2px;
+
+  background-color: #f5f4f6;
+  color: #111111;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.add-task-button::before {
+  content: "+";
+
+  margin-right: 6px;
+
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.add-task-button:hover {
+  background-color: #eeeeee;
+  border-color: #aaaaaa;
+}
+
+.add-task-button:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 1px;
+}
+
+
+/* ========================================
+   Add Task Form
+======================================== */
+
+.task-add-form {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  margin: 0;
+}
+
+.task-add-input {
+  min-width: 0;
+
+  width: 220px;
+
+  height: 34px;
+
+  box-sizing: border-box;
+
+  padding: 0 9px;
+
+  border: 1px solid #cccccc;
+  border-radius: 2px;
+
+  background-color: #ffffff;
+  color: #111111;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  outline: none;
+}
+
+.task-add-input:focus {
+  border-color: #111111;
+}
+
+.task-add-input::placeholder {
+  color: #999999;
+}
+
+
+/* ========================================
+   Add Button
+======================================== */
+
+.task-add-button {
+  height: 34px;
+
+  flex-shrink: 0;
+
+  padding: 0 13px;
+
+  border: 1px solid #111111;
+  border-radius: 2px;
+
+  background-color: #111111;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.task-add-button:hover {
+  background-color: #444444;
+  border-color: #444444;
+}
+
+.task-add-button:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 1px;
+}
+
+
+/* ========================================
+   Reflection
+======================================== */
+
+.reflection-input {
+  min-width: 0;
+  min-height: 0;
+
+  flex: 1;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  resize: none;
+
+  padding: 7px 12px;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 2px;
+
+  background-color: #ffffff;
+  color: #111111;
+
+  font-family: inherit;
+
+  font-size: 13px;
+
+  line-height: 36px;
+
+  outline: none;
+
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+
+      transparent 0,
+      transparent 35px,
+
+      #e5e5e5 35px,
+      #e5e5e5 36px,
+
+      transparent 36px,
+      transparent 37px
+    );
+
+  background-size:
+    calc(100% - 24px) 100%;
+
+  background-position:
+    center;
+
+  background-repeat: no-repeat;
+}
+
+.reflection-input:focus {
+  border-color: #cccccc;
+}
+
+.reflection-input::placeholder {
+  color: #888888;
+}
+
+
+/* ========================================
+   Message
+======================================== */
+
+.section-message {
+  flex: 1;
+
+  min-height: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 2px;
+
+  color: #777777;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+
+  text-align: center;
+}
+
+
+/* ========================================
+   Completed Tasks
+======================================== */
+
+.completed-task-list {
+  min-height: 0;
+
+  flex: 1;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  overflow-y: auto;
+
+  border-top: 1px solid #e5e5e5;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cccccc transparent;
+}
+
+.completed-task-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.completed-task-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.completed-task-list::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+
+  border-radius: 2px;
+}
+
+.completed-task-list li {
+  padding: 12px 8px;
+
+  border-bottom: 1px solid #e5e5e5;
+
+  color: #222222;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+.completed-task-list li::before {
+  content: "•";
+
+  margin-right: 10px;
+
+  color: #888888;
+}
+
+
+/* ========================================
+   Sidebar
+======================================== */
+
+.daily-page .sidebar {
+  width: 190px;
+
+  min-width: 190px;
+
+  height: 100vh;
+
+  box-sizing: border-box;
+
+  padding: 24px 12px;
+
+  background-color: #ffffff;
+
+  border-right: 1px solid #eeeeee;
+
+  overflow: hidden;
+}
+
+.daily-page .sidebar h1,
+.daily-page .sidebar h2,
+.daily-page .sidebar-title {
+  margin: 0 0 28px;
+
+  padding: 0 14px;
+
+  color: #111111;
+
+  font-size: 18px;
+
+  font-weight: 700;
+}
+
+.daily-page .sidebar a,
+.daily-page .sidebar button {
+  width: 100%;
+
+  min-height: 46px;
+
+  box-sizing: border-box;
+
+  display: flex;
+
+  align-items: center;
+
+  padding: 0 14px;
+
+  border: 1px solid transparent;
+
+  border-radius: 2px;
+
+  background-color: transparent;
+
+  color: #111111;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.daily-page .sidebar a:hover,
+.daily-page .sidebar button:hover {
+  background-color: #eeeeee;
+
+  border-color: #dddddd;
+
+  text-decoration: none;
+}
+
+
+/* ========================================
+   Responsive
+======================================== */
+
+@media (max-width: 900px) {
+  .daily-page {
+    display: block;
+  }
+
+  .daily-page .sidebar {
+    width: 100%;
+
+    min-width: 0;
+
+    height: 56px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 6px 12px;
+
+    border-right: none;
+
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .daily-content {
+    height: calc(100vh - 56px);
+
+    padding: 14px;
+
+    gap: 14px;
+  }
+}
+
+
+@media (max-width: 700px) {
+  .daily-content {
+    grid-template-columns: 1fr;
+
+    grid-template-rows:
+      repeat(4, minmax(0, 1fr));
+
+    overflow-y: auto;
+  }
+
+  .today-section {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .tomorrow-section {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .reflection-section {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .yesterday-section {
+    grid-column: 1;
+    grid-row: 4;
+  }
+}

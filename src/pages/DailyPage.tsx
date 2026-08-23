@@ -82,17 +82,24 @@ export default function DailyPage() {
               </div> 
             </div> 
 
-            {todayPlan ? ( 
               <SortableContext 
                 items={todayTasks} 
                 strategy={verticalListSortingStrategy} 
               > 
+  
                 <div className="task-list"> 
+                  {todayTasks.length === 0 && (
+                    <p className="daily-message"> 
+                      タスクを追加してください 
+                    </p> 
+                  )}
+
                   {todayTasks.map(task => 
                     <TaskItem 
                       key={task.id} 
                       id={task.id} 
                     > 
+                    
                       <div className="task-row">
                         <button  
                           className="task-toggle" 
@@ -169,13 +176,9 @@ export default function DailyPage() {
                       </div>
                     </TaskItem> 
                   )} 
+
                 </div> 
               </SortableContext> 
-            ) : ( 
-              <p className="section-message"> 
-                タスクを追加してください 
-              </p> 
-            )} 
  
             <div className="task-add"> 
               {todayShowAdd ? ( 
@@ -262,13 +265,20 @@ export default function DailyPage() {
                 <h2>明日の課題</h2> 
               </div> 
             </div> 
- 
-            {tomorrowPlan ? (
+
               <SortableContext 
                 items={tomorrowTasks} 
                 strategy={verticalListSortingStrategy} 
               > 
-                <div className="task-list"> 
+        
+                <div className="task-list">
+
+                  {tomorrowTasks.length === 0 && (
+                    <p className="daily-message"> 
+                      タスクを追加してください 
+                    </p> 
+                  )}
+
                   {tomorrowTasks.map(task => 
                     <TaskItem 
                       key={task.id} 
@@ -345,13 +355,9 @@ export default function DailyPage() {
                     </TaskItem> 
                   )} 
                 </div> 
+
               </SortableContext> 
-            ) : ( 
-              <p className="section-message"> 
-                タスクを追加してください 
-              </p> 
-            )} 
- 
+
             <div className="task-add">
               {tomorrowShowAdd ? ( 
                 <div className="task-add-form"> 

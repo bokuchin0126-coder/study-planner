@@ -84,7 +84,6 @@ export async function getDailyPlanByDateInDB(date: string) {
       .maybeSingle()
 
     if (error) throw error
-
     return data
   } catch(e) {
     throw(e)

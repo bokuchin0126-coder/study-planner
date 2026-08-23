@@ -13,6 +13,7 @@ import {
   useSensor, 
   useSensors, 
 } from "@dnd-kit/core" 
+import "../css/weekly.css"
 
 export default function WeeklyPage() { 
  
@@ -44,7 +45,6 @@ export default function WeeklyPage() {
   const [reflectionText, setReflectionText] = useState<string>("") 
  
   const [editingId, setEditingId] = useState<string>("") 
-  const [isTyping, setIsTyping] = useState<boolean>(false)
  
   const weekStart = weeklyDate("start") 
   const weekEnd = weeklyDate("end")
@@ -67,15 +67,18 @@ export default function WeeklyPage() {
       weekStart <= day.date && day.date <= weekEnd 
   ) 
  
-  const completedThisWeekDailyPlans = thisWeekDailyPlans.flatMap( 
-    (day: DailyRecord) =>
-      day.tasks 
-        .filter(task => task.completed) 
-        .map(task => ({ 
-          ...task, 
-          date: day.date 
-        })) 
-  ) 
+  const completedThisWeekDailyPlans = thisWeekDailyPlans
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .flatMap(
+      (day: DailyRecord) =>
+        day.tasks
+          .filter(task => task.completed)
+          .map(task => ({
+            ...task,
+            date: day.date
+          }))
+  )
+
 
   const completedLastWeekTasks = 
     lastWeekPlan?.tasks.filter(task => task.completed) 
@@ -98,42 +101,7 @@ export default function WeeklyPage() {
       <Sidebar /> 
  
       <main className="weekly-content"> 
- 
-        <header className="weekly-header"> 
-          <p className="weekly-date"> 
-            {weekStart} ～ {weekEnd} 
-          </p> 
-          <h1 className="weekly-title"> 
-            今週の学習 
-          </h1> 
-        </header>
- 
-        <section className="weekly-section last-week-section"> 
-          <div className="section-header"> 
-            <h2>先週の達成</h2> 
-          </div>
- 
-          {lastWeekPlan ? ( 
-            completedLastWeekTasks && 
-            completedLastWeekTasks.length > 0 ? ( 
-              <ul className="completed-task-list">
-                {completedLastWeekTasks.map(task => ( 
-                  <li key={task.id}> 
-                    {task.title} 
-                  </li> 
-                ))} 
-              </ul> 
-            ) : ( 
-              <p className="section-message"> 
-                先週達成したタスクはありません 
-              </p> 
-            ) 
-          ) : ( 
-            <p className="section-message"> 
-              先週のタスクはありません 
-            </p> 
-          )} 
-        </section> 
+  
  
         <DndContext 
           sensors={sensors} 
@@ -148,12 +116,9 @@ export default function WeeklyPage() {
         > 
           <section className="weekly-section this-week-section"> 
  
-            <div className="section-header"> 
+            <div className="weekly-section-header"> 
               <div> 
                 <h2>今週の課題</h2> 
-                <p className="section-description"> 
-                  今週取り組むタスク 
-                </p> 
               </div> 
             </div> 
  
@@ -161,96 +126,106 @@ export default function WeeklyPage() {
               items={weekTasks} 
               strategy={verticalListSortingStrategy} 
             >
-              <div className="task-list">
+              <div className="weekly-task-list">
+
+                {weekTasks.length === 0 && ( 
+                  <p className="weekly-section-message"> 
+                    タスクを追加してください 
+                  </p> 
+                )}
  
                 {weekTasks.map(task =>
                   <TaskItem 
                     key={task.id} 
                     id={task.id} 
                   > 
- 
-                    <button 
-                      className="task-toggle" 
-                      onClick={() =>
-                        updateTaskToggle( 
-                          task.id, 
-                          task.completed, 
-                          weekStart 
-                        ) 
-                      } 
-                    > 
-                      {task.completed ? "☑" : "□"} 
-                    </button> 
- 
-                    {editingId === task.id ? (
-                      <div className="task-edit"> 
 
-                        <input 
-                          value={editText}
-                          autoFocus 
-                          onChange={(e) =>
-                            setEditText(e.target.value) 
-                          }
-                          onKeyDown={async (e) => {
-                            if (e.key === "Enter") { 
+                    <div className="weekly-task-row">
+                    
+                      <button 
+                        className="weekly-task-toggle" 
+                        onClick={() =>
+                          updateTaskToggle( 
+                            task.id, 
+                            task.completed, 
+                            weekStart 
+                          ) 
+                        } 
+                       > 
+                        {task.completed ? "☑" : "□"} 
+                      </button> 
+   
+                      {editingId === task.id ? (
+                        <div className="weekly-task-edit"> 
+  
+                          <input 
+                            value={editText}
+                            autoFocus 
+                            onChange={(e) =>
+                              setEditText(e.target.value) 
+                            }
+                            onKeyDown={async (e) => {
+                              if (e.key === "Enter") { 
+                                await updateWeeklyTaskTitle( 
+                                  task.id,
+                                  editText, 
+                                  weekStart
+                                ) 
+                                setEditText("") 
+                                setEditingId("")
+                              } 
+                            }} 
+                          /> 
+   
+                          <button 
+                            className="weekly-task-action" 
+                            onClick={async () => {
                               await updateWeeklyTaskTitle( 
-                                task.id,
+                                task.id, 
                                 editText, 
-                                weekStart
+                                weekStart 
                               ) 
-                              setEditText("") 
+                              setEditText("")
                               setEditingId("")
-                            } 
-                          }} 
-                        /> 
- 
-                        <button 
-                          className="task-action" 
-                          onClick={async () => {
-                            await updateWeeklyTaskTitle( 
-                              task.id, 
-                              editText, 
-                              weekStart 
-                            ) 
-                            setEditText("")
-                            setEditingId("")
-                          }} 
-                        > 
-                          保存
-                        </button> 
- 
-                      </div> 
-                    ) : ( 
-                      <div className="task-content">
-
-                        <p className="task-title"> 
-                          {task.title} 
-                        </p> 
- 
-                        <button 
-                          className="task-action" 
-                          onClick={() => { 
-                            setEditingId(task.id) 
-                            setEditText(task.title) 
-                          }} 
-                        > 
-                          編集 
-                        </button> 
- 
-                      </div> 
-                    )} 
- 
-                    <button 
-                      className="task-delete" 
-                      onClick={() => 
-                        deleteWeeklyTask( 
-                          task.id, 
-                          weekStart 
-                        ) 
-                      }
-                    > 
-                      削除
-                    </button>
+                            }} 
+                          > 
+                            保存
+                          </button> 
+   
+                        </div> 
+                      ) : ( 
+                        <div className="weekly-task-content"> 
+      
+                          <p className="weekly-task-title"> 
+                            {task.title} 
+                          </p> 
+   
+                          <button 
+                            className="weekly-task-action" 
+                            onClick={() => { 
+                              setEditingId(task.id) 
+                              setEditText(task.title) 
+                            }} 
+                          > 
+                            編集 
+                          </button> 
+   
+                        </div> 
+                      )} 
+   
+                      <button 
+                        className="weekly-task-delete" 
+                        onClick={() => 
+                          deleteWeeklyTask( 
+                            task.id, 
+                            weekStart 
+                          ) 
+                        }
+                      > 
+                        削除
+                      </button>
+  
+                    </div>
 
                   </TaskItem> 
                 )} 
@@ -258,13 +233,13 @@ export default function WeeklyPage() {
               </div>
             </SortableContext> 
  
-            <div className="task-add"> 
+            <div className="weekly-task-add"> 
  
               {weekShowAdd ? ( 
-                <div className="task-add-form"> 
+                <div className="weekly-task-add-form"> 
  
                   <input 
-                    className="task-add-input" 
+                    className="weekly-task-add-input" 
                     value={addText} 
                     autoFocus 
                     placeholder="タスク名を入力..." 
@@ -285,7 +260,7 @@ export default function WeeklyPage() {
                   /> 
  
                   <button
-                    className="task-add-button" 
+                    className="weekly-task-add-button" 
                     onClick={async () => { 
                       await addWeeklyRecord( 
                         addText,
@@ -303,14 +278,8 @@ export default function WeeklyPage() {
               ) : ( 
                 <div> 
  
-                  {!weekPlan && ( 
-                    <p className="section-message"> 
-                      タスクを追加してください 
-                    </p> 
-                  )} 
- 
                   <button 
-                    className="add-task-button" 
+                    className="weekly-add-task-button" 
                     onClick={() => setWeekShowAdd(true)} 
                   > 
                     新しいタスクを追加
@@ -326,32 +295,26 @@ export default function WeeklyPage() {
  
         <section className="weekly-section reflection-section"> 
  
-          <div className="section-header"> 
+          <div className="weekly-section-header"> 
             <h2>今週の振り返り</h2> 
           </div> 
  
           <textarea 
-            className="reflection-input" 
+            className="weekly-reflection-input" 
             placeholder="今週の学習で気づいたこと、できたこと、改善したいこと..." 
             onBlur={() => { 
               updateWeeklyRecordReflection( 
                 reflectionText, 
                 weekStart 
-              ) 
-              setIsTyping(false) 
+              )  
             }} 
             value={reflectionText} 
             onChange={( 
               e: React.ChangeEvent<HTMLTextAreaElement> 
             ) => { 
               setReflectionText(e.target.value) 
-              setIsTyping(true) 
             }} 
-          /> 
- 
-          <p className="reflection-status"> 
-            {isTyping ? "入力中..." : "保存済み ✓"} 
-          </p> 
+          />
  
         </section> 
  
@@ -368,12 +331,9 @@ export default function WeeklyPage() {
         > 
           <section className="weekly-section next-week-section"> 
  
-            <div className="section-header"> 
+            <div className="weekly-section-header"> 
               <div> 
                 <h2>来週の課題</h2> 
-                <p className="section-description"> 
-                  来週取り組むタスクを準備しておきましょう 
-                </p> 
               </div> 
             </div> 
  
@@ -381,97 +341,107 @@ export default function WeeklyPage() {
               items={nextWeekTasks} 
               strategy={verticalListSortingStrategy} 
             > 
-              <div className="task-list"> 
- 
+              <div className="weekly-task-list"> 
+
+                {nextWeekTasks.length === 0 && ( 
+                  <p className="weekly-section-message"> 
+                    タスクを追加してください 
+                  </p> 
+                )}
+
                 {nextWeekTasks.map(task => 
                   <TaskItem 
                     key={task.id} 
                     id={task.id} 
                   > 
+
+                    <div className="weekly-task-row">
  
-                    {editingId === task.id ? ( 
-                      <div className="task-edit"> 
+                      {editingId === task.id ? ( 
+                        <div className="weekly-task-edit"> 
  
-                        <input 
-                          value={editText} 
-                          autoFocus 
-                          onChange={(e) => 
-                            setEditText(e.target.value) 
-                          } 
-                          onKeyDown={async (e) => { 
-                            if (e.key === "Enter") { 
-                              await updateWeeklyTaskTitle( 
+                          <input 
+                            value={editText} 
+                            autoFocus 
+                            onChange={(e) => 
+                              setEditText(e.target.value) 
+                            } 
+                            onKeyDown={async (e) => { 
+                              if (e.key === "Enter") { 
+                                await updateWeeklyTaskTitle( 
+                                  task.id, 
+                                  editText, 
+                                  nextWeekStart 
+                                ) 
+                                setEditText("") 
+                                setEditingId("") 
+                              } 
+                            }} 
+                          /> 
+   
+                          <button 
+                            className="weekly-task-action"
+                            onClick={async () => { 
+                              await updateWeeklyTaskTitle(
                                 task.id, 
                                 editText, 
-                                nextWeekStart 
+                                nextWeekStart
                               ) 
                               setEditText("") 
-                              setEditingId("") 
-                            } 
-                          }} 
-                        /> 
- 
-                        <button 
-                          className="task-action"
-                          onClick={async () => { 
-                            await updateWeeklyTaskTitle(
-                              task.id, 
-                              editText, 
-                              nextWeekStart
-                            ) 
-                            setEditText("") 
-                            setEditingId("")
-                          }}
-                        > 
-                          保存
-                        </button>
-
-                      </div> 
-                    ) : ( 
-                      <div className="task-content"> 
- 
-                        <p className="task-title"> 
-                          {task.title} 
-                        </p> 
- 
-                        <button 
-                          className="task-action" 
-                          onClick={() => { 
-                            setEditingId(task.id) 
-                            setEditText(task.title)
-                          }} 
-                        > 
-                          編集 
-                        </button> 
-
+                              setEditingId("")
+                            }}
+                          > 
+                            保存
+                          </button>
+  
+                        </div> 
+                      ) : ( 
+                        <div className="weekly-task-content"> 
+   
+                          <p className="weekly-task-title"> 
+                            {task.title} 
+                          </p> 
+   
+                          <button 
+                            className="weekly-task-action" 
+                            onClick={() => { 
+                              setEditingId(task.id) 
+                              setEditText(task.title)
+                            }} 
+                          > 
+                            編集 
+                          </button> 
+  
+                        </div>
+                      )}
+   
+                      <button 
+                        className="weekly-task-delete" 
+                        onClick={() => 
+                          deleteWeeklyTask( 
+                            task.id, 
+                            nextWeekStart 
+                          ) 
+                        } 
+                      > 
+                        削除 
+                      </button> 
+  
                       </div>
-                    )}
- 
-                    <button 
-                      className="task-delete" 
-                      onClick={() => 
-                        deleteWeeklyTask( 
-                          task.id, 
-                          nextWeekStart 
-                        ) 
-                      } 
-                    > 
-                      削除 
-                    </button> 
- 
+   
                   </TaskItem> 
                 )} 
  
               </div> 
             </SortableContext> 
  
-            <div className="task-add"> 
+            <div className="weekly-task-add"> 
  
               {nextWeekShowAdd ? ( 
-                <div className="task-add-form"> 
+                <div className="weekly-task-add-form"> 
  
                   <input 
-                    className="task-add-input" 
+                    className="weekly-task-add-input" 
                     value={addText} 
                     autoFocus 
                     placeholder="タスク名を入力..." 
@@ -492,7 +462,7 @@ export default function WeeklyPage() {
                   /> 
  
                   <button 
-                    className="task-add-button"
+                    className="weekly-task-add-button"
                     onClick={async () => { 
                       await addWeeklyRecord( 
                         addText, 
@@ -508,8 +478,9 @@ export default function WeeklyPage() {
  
                 </div> 
               ) : ( 
+                
                 <button 
-                  className="add-task-button" 
+                  className="weekly-add-task-button" 
                   onClick={() => setNextWeekShowAdd(true)} 
                 > 
                   新しいタスクを追加 
@@ -520,15 +491,39 @@ export default function WeeklyPage() {
  
           </section> 
         </DndContext> 
+
+        <section className="weekly-section last-week-section"> 
+          <div className="weekly-section-header"> 
+            <h2>先週の達成</h2> 
+          </div>
+ 
+          {lastWeekPlan ? ( 
+            completedLastWeekTasks && 
+            completedLastWeekTasks.length > 0 ? ( 
+              <ul className="weekly-completed-task-list">
+                {completedLastWeekTasks.map(task => ( 
+                  <li key={task.id}> 
+                    {task.title} 
+                  </li> 
+                ))} 
+              </ul> 
+            ) : ( 
+              <p className="weekly-section-message"> 
+                先週達成したタスクはありません 
+              </p> 
+            ) 
+          ) : ( 
+            <p className="weekly-section-message"> 
+              先週のタスクはありません 
+            </p> 
+          )} 
+        </section>
  
         <section className="weekly-section completed-daily-section"> 
  
-          <div className="section-header"> 
+          <div className="weekly-section-header"> 
             <div> 
               <h2>今週達成したデイリータスク</h2> 
-              <p className="section-description"> 
-                今週のDailyページで達成したタスク 
-              </p> 
             </div> 
           </div> 
  
@@ -563,7 +558,7 @@ export default function WeeklyPage() {
  
             </div> 
           ) : ( 
-            <p className="section-message"> 
+            <p className="weekly-section-message"> 
               今週達成したタスクはありません 
             </p> 
           )} 

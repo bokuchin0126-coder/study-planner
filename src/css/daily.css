@@ -12,15 +12,6 @@
 
   background-color: #ffffff;
   color: #111111;
-
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Noto Sans JP",
-    "Hiragino Kaku Gothic ProN",
-    "Yu Gothic",
-    "YuGothic",
-    sans-serif;
 }
 
 
@@ -91,23 +82,12 @@
    Section Position
 ======================================== */
 
-/*
-  左側
-  今日の課題 70%
-*/
-
 .today-section {
   grid-column: 1;
   grid-row: 1 / 7;
 
   margin-bottom: -20px;
 }
-
-
-/*
-  左側
-  振り返り 30%
-*/
 
 .reflection-section {
   grid-column: 1;
@@ -118,25 +98,14 @@
 }
 
 
-/*
-  右側
-  明日の課題 50%
-*/
-
 .tomorrow-section {
   grid-column: 2;
-  grid-row: 1 / 6;
+  grid-row: 1 / 7;
 }
-
-
-/*
-  右側
-  昨日の達成 50%
-*/
 
 .yesterday-section {
   grid-column: 2;
-  grid-row: 6 / 11;
+  grid-row: 7 / 11;
 }
 
 
@@ -147,7 +116,7 @@
 .section-header {
   flex-shrink: 0;
 
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .section-header h2 {
@@ -155,15 +124,10 @@
 
   color: #111111;
 
-  font-size: 21px;
+  font-size: 17px;
   font-weight: 700;
   line-height: 1.5;
 }
-
-
-/*
-  説明文は使用しない
-*/
 
 .section-description {
   display: none;
@@ -225,7 +189,7 @@
 .task-row {
   width: 100%;
 
-  min-height: 54px;
+  min-height: 46px;
 
   box-sizing: border-box;
 
@@ -252,8 +216,8 @@
 ======================================== */
 
 .task-toggle {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
 
   flex-shrink: 0;
 
@@ -327,7 +291,7 @@
 .task-delete {
   flex-shrink: 0;
 
-  padding: 5px 7px;
+  padding: 6px 8px;
 
   border: 1px solid transparent;
   border-radius: 2px;
@@ -447,9 +411,9 @@
   /*
     前回より濃く
   */
-  color: #555555;
+  color: #212121;
 
-  font-size: 13px;
+  font-size: 11px;
   line-height: 34px;
 }
 
@@ -643,6 +607,7 @@
     center;
 
   background-repeat: no-repeat;
+  background-attachment: local;
 }
 
 .reflection-input:focus {
@@ -742,88 +707,6 @@
 
   color: #888888;
 }
-
-
-/* ========================================
-   Sidebar
-======================================== */
-
-.daily-page .sidebar {
-  width: 190px;
-
-  min-width: 190px;
-
-  height: 100vh;
-
-  box-sizing: border-box;
-
-  padding: 24px 12px;
-
-  background-color: #ffffff;
-
-  border-right: 1px solid #eeeeee;
-
-  overflow: hidden;
-}
-
-.daily-page .sidebar h1,
-.daily-page .sidebar h2,
-.daily-page .sidebar-title {
-  margin: 0 0 28px;
-
-  padding: 0 14px;
-
-  color: #111111;
-
-  font-size: 18px;
-
-  font-weight: 700;
-}
-
-.daily-page .sidebar a,
-.daily-page .sidebar button {
-  width: 100%;
-
-  min-height: 46px;
-
-  box-sizing: border-box;
-
-  display: flex;
-
-  align-items: center;
-
-  padding: 0 14px;
-
-  border: 1px solid transparent;
-
-  border-radius: 2px;
-
-  background-color: transparent;
-
-  color: #111111;
-
-  font-family: inherit;
-
-  font-size: 14px;
-
-  text-decoration: none;
-
-  cursor: pointer;
-
-  transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease;
-}
-
-.daily-page .sidebar a:hover,
-.daily-page .sidebar button:hover {
-  background-color: #eeeeee;
-
-  border-color: #dddddd;
-
-  text-decoration: none;
-}
-
 
 /* ========================================
    Responsive

@@ -397,7 +397,7 @@ export default function DailyPage() {
 
         <section className="daily-section yesterday-section"> 
           <div className="section-header"> 
-            <h2>昨日の達成</h2> 
+            <h2>昨日達成した課題</h2> 
           </div> 
  
           {yesterdayPlan ? ( 

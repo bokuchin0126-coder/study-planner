@@ -1,5 +1,14 @@
 * {
     box-sizing: border-box;
+
+    font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Noto Sans JP",
+    "Hiragino Kaku Gothic ProN",
+    "Yu Gothic",
+    "YuGothic",
+    sans-serif;
 }
 
 html,

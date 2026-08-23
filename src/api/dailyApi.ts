@@ -1,16 +1,18 @@
 import { supabase } from "../lib/supabase"
-import { getCurrentUser } from "./authApi"
 import type { DailyTaskRow } from "../types/daily"
 
-export async function createFirstDailyTaskInDB(text: string, date: string, orderIndex: number) {
+export async function createFirstDailyTaskInDB(
+  text: string, 
+  date: string, 
+  orderIndex: number,
+  userId: string
+) {
   try {
-    const user = await getCurrentUser()
-
     const { data: planData, error: planError } = await supabase
       .from("daily_plans")
       .upsert(
         {
-          user_id: user.id,
+          user_id: userId,
           date: date,
           reflection: ""
         },
@@ -26,7 +28,7 @@ export async function createFirstDailyTaskInDB(text: string, date: string, order
     const { data: taskData, error: taskError } = await supabase
       .from("daily_tasks")
       .insert({
-        user_id: user.id,
+        user_id: userId,
         plan_id: planData.id,
         text: text,
         order_index: orderIndex
@@ -41,14 +43,17 @@ export async function createFirstDailyTaskInDB(text: string, date: string, order
   }
 }
 
-export async function addDailyTaskInDB(text: string, date: string, orderIndex: number) {
+export async function addDailyTaskInDB(
+  text: string, 
+  date: string, 
+  orderIndex: number,
+  userId: string
+) {
   try {
-    const user = await getCurrentUser()
-
     const { data: planData, error: planError } = await supabase
       .from("daily_plans")
       .select()
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("date", date)
       .single()
 
@@ -57,7 +62,7 @@ export async function addDailyTaskInDB(text: string, date: string, orderIndex: n
     const { data: taskData, error: taskError } = await supabase
       .from("daily_tasks")
       .insert({
-        user_id: user.id,
+        user_id: userId,
         plan_id: planData.id,
         text: text,
         order_index: orderIndex
@@ -72,14 +77,12 @@ export async function addDailyTaskInDB(text: string, date: string, orderIndex: n
   }
 }
 
-export async function getDailyPlanByDateInDB(date: string) {
+export async function getDailyPlanByDateInDB(date: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { data, error } = await supabase
       .from("daily_plans")
       .select()
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("date", date)
       .maybeSingle()
 
@@ -91,16 +94,14 @@ export async function getDailyPlanByDateInDB(date: string) {
   }
 }
 
-export async function updateDailyTaskTitleInDB(id: string, text: string) {
+export async function updateDailyTaskTitleInDB(id: string, text: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { error } = await supabase
         .from("daily_tasks")
         .update({
           text: text
         })
-        .eq("user_id", user.id)
+        .eq("user_id", userId)
         .eq("id", id)
 
       if (error) throw error
@@ -109,16 +110,14 @@ export async function updateDailyTaskTitleInDB(id: string, text: string) {
   }
 }
 
-export async function updateDailyTaskToggleInDB(id: string, completed: boolean) {
+export async function updateDailyTaskToggleInDB(id: string, completed: boolean, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { error } = await supabase
       .from("daily_tasks")
       .update({
         completed: !completed
       })
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("id", id)
 
     if (error) throw error
@@ -127,14 +126,12 @@ export async function updateDailyTaskToggleInDB(id: string, completed: boolean) 
   }
 }
 
-export async function deleteDailyCopyTaskInDB(taskDateId: string) {
+export async function deleteDailyCopyTaskInDB(taskDateId: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { data, error } = await supabase
       .from("daily_tasks")
       .delete()
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("source_task_id", taskDateId)
       .select()
 
@@ -146,14 +143,12 @@ export async function deleteDailyCopyTaskInDB(taskDateId: string) {
   }
 }
 
-export async function daleteDailyTaskInDB(id: string) {
+export async function daleteDailyTaskInDB(id: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { error } = await supabase
       .from("daily_tasks")
       .delete()
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("id", id)
     
     if (error) throw error
@@ -162,16 +157,14 @@ export async function daleteDailyTaskInDB(id: string) {
   }
 }
 
-export async function updateDailyRecordReflectionInDB(text: string, date: string) {
+export async function updateDailyRecordReflectionInDB(text: string, date: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { error } = await supabase
       .from("daily_plans")
       .update({
         reflection: text
       })
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("date", date)
 
     if (error) throw error
@@ -183,15 +176,14 @@ export async function updateDailyRecordReflectionInDB(text: string, date: string
 export async function carryOverDailyTasksInDB(
   carryTasks: DailyTaskRow,
   tomorrowDate: string,
-  orderIndex: number
+  orderIndex: number,
+  userId: string
 ) {
   try {
-    const user = await getCurrentUser()
-
     let { data: planData, error: planError } = await supabase
       .from("daily_plans")
       .select()
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("date", tomorrowDate)
       .maybeSingle()
 
@@ -201,7 +193,7 @@ export async function carryOverDailyTasksInDB(
       const { data, error } = await supabase
         .from("daily_plans")
         .insert({
-          user_id: user.id,
+          user_id: userId,
           date: tomorrowDate,
           reflection: ""
         })
@@ -216,7 +208,7 @@ export async function carryOverDailyTasksInDB(
     const { data: existsTasks } = await supabase
       .from("daily_tasks")
       .select("id")
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("plan_id", planData.id)
       .eq("source_task_id", carryTasks.id)
       .maybeSingle()
@@ -227,7 +219,7 @@ export async function carryOverDailyTasksInDB(
     const { data: taskData, error: taskError } = await supabase
       .from("daily_tasks")
       .insert({
-        user_id: user.id,
+        user_id: userId,
         plan_id: planData.id,
         text: carryTasks.text,
         source_task_id: carryTasks.id,
@@ -245,14 +237,12 @@ export async function carryOverDailyTasksInDB(
   }
 }
 
-export async function getDailyRecords(today: string, tomorrow: string, yesterday: string) {
+export async function getDailyRecords(today: string, tomorrow: string, yesterday: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { data: plansData, error: planError } = await supabase
       .from("daily_plans")
       .select()
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .in("date", [today, tomorrow, yesterday])
 
     if (planError) throw planError
@@ -261,7 +251,7 @@ export async function getDailyRecords(today: string, tomorrow: string, yesterday
     const { data: tasksData, error: tasksError } = await supabase
       .from("daily_tasks")
       .select()
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .in("plan_id", planIds)
 
     if (tasksError) throw tasksError
@@ -271,14 +261,12 @@ export async function getDailyRecords(today: string, tomorrow: string, yesterday
   }
 }
 
-export async function activateCarryOverTasks(date: string) {
+export async function activateCarryOverTasks(date: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { data: planData, error: planError } = await supabase
       .from("daily_plans")
       .select("id")
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("date", date)
       .maybeSingle()
 
@@ -291,7 +279,7 @@ export async function activateCarryOverTasks(date: string) {
       .update({
         source_task_id: null
       })
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("plan_id", planData.id)
       .not("source_task_id", "is", null)
 

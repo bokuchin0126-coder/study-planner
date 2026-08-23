@@ -1,19 +1,18 @@
 import { supabase } from "../lib/supabase"
-import { getCurrentUser } from "./authApi"
 
 
 export async function getNextOrderIndex(
   planTableName: string,
   taskTableName: string,
   dateName: string, 
-  date: string) {
+  date: string,
+  userId: string
+) {
   try {
-    const user = await getCurrentUser()
-
     const { data: planData, error: planError } = await supabase
       .from(planTableName)
       .select()
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq(dateName, date)
       .maybeSingle()
       
@@ -24,7 +23,7 @@ export async function getNextOrderIndex(
     const { data: taskData, error: taskError } = await supabase
       .from(taskTableName)
       .select("order_index")
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("plan_id", planData.id)
 
     if (taskError) throw taskError

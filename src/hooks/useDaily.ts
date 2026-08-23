@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import type { DailyRecord, DailyTaskRow } from "../types/daily"
 import type { Task } from "../types/baseTask"
 import { getNextOrderIndex } from "../api/orderIndexApi"
+import { getCurrentUser } from "../api/authApi"
 import {
   createFirstDailyTaskInDB,
   addDailyTaskInDB,
@@ -54,12 +55,13 @@ export default function useDaily() {
     addingDatesRef.current.add(date)
 
     try {
-      const contentsDate = await getDailyPlanByDateInDB(date)
+      const user = await getCurrentUser()
+      const contentsDate = await getDailyPlanByDateInDB(date, user.id)
 
       if (!contentsDate) {
         const orderIndex = 0
         
-        const taskData = await createFirstDailyTaskInDB(text, date, orderIndex)
+        const taskData = await createFirstDailyTaskInDB(text, date, orderIndex, user.id)
 
         const newTasks: DailyRecord = {
             date: date,
@@ -79,10 +81,11 @@ export default function useDaily() {
           "daily_plans", 
           "daily_tasks", 
           "date", 
-          date
+          date,
+          user.id
         )
 
-        const taskData = await addDailyTaskInDB(text, date, orderIndex)
+        const taskData = await addDailyTaskInDB(text, date, orderIndex, user.id)
         
         const newTasks: Task = {
           id: taskData.id,
@@ -112,8 +115,9 @@ export default function useDaily() {
   const updateDailyTaskTitle = async (id: string, text: string, date: string) => {
     try {
       if (text.trim() === "") alert("タスク名を入力して下さい")
-        
-      await updateDailyTaskTitleInDB(id, text)
+      
+      const user = await getCurrentUser()
+      await updateDailyTaskTitleInDB(id, text, user.id)
 
       setDailyRecords(prev => prev.map(day => day.date === date ?
         {
@@ -133,8 +137,10 @@ export default function useDaily() {
 
   const updateDailyTaskToggle = async (id: string, completed: boolean, date: string) => {
     try {
-      await updateDailyTaskToggleInDB(id, completed)
-      const deleteTask = await deleteDailyCopyTaskInDB(id)
+      const user = await getCurrentUser()
+
+      await updateDailyTaskToggleInDB(id, completed, user.id)
+      const deleteTask = await deleteDailyCopyTaskInDB(id, user.id)
       
       if (deleteTask && deleteTask.length > 0) {
         setDailyRecords(prev => prev.map(day => ({
@@ -164,8 +170,10 @@ export default function useDaily() {
 
   const deleteDailyTask = async (id: string, date: string) => {
     try {
-      await deleteDailyCopyTaskInDB(id)
-      await daleteDailyTaskInDB(id)
+      const user = await getCurrentUser()
+
+      await deleteDailyCopyTaskInDB(id, user.id)
+      await daleteDailyTaskInDB(id, user.id)
 
       setDailyRecords(prev => prev.map(day => day.date === date ? 
         {
@@ -182,7 +190,8 @@ export default function useDaily() {
  
   const updateDailyRecordReflection = async (text: string, date: string) => {
     try {
-      await updateDailyRecordReflectionInDB(text, date)
+      const user = await getCurrentUser()
+      await updateDailyRecordReflectionInDB(text, date, user.id)
 
       setDailyRecords(prev => prev.map(day => day.date === date ? 
         {
@@ -200,18 +209,21 @@ export default function useDaily() {
   const carryOverRecords = async (task: DailyTaskRow) => {
     try {
       if (!task) return
+      const user = await getCurrentUser()
 
       const orderIndex = await getNextOrderIndex(
           "daily_plans", 
           "daily_tasks", 
           "date", 
-          tomorrowDate
+          tomorrowDate,
+          user.id
         )
 
       const taskData = await carryOverDailyTasksInDB(
         task,
         tomorrowDate,
-        orderIndex
+        orderIndex,
+        user.id
       )
 
       if (!taskData) return    
@@ -224,9 +236,10 @@ export default function useDaily() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        await activateCarryOverTasks(today)
+        const user = await getCurrentUser()
+        await activateCarryOverTasks(today, user.id)
         
-        const {plansData, tasksData} = await getDailyRecords(today, tomorrowDate, yesterdayDate)
+        const {plansData, tasksData} = await getDailyRecords(today, tomorrowDate, yesterdayDate, user.id)
         const taskFilter = tasksData.filter(task => task.source_task_id === null)
 
         const dailyRecords = plansData.map(plan => {

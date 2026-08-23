@@ -45,25 +45,17 @@ export async function createFirstDailyTaskInDB(
 
 export async function addDailyTaskInDB(
   text: string, 
-  date: string, 
+  planId: string, 
   orderIndex: number,
   userId: string
 ) {
   try {
-    const { data: planData, error: planError } = await supabase
-      .from("daily_plans")
-      .select()
-      .eq("user_id", userId)
-      .eq("date", date)
-      .single()
-
-    if (planError) throw planError
-        
+       
     const { data: taskData, error: taskError } = await supabase
       .from("daily_tasks")
       .insert({
         user_id: userId,
-        plan_id: planData.id,
+        plan_id: planId,
         text: text,
         order_index: orderIndex
       })
@@ -81,7 +73,7 @@ export async function getDailyPlanByDateInDB(date: string, userId: string) {
   try {
     const { data, error } = await supabase
       .from("daily_plans")
-      .select()
+      .select("id")
       .eq("user_id", userId)
       .eq("date", date)
       .maybeSingle()

@@ -85,7 +85,7 @@ export default function useDaily() {
           user.id
         )
 
-        const taskData = await addDailyTaskInDB(text, date, orderIndex, user.id)
+        const taskData = await addDailyTaskInDB(text, contentsDate.id, orderIndex, user.id)
         
         const newTasks: Task = {
           id: taskData.id,

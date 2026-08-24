@@ -248,12 +248,13 @@ export default function WeeklyPage() {
                     } 
                     onKeyDown={async (e) => { 
                       if (e.key === "Enter") { 
+                        const text = addText
+                        setAddText("") 
                         await addWeeklyRecord( 
-                          addText,
+                          text,
                           weekStart, 
                           weekEnd 
                         ) 
-                        setAddText("") 
                         setWeekShowAdd(false)
                       } 
                     }} 
@@ -262,12 +263,13 @@ export default function WeeklyPage() {
                   <button
                     className="weekly-task-add-button" 
                     onClick={async () => { 
+                      const text = addText
+                      setAddText("") 
                       await addWeeklyRecord( 
-                        addText,
+                        text,
                         weekStart, 
                         weekEnd 
                       ) 
-                      setAddText("") 
                       setWeekShowAdd(false) 
                     }} 
                   > 
@@ -450,12 +452,13 @@ export default function WeeklyPage() {
                     } 
                     onKeyDown={async (e) => { 
                       if (e.key === "Enter") { 
+                        const text = addText
+                        setAddText("")
                         await addWeeklyRecord( 
-                          addText, 
+                          text, 
                           nextWeekStart, 
                           nextWeekEnd 
-                        ) 
-                        setAddText("") 
+                        )  
                         setNextWeekShowAdd(false)
                       } 
                     }} 
@@ -464,12 +467,13 @@ export default function WeeklyPage() {
                   <button 
                     className="weekly-task-add-button"
                     onClick={async () => { 
+                      const text = addText
+                      setAddText("") 
                       await addWeeklyRecord( 
-                        addText, 
+                        text, 
                         nextWeekStart, 
                         nextWeekEnd 
                       ) 
-                      setAddText("") 
                       setNextWeekShowAdd(false) 
                     }} 
                   > 

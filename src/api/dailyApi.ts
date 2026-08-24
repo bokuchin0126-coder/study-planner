@@ -80,7 +80,7 @@ export async function getDailyPlanByDateInDB(date: string, userId: string) {
 
     if (error) throw error
 
-    return data
+    return data?.id ?? null
   } catch(e) {
     throw(e)
   }

@@ -56,9 +56,9 @@ export default function useDaily() {
 
     try {
       const user = await getCurrentUser()
-      const contentsDate = await getDailyPlanByDateInDB(date, user.id)
+      const contentsDateId = await getDailyPlanByDateInDB(date, user.id)
 
-      if (!contentsDate) {
+      if (!contentsDateId) {
         const orderIndex = 0
         
         const taskData = await createFirstDailyTaskInDB(text, date, orderIndex, user.id)
@@ -78,14 +78,12 @@ export default function useDaily() {
 
       } else {
         const orderIndex = await getNextOrderIndex(
-          "daily_plans", 
           "daily_tasks", 
-          "date", 
-          date,
+          contentsDateId,
           user.id
         )
 
-        const taskData = await addDailyTaskInDB(text, contentsDate.id, orderIndex, user.id)
+        const taskData = await addDailyTaskInDB(text, contentsDateId, orderIndex, user.id)
         
         const newTasks: Task = {
           id: taskData.id,
@@ -211,11 +209,11 @@ export default function useDaily() {
       if (!task) return
       const user = await getCurrentUser()
 
+      const dataId = await getDailyPlanByDateInDB(tomorrowDate, user.id)
+
       const orderIndex = await getNextOrderIndex(
-          "daily_plans", 
           "daily_tasks", 
-          "date", 
-          tomorrowDate,
+          dataId,
           user.id
         )
 

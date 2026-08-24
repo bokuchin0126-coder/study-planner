@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import type { LongTermRecord, CompletedTask } from "../types/longTerm"
 import type { Task } from "../types/baseTask"
+import { getCurrentUser } from "../api/authApi"
 import { getNextOrderIndex } from "../api/orderIndexApi"
 import {
   addLongTermTaskInDB,
@@ -29,14 +30,15 @@ export default function useLongTerm() {
       if (!longTermRecord) throw alert("データがありませんでした")
       if (text.trim() === "") alert("タスク名を入力してください")
 
+      const user = await getCurrentUser()
+
       const orderIndex = await getNextOrderIndex(
-        "long_term_plans",
         "long_term_tasks",
-        "start_date",
-        longTermRecord.startDate
+        longTermRecord.id,
+        user.id
       )
       
-      const taskData = await addLongTermTaskInDB(longTermRecord.id, text, orderIndex)
+      const taskData = await addLongTermTaskInDB(longTermRecord.id, text, orderIndex, user.id)
 
       setLongTermRecord(prev => {
         if (!prev) return null
@@ -62,7 +64,9 @@ export default function useLongTerm() {
       if (!longTermRecord) throw alert("データがありませんでした")
       if (text.trim() === "") alert("目標を 入力してください")
 
-      await updateLongTermGoalInDB(text, longTermRecord.id)
+      const user = await getCurrentUser()
+
+      await updateLongTermGoalInDB(text, longTermRecord.id, user.id)
 
       setLongTermRecord(prev => {
         if (!prev) return null
@@ -82,7 +86,9 @@ export default function useLongTerm() {
     try {
       if (!longTermRecord) throw alert("データがありませんでした")
 
-      await updateLongTermEndDateInDB(date, longTermRecord.id)
+      const user = await getCurrentUser()
+
+      await updateLongTermEndDateInDB(date, longTermRecord.id, user.id)
 
       setLongTermRecord(prev => {
         if (!prev) return null
@@ -102,7 +108,9 @@ export default function useLongTerm() {
     try {
       if (!longTermRecord) throw alert("データがありませんでした")
 
-      await updateLongTermStartDateInDB(date, longTermRecord.id)
+      const user = await getCurrentUser()
+
+      await updateLongTermStartDateInDB(date, longTermRecord.id, user.id)
 
       setLongTermRecord(prev => {
         if (!prev) return null
@@ -122,7 +130,9 @@ export default function useLongTerm() {
     try {
       if (!longTermRecord) throw alert("データがありませんでした")
 
-      await updateLongTermReflectionInDB(text, longTermRecord.id)
+      const user = await getCurrentUser()
+
+      await updateLongTermReflectionInDB(text, longTermRecord.id, user.id)
 
       setLongTermRecord(prev => {
         if (!prev) return null
@@ -141,8 +151,10 @@ export default function useLongTerm() {
   const updateLongTermToggle = async () => {
     try {
       if (!longTermRecord) throw alert("データがありませんでした")
+
+      const user = await getCurrentUser()
       
-      await updateLongTermToggleInDB(longTermRecord.completed, longTermRecord.id)
+      await updateLongTermToggleInDB(longTermRecord.completed, longTermRecord.id, user.id)
 
       setLongTermRecord(prev => {
         if (!prev) return null
@@ -163,7 +175,9 @@ export default function useLongTerm() {
       if (!longTermRecord) throw alert("データがありませんでした")
       if (text.trim() === "") alert("タスク名を入力してください")
 
-      await updateLongTermTaskTitleInDB(text, id)
+      const user = await getCurrentUser()
+
+      await updateLongTermTaskTitleInDB(text, id, user.id)
 
       setLongTermRecord(prev => {
         if (!prev) return null
@@ -192,7 +206,9 @@ export default function useLongTerm() {
       const targetTask = longTermRecord.tasks.find(task => task.id === id)
       if (!targetTask) throw alert("選択されたタスクはすでに消えたか、IDが変わっています")
 
-      await updateLongTermTaskToggleInDB(targetTask.completed, id)
+      const user = await getCurrentUser()
+
+      await updateLongTermTaskToggleInDB(targetTask.completed, id, user.id)
 
       setLongTermRecord(prev => {
         if (!prev) return null
@@ -218,7 +234,9 @@ export default function useLongTerm() {
     try {
       if (!longTermRecord) throw alert("データがありませんでした")
 
-      await deleteLongTermTaskInDB(id)
+      const user = await getCurrentUser()
+
+      await deleteLongTermTaskInDB(id, user.id)
 
       setLongTermRecord(prev => {
         if (!prev) return null
@@ -239,7 +257,9 @@ export default function useLongTerm() {
     initializingRef.current = true
 
     try {
-      const { currentPlan, tasksData } = await getCurrentLongTermPlanInDB()
+      const user = await getCurrentUser()
+
+      const { currentPlan, tasksData } = await getCurrentLongTermPlanInDB(user.id)
 
       if (currentPlan) {
         const tasks: Task[] = tasksData.map(task => ({
@@ -265,7 +285,7 @@ export default function useLongTerm() {
         
         const formatDate = (date: Date) => date.toISOString().split("T")[0]
 
-        const data = await createInitialLongTermPlanInDB(formatDate(today), formatDate(end))
+        const data = await createInitialLongTermPlanInDB(formatDate(today), formatDate(end), user.id)
 
         setLongTermRecord({
           id: data.id,
@@ -289,10 +309,12 @@ export default function useLongTerm() {
     if (!longTermRecord) return
 
     try {
+      const user = await getCurrentUser()
+
       const startPeriod = longTermRecord.startDate
       const endPeriod = longTermRecord.endDate
 
-      const { plansData, tasksData } = await getMonthlyPlansInLongTerm(startPeriod, endPeriod)
+      const { plansData, tasksData } = await getMonthlyPlansInLongTerm(startPeriod, endPeriod, user.id)
 
       if (plansData.length === 0) {
         setMonthlyCompletedTasks([])

@@ -72,10 +72,8 @@ export default function useWeekly() {
    
       } else {
         const orderIndex = await getNextOrderIndex(
-          "weekly_plans", 
           "weekly_tasks", 
-          "week_start", 
-          startDate,
+          contentsDateId,
           user.id
         )
 

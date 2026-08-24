@@ -73,10 +73,8 @@ export default function useMonthly() {
 
       } else {
         const orderIndex = await getNextOrderIndex(
-          "monthly_plans", 
           "monthly_tasks", 
-          "month_start", 
-          date,
+          currentDateId,
           user.id
         )
         const taskData = await addMonthlyTaskInDB(text, orderIndex, currentDateId, user.id)

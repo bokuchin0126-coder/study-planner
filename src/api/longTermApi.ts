@@ -1,26 +1,14 @@
 import { supabase } from "../lib/supabase"
-import { getCurrentUser } from "./authApi"
 
 
-export async function addLongTermTaskInDB(id: string, text: string, orderIndex: number) {
+export async function addLongTermTaskInDB(id: string, text: string, orderIndex: number, userId: string) {
   try {
-    const user = await getCurrentUser()
-
-    const { data: planData, error: planError } = await supabase
-        .from("long_term_plans")
-        .select()
-        .eq("user_id", user.id)
-        .eq("id", id)
-        .single()
-
-    if (planError) throw planError
-
     const { data: taskData, error: taskError } = await supabase
       .from("long_term_tasks")
       .insert({
-        user_id: user.id,
+        user_id: userId,
         text: text,
-        plan_id: planData.id,
+        plan_id: id,
         order_index: orderIndex
       })
       .select().single()
@@ -33,16 +21,14 @@ export async function addLongTermTaskInDB(id: string, text: string, orderIndex: 
   }
 }
 
-export async function updateLongTermGoalInDB(text: string, id: string) {
+export async function updateLongTermGoalInDB(text: string, id: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { error } = await supabase
       .from("long_term_plans")
       .update({
         goal: text
       })
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("id", id)
     
     if (error) throw error
@@ -51,16 +37,14 @@ export async function updateLongTermGoalInDB(text: string, id: string) {
   }
 }
 
-export async function updateLongTermEndDateInDB(date: string, id: string) {
-  try {
-    const user = await getCurrentUser()
-      
+export async function updateLongTermEndDateInDB(date: string, id: string, userId: string) {
+  try {    
     const { error } = await supabase
       .from("long_term_plans")
       .update({
         end_date: date
       })
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("id", id)
 
     if (error) throw error
@@ -69,16 +53,14 @@ export async function updateLongTermEndDateInDB(date: string, id: string) {
   }
 }
 
-export async function updateLongTermStartDateInDB(date: string, id: string) {
+export async function updateLongTermStartDateInDB(date: string, id: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-      
     const { error } = await supabase
       .from("long_term_plans")
       .update({
         start_date: date
       })
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("id", id)
 
     if (error) throw error
@@ -87,16 +69,14 @@ export async function updateLongTermStartDateInDB(date: string, id: string) {
   }
 }
 
-export async function updateLongTermReflectionInDB(text: string, id: string) {
+export async function updateLongTermReflectionInDB(text: string, id: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { error } = await supabase
       .from("long_term_plans")
       .update({
         reflection: text
       })
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("id", id)
 
     if (error) throw error
@@ -106,16 +86,14 @@ export async function updateLongTermReflectionInDB(text: string, id: string) {
   }
 }
 
-export async function updateLongTermToggleInDB(completed: boolean, id: string) {
+export async function updateLongTermToggleInDB(completed: boolean, id: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { error } = await supabase
       .from("long_term_plans")
       .update({
         completed: !completed
       })
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("id", id)
 
     if (error) throw error
@@ -124,16 +102,14 @@ export async function updateLongTermToggleInDB(completed: boolean, id: string) {
   }
 }
 
-export async function updateLongTermTaskTitleInDB(text: string, id: string) {
+export async function updateLongTermTaskTitleInDB(text: string, id: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { error } = await supabase
       .from("long_term_tasks")
       .update({
         text: text
       })
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("id", id)
 
     if (error) throw error
@@ -142,16 +118,14 @@ export async function updateLongTermTaskTitleInDB(text: string, id: string) {
   }
 }
 
-export async function updateLongTermTaskToggleInDB(completed: boolean, id: string) {
+export async function updateLongTermTaskToggleInDB(completed: boolean, id: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { error } = await supabase
       .from("long_term_tasks")
       .update({
         completed: !completed
       })
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("id", id)
 
     if (error) throw error
@@ -161,14 +135,12 @@ export async function updateLongTermTaskToggleInDB(completed: boolean, id: strin
   }
 }
 
-export async function deleteLongTermTaskInDB(id: string) {
+export async function deleteLongTermTaskInDB(id: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { error } = await supabase
       .from("long_term_tasks")
       .delete()
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("id", id)
 
     if (error) throw error
@@ -178,14 +150,12 @@ export async function deleteLongTermTaskInDB(id: string) {
   }
 }
 
-export async function getCurrentLongTermPlanInDB() {
+export async function getCurrentLongTermPlanInDB(userId: string) {
   try {
-    const user = await getCurrentUser()
-    
     const { data: currentPlan, error: currentPlanError } = await supabase
       .from("long_term_plans")
       .select()
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("completed", false)
       .maybeSingle()
     
@@ -201,7 +171,7 @@ export async function getCurrentLongTermPlanInDB() {
     const { data: tasksData, error: tasksError } = await supabase
       .from("long_term_tasks")
       .select()
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .eq("plan_id", currentPlan.id)
     
     if (tasksError) throw tasksError
@@ -213,14 +183,12 @@ export async function getCurrentLongTermPlanInDB() {
   }
 }
 
-export async function createInitialLongTermPlanInDB(today: string, end: string) {
+export async function createInitialLongTermPlanInDB(today: string, end: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { data, error} = await supabase
       .from("long_term_plans")
       .insert({
-        user_id: user.id,
+        user_id: userId,
         start_date: today,
         end_date: end,
         reflection: "",
@@ -235,14 +203,12 @@ export async function createInitialLongTermPlanInDB(today: string, end: string) 
   }
 }
 
-export async function getMonthlyPlansInLongTerm(startPeriod: string, endPeriod: string) {
+export async function getMonthlyPlansInLongTerm(startPeriod: string, endPeriod: string, userId: string) {
   try {
-    const user = await getCurrentUser()
-
     const { data: plansData, error: plansError } = await supabase
       .from("monthly_plans")
       .select()
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .gte("month_start", startPeriod)
       .lte("month_end", endPeriod)
 
@@ -259,7 +225,7 @@ export async function getMonthlyPlansInLongTerm(startPeriod: string, endPeriod: 
     const { data: tasksData, error: tasksError } = await supabase
       .from("monthly_tasks")
       .select()
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .in("plan_id", planIds)
 
     if (tasksError) throw tasksError

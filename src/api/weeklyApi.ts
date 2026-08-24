@@ -5,14 +5,14 @@ export async function getWeeklyPlanByDateInDB(startDate: string, userId: string)
   try {
     const { data, error } = await supabase
       .from("weekly_plans")
-      .select()
+      .select("id")
       .eq("user_id", userId)
       .eq("week_start", startDate)
       .maybeSingle()
     
     if (error) throw error
 
-    return data
+    return data?.id ?? null
   } catch(e) {
     throw e
   }

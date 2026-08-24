@@ -130,7 +130,9 @@ export default function WeeklyPage() {
 
                 {weekTasks.length === 0 && ( 
                   <p className="weekly-section-message"> 
-                    タスクを追加してください 
+                    タスクがありません
+                  <br />
+                  「新しいタスクを追加」から始められます。 
                   </p> 
                 )}
  
@@ -347,7 +349,9 @@ export default function WeeklyPage() {
 
                 {nextWeekTasks.length === 0 && ( 
                   <p className="weekly-section-message"> 
-                    タスクを追加してください 
+                    タスクがありません
+                  <br />
+                  「新しいタスクを追加」から始められます。 
                   </p> 
                 )}
 

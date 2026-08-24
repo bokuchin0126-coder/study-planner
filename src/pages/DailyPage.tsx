@@ -173,7 +173,9 @@ export default function DailyPage() {
               </SortableContext> 
             ) : ( 
               <p className="section-message"> 
-                タスクを追加してください 
+                タスクがありません
+                  <br />
+                  「新しいタスクを追加」から始められます。 
               </p> 
             )} 
  
@@ -354,7 +356,9 @@ export default function DailyPage() {
               </SortableContext> 
             ) : ( 
               <p className="section-message"> 
-                タスクを追加してください 
+                タスクがありません
+                  <br />
+                  「新しいタスクを追加」から始められます。 
               </p> 
             )} 
  

@@ -48,9 +48,9 @@ export default function useWeekly() {
       if (text.trim() === "") throw alert("タスクを入力して下さい")
       const user = await getCurrentUser()
 
-      const contentsDate = await getWeeklyPlanByDateInDB(startDate, user.id)
+      const contentsDateId = await getWeeklyPlanByDateInDB(startDate, user.id)
 
-      if (!contentsDate) {
+      if (!contentsDateId) {
         const orderIndex = 0
 
         const taskData = await createdFirstWeeklyTaskInDB(startDate, endDate, text, orderIndex, user.id)
@@ -79,7 +79,7 @@ export default function useWeekly() {
           user.id
         )
 
-        const taskData = await addWeeklyTaskInDB(text, orderIndex, user.id, contentsDate.id)
+        const taskData = await addWeeklyTaskInDB(text, orderIndex, user.id, contentsDateId)
 
         const task: Task = {
           id: taskData.id,

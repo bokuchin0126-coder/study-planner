@@ -1,5 +1,4 @@
 import { describe, expect, it, vi, beforeEach } from "vitest"
-import { getCurrentUser } from "./authApi"
 import { supabase } from "../lib/supabase"
 import {
   createFirstDailyTaskInDB,
@@ -26,17 +25,12 @@ const getDate = (yearOffset = 0, monthOffset = 0, dayOffset = 0) => {
   return date.toISOString().split("T")[0]
 }
 
-vi.mock("./authApi", () => ({
-  getCurrentUser: vi.fn(),
-}))
-
 vi.mock("../lib/supabase", () => ({
   supabase: {
     from: vi.fn(),
   },
 }))
 
-const mockedGetCurrentUser = vi.mocked(getCurrentUser)
 const mockedFrom = vi.mocked(supabase.from)
 
 const mockInsert = vi.fn()
@@ -55,10 +49,6 @@ const mockExecute = vi.fn()
 
 beforeEach(() => {
   vi.clearAllMocks()
-
-  mockedGetCurrentUser.mockResolvedValue({
-    id: "user-id",
-  } as any)
 
   mockInsert.mockReturnValue({
     select: mockSelect,
@@ -140,10 +130,9 @@ describe("createFirstDailyTaskInDB", () => {
     const result = await createFirstDailyTaskInDB(
       "Study React",
       "2026-08-03",
-      0
+      0,
+      "user-id"
     )
-
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
 
     expect(mockedFrom).toHaveBeenNthCalledWith(1, "daily_plans")
     expect(mockedFrom).toHaveBeenNthCalledWith(2, "daily_tasks")
@@ -173,56 +162,28 @@ describe("createFirstDailyTaskInDB", () => {
 
 describe("addDailyTaskInDB", () => {
   it("指定したプランのidを目印に作成したタスクを返せる", async () => {
-    const plan = {
-      id: "plan-id"
-    }
-
     const task = {
       id: "task-id",
       text: "Study React",
       plan_id: "plan-id",
       order_index: 0,
     }
-    mockEq.mockReturnValueOnce({
-      eq: mockEq
-    })
-    mockEq.mockReturnValueOnce({
-      single: mockSingle
-    })
 
-    mockSingle
-      .mockResolvedValueOnce({
-        data: plan,
-        error: null,
-      })
-      .mockResolvedValueOnce({
-        data: task,
-        error: null,
-      })
+    mockSingle.mockResolvedValueOnce({
+      data: task,
+      error: null,
+    })
 
     const result = await addDailyTaskInDB(
       "Study React",
-      "2026-08-03",
-      0
-    )
-
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
-
-    expect(mockedFrom).toHaveBeenNthCalledWith(1, "daily_plans")
-    expect(mockedFrom).toHaveBeenNthCalledWith(2, "daily_tasks")
-
-    expect(mockEq).toHaveBeenNthCalledWith(
-      1,
-      "user_id",
+      "plan-id",
+      0,
       "user-id"
     )
-    expect(mockEq).toHaveBeenNthCalledWith(
-      2,
-      "date",
-      "2026-08-03"
-    )
 
-    expect(mockInsert).toHaveBeenNthCalledWith(1, {
+    expect(mockedFrom).toHaveBeenCalledWith("daily_tasks")
+
+    expect(mockInsert).toHaveBeenCalledWith({
       user_id: "user-id",
       plan_id: "plan-id",
       text: "Study React",
@@ -237,6 +198,7 @@ describe("getDailyPlanByDateInDB", () => {
   it("指定したdateのプランを返す", async () => {
     const plan = {
       user_id: "user-id",
+      id: "plan-id",
       date: "2026-05-06"
     }
     mockEq.mockReturnValueOnce({
@@ -250,10 +212,12 @@ describe("getDailyPlanByDateInDB", () => {
       error: null
     })
 
-    const result = await getDailyPlanByDateInDB("2026-05-06")
+    const result = await getDailyPlanByDateInDB("2026-05-06", "user-id")
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("daily_plans")
+
+    expect(mockSelect).toHaveBeenCalledWith("id")
+    
     expect(mockEq).toHaveBeenNthCalledWith(1, 
       "user_id",
       "user-id"
@@ -262,7 +226,7 @@ describe("getDailyPlanByDateInDB", () => {
       "date",
       "2026-05-06"
     )
-    expect(result).toEqual(plan)
+    expect(result).toEqual("plan-id")
   })
 
   it("指定したdateのプランがない場合はnullを返す", async () => {
@@ -277,9 +241,8 @@ describe("getDailyPlanByDateInDB", () => {
       error: null
     })
 
-    const result = await getDailyPlanByDateInDB("2026-05-06")
+    const result = await getDailyPlanByDateInDB("2026-05-06", "user-id")
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("daily_plans")
     expect(mockEq).toHaveBeenNthCalledWith(1, 
       "user_id",
@@ -297,10 +260,10 @@ describe("updateDailyTaskTitleInDB", () => {
   it("指定したidを目印にタスクのテキストを更新する", async () => {
     await updateDailyTaskTitleInDB(
       "task-id",
-      "Completed React"
+      "Completed React",
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("daily_tasks")
     expect(mockEq).toHaveBeenCalledWith(
       "user_id",
@@ -318,10 +281,10 @@ describe("updateDailyTaskToggleInDB", () => {
   it("指定したidを目印にタスクのタグを更新する", async () => {
     await updateDailyTaskToggleInDB(
       "task-id",
-      true
+      true,
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("daily_tasks")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -353,9 +316,8 @@ describe("deleteDailyCopyTaskInDB", () => {
       data: task,
       error: null
     })
-    const result = await deleteDailyCopyTaskInDB("source-task-id")
+    const result = await deleteDailyCopyTaskInDB("source-task-id", "user-id")
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("daily_tasks")
 
     expect(mockEq).toHaveBeenNthCalledWith(1,
@@ -373,9 +335,8 @@ describe("deleteDailyCopyTaskInDB", () => {
 
 describe("daleteDailyTaskInDB", () => {
   it("指定したidを目印にタスクを削除する", async () => {
-    await daleteDailyTaskInDB("task-id")
+    await daleteDailyTaskInDB("task-id", "user-id")
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("daily_tasks")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -394,10 +355,10 @@ describe("updateDailyRecordReflectionInDB", () => {
   it("指定したdateを目印にレコードの振り返りを更新する", async () => {
     await updateDailyRecordReflectionInDB(
       "Update Record",
-      "2026-05-16"
+      "2026-05-16",
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("daily_plans")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -463,10 +424,10 @@ describe("carryOverDailyTasksInDB", () => {
     const result = await carryOverDailyTasksInDB(
       carryTask,
       getDate(0, 0, 1),
-      0  
+      0,
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenNthCalledWith(1, "daily_plans")
     expect(mockedFrom).toHaveBeenNthCalledWith(2, "daily_tasks")
 
@@ -546,9 +507,9 @@ describe("carryOverDailyTasksInDB", () => {
     const result = await carryOverDailyTasksInDB(
       carryTask,
       getDate(0, 0, 1),
-      0  
+      0,
+      "user-id"
     )
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenNthCalledWith(1, "daily_plans")
     expect(mockedFrom).toHaveBeenNthCalledWith(2, "daily_plans")
     expect(mockedFrom).toHaveBeenNthCalledWith(3, "daily_tasks")
@@ -631,10 +592,10 @@ describe("getDailyRecords", () => {
     const result = await getDailyRecords(
       getDate(),
       getDate(0, 0, 1),
-      getDate(0, 0, -1)
+      getDate(0, 0, -1),
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenNthCalledWith(1, "daily_plans")
     expect(mockedFrom).toHaveBeenNthCalledWith(2, "daily_tasks")
 
@@ -669,11 +630,6 @@ describe("activateCarryOverTasks", () => {
       id: "plan-id",
       date: getDate()
     }
-    const task = {
-      user_id: "user-id",
-      plan_id: "plan-id",
-      source_task_id: "task-id"
-    }
 
     mockEq.mockReturnValueOnce({
       eq: mockEq
@@ -695,9 +651,8 @@ describe("activateCarryOverTasks", () => {
       error: null
     })
 
-    await activateCarryOverTasks(getDate())
+    await activateCarryOverTasks(getDate(), "user-id")
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenNthCalledWith(1, "daily_plans")
     expect(mockedFrom).toHaveBeenNthCalledWith(2, "daily_tasks")
 
@@ -738,7 +693,7 @@ describe("activateCarryOverTasks", () => {
       data: null,
       error: null
     })
-    const result = await activateCarryOverTasks(getDate())
+    const result = await activateCarryOverTasks(getDate(), "user-id")
 
     expect(result).toBeUndefined()
     expect(mockUpdate).not.toHaveBeenCalled(),

@@ -211,20 +211,29 @@ export default function useDaily() {
 
       const dataId = await getDailyPlanByDateInDB(tomorrowDate, user.id)
 
+      if (!dataId) {
+        await carryOverDailyTasksInDB(
+          task,
+          tomorrowDate,
+          0,
+          user.id
+        )
+        return
+      }
+
       const orderIndex = await getNextOrderIndex(
           "daily_tasks", 
           dataId,
           user.id
         )
 
-      const taskData = await carryOverDailyTasksInDB(
+      await carryOverDailyTasksInDB(
         task,
         tomorrowDate,
         orderIndex,
         user.id
       )
-
-      if (!taskData) return    
+  
     } catch (e) {
       console.error(e)
       alert("タスクのコピーに失敗しました")

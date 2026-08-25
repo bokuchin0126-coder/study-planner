@@ -82,7 +82,7 @@ export default function DailyPage() {
               </div> 
             </div> 
 
-            {todayPlan ? ( 
+            {todayTasks.length !== 0 ? ( 
               <SortableContext 
                 items={todayTasks} 
                 strategy={verticalListSortingStrategy} 
@@ -143,9 +143,11 @@ export default function DailyPage() {
                           </div> 
                         ) : (
                           <div className="task-content"> 
+
                             <p className="task-title">
                               {task.title}
                             </p> 
+
                             <button 
                               className="task-action" 
                               onClick={() => { 
@@ -271,7 +273,7 @@ export default function DailyPage() {
               </div> 
             </div> 
  
-            {tomorrowPlan ? (
+            {tomorrowTasks.length !== 0 ? (
               <SortableContext 
                 items={tomorrowTasks} 
                 strategy={verticalListSortingStrategy} 

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest"
-import { getCurrentUser } from "./authApi"
 import { supabase } from "../lib/supabase"
 import {
+  getWeeklyPlanByDateInDB,
   createdFirstWeeklyTaskInDB,
   addWeeklyTaskInDB,
   updateWeeklyTaskTitleInDB,
@@ -36,17 +36,12 @@ const weeklyDate = (date: "start" | "end", offset = 0) => {
   else return ""
 }
 
-vi.mock("./authApi", () => ({
-  getCurrentUser: vi.fn(),
-}))
-
 vi.mock("../lib/supabase", () => ({
   supabase: {
     from: vi.fn(),
   },
 }))
 
-const mockedGetCurrentUser = vi.mocked(getCurrentUser)
 const mockedFrom = vi.mocked(supabase.from)
 
 const mockInsert = vi.fn()
@@ -63,10 +58,6 @@ const mockExecute = vi.fn()
 
 beforeEach(() => {
   vi.clearAllMocks()
-
-  mockedGetCurrentUser.mockResolvedValue({
-    id: "user-id",
-  } as any)
 
   mockInsert.mockReturnValue({
     select: mockSelect,
@@ -116,6 +107,42 @@ beforeEach(() => {
   } as any)
 })
 
+describe("getWeeklyPlanByDateInDB", () => {
+  it("指定した日付のplanのidを返す", async () => {
+    const plan = {
+      user_id: "user-id",
+      id: "plan-id",
+      week_start: "2026-08-09"
+    }
+    mockEq.mockReturnValueOnce({
+      eq: mockEq
+    })
+    mockEq.mockReturnValueOnce({
+      maybeSingle: mockMaybeSingle
+    })
+    mockMaybeSingle.mockResolvedValueOnce({
+      data: {id: plan.id},
+      error: null
+    })
+
+    const result = await getWeeklyPlanByDateInDB("2026-08-09", "user-id")
+
+    expect(mockedFrom).toHaveBeenCalledWith("weekly_plans")
+
+    expect(mockSelect).toHaveBeenCalledWith("id")
+
+    expect(mockEq).toHaveBeenNthCalledWith(1,
+      "user_id",
+      "user-id"
+    )
+    expect(mockEq).toHaveBeenNthCalledWith(2,
+      "week_start",
+      "2026-08-09"
+    )
+    expect(result).toEqual(plan.id)
+  })
+})
+
 describe("createdFirstWeeklyTaskInDB", () => {
   it("指定した期間のplanを作り、入力したテキストで作成したタスクを返す", async () => {
     const plan = {
@@ -144,10 +171,10 @@ describe("createdFirstWeeklyTaskInDB", () => {
       weeklyDate("start"),
       weeklyDate("end"),
       "task-text",
-      0
+      0,
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenNthCalledWith(1, "weekly_plans")
     expect(mockedFrom).toHaveBeenNthCalledWith(2, "weekly_tasks")
 
@@ -169,50 +196,26 @@ describe("createdFirstWeeklyTaskInDB", () => {
 
 describe("addWeeklyTaskInDB", () => {
   it("指定した期間のplanにタスクを追加して返す", async () => {
-    const plan = {
-      user_id: "user-id",
-      id: "plan-id",
-      week_start: weeklyDate("start")
-    }
     const task = {
       user_id: "user-id",
       plan_id: "plan-id",
       text: "task-text",
       order_index: 0
     }
-    mockEq.mockReturnValueOnce({
-      eq: mockEq
-    })
-    mockEq.mockReturnValueOnce({
-      single: mockSingle
-    })
-    mockSingle.mockResolvedValueOnce({
-      data: plan,
-      error: null
-    })
     mockSingle.mockResolvedValueOnce({
       data: task,
       error: null
     })
     
     const result = await addWeeklyTaskInDB(
-      weeklyDate("start"),
       "task-text",
-      0
+      0,
+      "user-id",
+      "plan-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
-    expect(mockedFrom).toHaveBeenNthCalledWith(1, "weekly_plans")
-    expect(mockedFrom).toHaveBeenNthCalledWith(2, "weekly_tasks")
+    expect(mockedFrom).toHaveBeenCalledWith("weekly_tasks")
 
-    expect(mockEq).toHaveBeenNthCalledWith(1,
-      "user_id",
-      "user-id"
-    )
-    expect(mockEq).toHaveBeenNthCalledWith(2,
-      "week_start",
-      weeklyDate("start")
-    )
     expect(mockInsert).toHaveBeenNthCalledWith(1,{
       user_id: "user-id",
       plan_id: "plan-id",
@@ -228,9 +231,9 @@ describe("updateWeeklyTaskTitleInDB", () => {
     await updateWeeklyTaskTitleInDB(
       "task-id",
       "task-text",
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("weekly_tasks")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -251,10 +254,10 @@ describe("updateWeeklyTaskToggleInDB", () => {
   it("指定したidを目印にタスクのタグを更新する", async () => {
     await updateWeeklyTaskToggleInDB(
       "task-id",
-      false
+      false,
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("weekly_tasks")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -275,10 +278,10 @@ describe("updateWeeklyReflectionInDB", () => {
   it("指定した期間のplanの振り返りを更新する", async () => {
     await updateWeeklyReflectionInDB(
       "plan-reflection",
-      weeklyDate("start")
+      weeklyDate("start"),
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("weekly_plans")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -297,9 +300,8 @@ describe("updateWeeklyReflectionInDB", () => {
 
 describe("daleteWeeklyTaskInDB", () => {
   it("指定したidを目印にタスクを削除する", async () => {
-    await daleteWeeklyTaskInDB("task-id")
+    await daleteWeeklyTaskInDB("task-id", "user-id")
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("weekly_tasks")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -356,10 +358,10 @@ describe("getWeeklyRecords", () => {
     const result = await getWeeklyRecords(
       weeklyDate("start"),
       weeklyDate("start", -1),
-      weeklyDate("start", 1)
+      weeklyDate("start", 1),
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenNthCalledWith(1, "weekly_plans")
     expect(mockedFrom).toHaveBeenNthCalledWith(2, "weekly_tasks")
 

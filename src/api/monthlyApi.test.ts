@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest"
-import { getCurrentUser } from "./authApi"
 import { supabase } from "../lib/supabase"
 import {
+  getMonthlyPlanByDateInDB,
   createdFirstMonthlyTaskInDB,
   addMonthlyTaskInDB,
   updateMonthlyTaskTitleInDB,
@@ -32,9 +32,6 @@ const monthlyDate = (date: "start" | "end", offset = 0) => {
   else return ""
 }
 
-vi.mock("./authApi", () => ({
-  getCurrentUser: vi.fn(),
-}))
 
 vi.mock("../lib/supabase", () => ({
   supabase: {
@@ -42,7 +39,6 @@ vi.mock("../lib/supabase", () => ({
   },
 }))
 
-const mockedGetCurrentUser = vi.mocked(getCurrentUser)
 const mockedFrom = vi.mocked(supabase.from)
 
 const mockInsert = vi.fn()
@@ -59,10 +55,6 @@ const mockExecute = vi.fn()
 
 beforeEach(() => {
   vi.clearAllMocks()
-
-  mockedGetCurrentUser.mockResolvedValue({
-    id: "user-id",
-  } as any)
 
   mockInsert.mockReturnValue({
     select: mockSelect,
@@ -112,6 +104,42 @@ beforeEach(() => {
   } as any)
 })
 
+describe("getMonthlyPlanByDateInDB", () => {
+  it("指定した日付のplanのidを返す", async () => {
+    const plan = {
+      user_id: "user-id",
+      id: "plan-id",
+      month_start: "2026-08-01"
+    }
+    mockEq.mockReturnValueOnce({
+      eq: mockEq
+    })
+    mockEq.mockReturnValueOnce({
+      maybeSingle: mockMaybeSingle
+    })
+    mockMaybeSingle.mockResolvedValueOnce({
+      data: {id: plan.id},
+      error: null
+    })
+
+    const result = await getMonthlyPlanByDateInDB("2026-08-01", "user-id")
+
+    expect(mockedFrom).toHaveBeenCalledWith("monthly_plans")
+
+    expect(mockSelect).toHaveBeenCalledWith("id")
+
+    expect(mockEq).toHaveBeenNthCalledWith(1,
+      "user_id",
+      "user-id"
+    )
+    expect(mockEq).toHaveBeenNthCalledWith(2,
+      "month_start",
+      "2026-08-01"
+    )
+    expect(result).toEqual(plan.id)
+  })
+})
+
 describe("createdFirstMonthlyTaskInDB", () => {
   it("指定した期間のplanを作成し、入力したテキストで作成したタスクを返す", async () => {
     const plan = {
@@ -139,10 +167,10 @@ describe("createdFirstMonthlyTaskInDB", () => {
       monthlyDate("start"),
       monthlyDate("end"),
       "task-text",
-      0
+      0,
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenNthCalledWith(1, "monthly_plans")
     expect(mockedFrom).toHaveBeenNthCalledWith(2, "monthly_tasks")
 
@@ -164,52 +192,27 @@ describe("createdFirstMonthlyTaskInDB", () => {
 
 describe("addMonthlyTaskInDB", () => {
   it("指定した期間のplanにタスクを追加して返す", async () => {
-    const plan = {
-      user_id: "user-id",
-      id: "plan-id",
-      month_start: monthlyDate("start")
-    }
     const task = {
       user_id: "user-id",
       plan_id: "plan-id",
       text: "task-text",
       order_index: 0
     }
-    mockEq.mockReturnValueOnce({
-      eq: mockEq
-    })
-    mockEq.mockReturnValueOnce({
-      single: mockSingle
-    })
-    mockSingle.mockResolvedValueOnce({
-      data: plan,
-      error: null
-    })
     mockSingle.mockResolvedValueOnce({
       data: task,
       error: null
     })
 
     const result = await addMonthlyTaskInDB(
-      monthlyDate("start"),
       "task-text",
-      0
-    )
-
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
-    expect(mockedFrom).toHaveBeenNthCalledWith(1, "monthly_plans")
-    expect(mockedFrom).toHaveBeenNthCalledWith(2, "monthly_tasks")
-
-    expect(mockEq).toHaveBeenNthCalledWith(1, 
-      "user_id",
+      0,
+      "plan-id",
       "user-id"
     )
-    expect(mockEq).toHaveBeenNthCalledWith(2, 
-      "month_start",
-      monthlyDate("start")
-    )
 
-    expect(mockInsert).toHaveBeenNthCalledWith(1, {
+    expect(mockedFrom).toHaveBeenCalledWith("monthly_tasks")
+
+    expect(mockInsert).toHaveBeenCalledWith({
       user_id: "user-id",
       plan_id: "plan-id",
       text: "task-text",
@@ -223,10 +226,10 @@ describe("updateMonthlyTaskTitleInDB", () => {
   it("指定したidを目印にタスク名を更新する", async () => {
     await updateMonthlyTaskTitleInDB(
       "task-id",
-      "task-text"
+      "task-text",
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("monthly_tasks")
 
     expect(mockEq).toHaveBeenCalledWith( 
@@ -247,9 +250,9 @@ describe("updateMonthlyTaskToggleInDB", () => {
   it("指定したidを目印にタグを更新する", async () => {
     await updateMonthlyTaskToggleInDB(
       "task-id",
-      true
+      true,
+      "user-id"
     )
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("monthly_tasks")
 
     expect(mockEq).toHaveBeenCalledWith( 
@@ -270,9 +273,9 @@ describe("updateMonthlyReflectionInDB", () => {
   it("指定した期間のplanの振り返りを更新する", async () => {
     await updateMonthlyReflectionInDB(
       "plan-reflection",
-      monthlyDate("start")
+      monthlyDate("start"),
+      "user-id"
     )
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("monthly_plans")
 
     expect(mockEq).toHaveBeenCalledWith( 
@@ -291,9 +294,8 @@ describe("updateMonthlyReflectionInDB", () => {
 
 describe("daleteMonthlyTaskInDB", () => {
   it("指定したidを目印にタスクを削除する", async () => {
-    await deleteMonthlyTaskInDB("task-id")
+    await deleteMonthlyTaskInDB("task-id", "user-id")
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("monthly_tasks")
 
     expect(mockEq).toHaveBeenCalledWith( 
@@ -350,10 +352,10 @@ describe("getMonthlyRecords", () => {
     const result = await getMonthlyRecords(
       monthlyDate("start"),
       monthlyDate("start", -1),
-      monthlyDate("start", 1)
+      monthlyDate("start", 1),
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenNthCalledWith(1, "monthly_plans")
     expect(mockedFrom).toHaveBeenNthCalledWith(2, "monthly_tasks")
 

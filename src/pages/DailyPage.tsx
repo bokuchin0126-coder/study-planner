@@ -82,6 +82,7 @@ export default function DailyPage() {
               </div> 
             </div> 
 
+            {todayTasks.length !== 0 ? ( 
               <SortableContext 
                 items={todayTasks} 
                 strategy={verticalListSortingStrategy} 
@@ -150,9 +151,11 @@ export default function DailyPage() {
                           </div> 
                         ) : (
                           <div className="task-content"> 
+
                             <p className="task-title">
                               {task.title}
                             </p> 
+
                             <button 
                               className="task-action" 
                               onClick={() => { 
@@ -179,6 +182,13 @@ export default function DailyPage() {
 
                 </div> 
               </SortableContext> 
+            ) : ( 
+              <p className="section-message"> 
+                タスクがありません
+                  <br />
+                  「新しいタスクを追加」から始められます。 
+              </p> 
+            )} 
  
             <div className="task-add"> 
               {todayShowAdd ? ( 
@@ -191,10 +201,13 @@ export default function DailyPage() {
                     onChange={(e) => setAddText(e.target.value)} 
                     onKeyDown={async (e) => { 
                       if (e.key === "Enter") { 
-                        const task = await addDailyRecord(addText, today) 
-                        await carryOverRecords(task) 
+                        const text = addText
                         setAddText("") 
+
+                        const task = await addDailyRecord(text, today) 
                         setTodayShowAdd(false) 
+
+                        await carryOverRecords(task) 
                       }
                     }} 
                   /> 
@@ -202,10 +215,13 @@ export default function DailyPage() {
                   <button 
                     className="task-add-button" 
                     onClick={async () => { 
-                      const task = await addDailyRecord(addText, today)
-                      await carryOverRecords(task) 
+                      const text = addText
                       setAddText("") 
-                      setTodayShowAdd(false) 
+
+                      const task = await addDailyRecord(text, today) 
+                      setTodayShowAdd(false)
+
+                      await carryOverRecords(task)  
                     }}
                   > 
                     追加 
@@ -265,7 +281,8 @@ export default function DailyPage() {
                 <h2>明日の課題</h2> 
               </div> 
             </div> 
-
+ 
+            {tomorrowTasks.length !== 0 ? (
               <SortableContext 
                 items={tomorrowTasks} 
                 strategy={verticalListSortingStrategy} 
@@ -357,7 +374,14 @@ export default function DailyPage() {
                 </div> 
 
               </SortableContext> 
-
+            ) : ( 
+              <p className="section-message"> 
+                タスクがありません
+                  <br />
+                  「新しいタスクを追加」から始められます。 
+              </p> 
+            )} 
+ 
             <div className="task-add">
               {tomorrowShowAdd ? ( 
                 <div className="task-add-form"> 
@@ -369,8 +393,10 @@ export default function DailyPage() {
                     onChange={(e) => setAddText(e.target.value)} 
                     onKeyDown={async (e) => {
                       if (e.key === "Enter") { 
-                        await addDailyRecord(addText, tomorrowDate) 
+                        const text = addText
                         setAddText("") 
+
+                        await addDailyRecord(text, tomorrowDate) 
                         setTomorrowShowAdd(false) 
                       } 
                     }} 
@@ -379,8 +405,10 @@ export default function DailyPage() {
                   <button  
                     className="task-add-button"
                     onClick={async () => { 
-                      await addDailyRecord(addText, tomorrowDate) 
+                      const text = addText
                       setAddText("") 
+
+                      await addDailyRecord(text, tomorrowDate) 
                       setTomorrowShowAdd(false)
                     }} 
                   > 

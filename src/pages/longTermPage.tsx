@@ -468,6 +468,14 @@ export default function LongTermPage() {
           >
  
             <div className="task-list"> 
+
+            {longTermTasks.length === 0 && (
+              <p className="section-message"> 
+                タスクがありません
+                <br />
+                「新しいタスクを追加」から始められます。 
+              </p> 
+            )} 
  
               {longTermTasks.map(task => ( 
                 <TaskItem 
@@ -588,8 +596,9 @@ export default function LongTermPage() {
                   onKeyDown={(e) => { 
 
                     if (e.key === "Enter") { 
-                      addLongTermTask(addText) 
+                      const text = addText
                       setAddText("") 
+                      addLongTermTask(text) 
                       setShowAdd(false) 
                     }
 
@@ -599,9 +608,9 @@ export default function LongTermPage() {
                 <button 
                   className="task-add-button" 
                   onClick={() => { 
- 
-                    addLongTermTask(addText) 
+                    const text = addText
                     setAddText("") 
+                    addLongTermTask(text) 
                     setShowAdd(false) 
  
                   }} 

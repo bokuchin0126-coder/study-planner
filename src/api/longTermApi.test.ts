@@ -1,5 +1,4 @@
 import { describe, expect, it, vi, beforeEach } from "vitest"
-import { getCurrentUser } from "./authApi"
 import { supabase } from "../lib/supabase"
 import {
   addLongTermTaskInDB,
@@ -18,17 +17,12 @@ import {
 
 
 
-vi.mock("./authApi", () => ({
-  getCurrentUser: vi.fn(),
-}))
-
 vi.mock("../lib/supabase", () => ({
   supabase: {
     from: vi.fn(),
   },
 }))
 
-const mockedGetCurrentUser = vi.mocked(getCurrentUser)
 const mockedFrom = vi.mocked(supabase.from)
 
 const mockInsert = vi.fn()
@@ -47,10 +41,6 @@ const mockExecute = vi.fn()
 
 beforeEach(() => {
   vi.clearAllMocks()
-
-  mockedGetCurrentUser.mockResolvedValue({
-    id: "user-id",
-  } as any)
 
   mockInsert.mockReturnValue({
     select: mockSelect,
@@ -107,10 +97,6 @@ beforeEach(() => {
 
 describe("addLongTermTaskInDB", () => {
   it("指定したidを目印に作成したタスクを返す", async () => {
-    const plan = {
-      user_id: "user-id",
-      id: "plan-id",
-    }
     const task = {
       user_id: "user-id",
       plan_id: "plan-id",
@@ -118,16 +104,6 @@ describe("addLongTermTaskInDB", () => {
       order_index: 0
     }
 
-    mockEq.mockReturnValueOnce({
-      eq: mockEq
-    })
-    mockEq.mockReturnValueOnce({
-      single: mockSingle
-    })
-    mockSingle.mockResolvedValueOnce({
-      data: plan,
-      error: null
-    })
     mockSingle.mockResolvedValueOnce({
       data: task,
       error: null
@@ -136,21 +112,12 @@ describe("addLongTermTaskInDB", () => {
     const result = await addLongTermTaskInDB(
       "plan-id",
       "task-text",
-      0
-    )
-
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
-    expect(mockedFrom).toHaveBeenNthCalledWith(1, "long_term_plans")
-    expect(mockedFrom).toHaveBeenNthCalledWith(2, "long_term_tasks")
-
-    expect(mockEq).toHaveBeenNthCalledWith(1, 
-      "user_id",
+      0,
       "user-id"
     )
-    expect(mockEq).toHaveBeenNthCalledWith(2, 
-      "id",
-      "plan-id"
-    )
+
+    expect(mockedFrom).toHaveBeenCalledWith("long_term_tasks")
+
     expect(mockInsert).toHaveBeenCalledWith({
       user_id: "user-id",
       plan_id: "plan-id",
@@ -165,9 +132,9 @@ describe("updateLongTermGoalInDB", () => {
   it("指定したidを目印にrecordの目標を更新する", async () => {
     await updateLongTermGoalInDB(
       "study goal",
-      "record-id"
+      "record-id",
+      "user-id"
     )
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("long_term_plans")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -188,9 +155,9 @@ describe("updateLongTermEndDateInDB", () => {
   it("指定したidを目印にrecordの終了日を更新する", async () => {
     await updateLongTermEndDateInDB(
       "2026-08-02",
-      "record-id"
+      "record-id",
+      "user-id"
     )
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("long_term_plans")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -211,9 +178,9 @@ describe("updateLongTermStartDateInDB", () => {
   it("指定したidを目印にrecordの開始日を更新する", async () => {
     await updateLongTermStartDateInDB(
       "2026-05-09",
-      "record-id"
+      "record-id",
+      "user-id"
     )
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("long_term_plans")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -234,9 +201,9 @@ describe("updateLongTermReflectionInDB", () => {
   it("指定したidを目印にrecordの振り返りを更新する", async () => {
     await updateLongTermReflectionInDB(
       "record-reflection",
-      "record-id"
+      "record-id",
+      "user-id"
     )
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("long_term_plans")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -257,9 +224,9 @@ describe("updateLonTermToggleInDB", () => {
   it("指定したidを目印にrecordのタグを更新する", async () => {
     await updateLongTermToggleInDB(
       false,
-      "record-id"
+      "record-id",
+      "user-id"
     )
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("long_term_plans")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -280,9 +247,9 @@ describe("updateLongTermTaskTitleInDB", () => {
   it("指定したidを目印にタスク名を更新する", async () => {
     await updateLongTermTaskTitleInDB(
       "task-text",
-      "task-id"
+      "task-id",
+      "user-id"
     )
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("long_term_tasks")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -303,9 +270,9 @@ describe("updateLongTermTaskToggleInDB", () => {
   it("指定したidを目印にタスクのタグを更新する", async () => {
     await updateLongTermTaskToggleInDB(
       true,
-      "task-id"
+      "task-id",
+      "user-id"
     )
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("long_term_tasks")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -324,9 +291,8 @@ describe("updateLongTermTaskToggleInDB", () => {
 
 describe("deleteLongTermTaskInDB", () => {
   it("指定したidを目印にタスクを削除する", async () => {
-    await deleteLongTermTaskInDB("task-id")
+    await deleteLongTermTaskInDB("task-id", "user-id")
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("long_term_tasks")
 
     expect(mockEq).toHaveBeenCalledWith(
@@ -367,9 +333,8 @@ describe("getCurrentLongTermPlanInDB", () => {
       data: task,
       error: null
     })
-    const result = await getCurrentLongTermPlanInDB()
+    const result = await getCurrentLongTermPlanInDB("user-id")
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenNthCalledWith(1, "long_term_plans")
     expect(mockedFrom).toHaveBeenNthCalledWith(2, "long_term_tasks")
 
@@ -402,9 +367,8 @@ describe("getCurrentLongTermPlanInDB", () => {
       data: null,
       error: null
     })
-    const result = await getCurrentLongTermPlanInDB()
+    const result = await getCurrentLongTermPlanInDB("user-id")
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("long_term_plans")
 
     expect(mockEq).toHaveBeenNthCalledWith(1, 
@@ -437,10 +401,10 @@ describe("createInitialLongTermPlanInDB", () => {
     })
     const result = await createInitialLongTermPlanInDB(
       "2026-08-07",
-      "2027-10-07"
+      "2027-10-07",
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("long_term_plans")
 
     expect(mockInsert).toHaveBeenCalledWith({
@@ -487,10 +451,10 @@ describe("getMonthlyPlansInLongTerm", () => {
     })
     const result = await getMonthlyPlansInLongTerm(
       "2026-04-01",
-      "2026-07-02"
+      "2026-07-02",
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenNthCalledWith(1, "monthly_plans")
     expect(mockedFrom).toHaveBeenNthCalledWith(2, "monthly_tasks")
 
@@ -527,10 +491,10 @@ describe("getMonthlyPlansInLongTerm", () => {
     })
     const result = await getMonthlyPlansInLongTerm(
       "2026-05-05",
-      "2027-05-05"
+      "2027-05-05",
+      "user-id"
     )
 
-    expect(mockedGetCurrentUser).toHaveBeenCalledTimes(1)
     expect(mockedFrom).toHaveBeenCalledWith("monthly_plans")
 
     expect(mockEq).toHaveBeenCalledWith(

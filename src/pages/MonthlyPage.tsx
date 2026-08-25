@@ -184,6 +184,14 @@ export default function MonthlyPage() {
  
             <div className="task-list">
 
+              {monthTasks.length === 0 && (
+                <p className="section-message"> 
+                  タスクがありません
+                  <br />
+                  「新しいタスクを追加」から始められます。
+                </p> 
+              )} 
+
               {monthTasks.map(task => (
                 <TaskItem 
                   key={task.id} 
@@ -305,12 +313,13 @@ export default function MonthlyPage() {
                   } 
                   onKeyDown={async (e) => { 
                     if (e.key === "Enter") { 
+                      const text = addText
+                      setAddText("") 
                       await addMonthlyRecord( 
-                        addText, 
+                        text, 
                         monthStart 
                       ) 
- 
-                      setAddText("") 
+
                       setMonthShowAdd(false) 
                     } 
                   }} 
@@ -319,12 +328,13 @@ export default function MonthlyPage() {
                 <button 
                   className="task-add-button" 
                   onClick={async () => { 
+                    const text = addText
+                    setAddText("")
                     await addMonthlyRecord( 
-                      addText, 
+                      text, 
                       monthStart 
                     ) 
- 
-                    setAddText("") 
+  
                     setMonthShowAdd(false) 
                   }}
                 > 
@@ -336,13 +346,7 @@ export default function MonthlyPage() {
             ) : ( 
  
               <div> 
- 
-                {!month && (
-                  <p className="section-message"> 
-                    タスクを追加してください 
-                  </p> 
-                )} 
- 
+
                 <button 
                   className="add-task-button" 
                   onClick={() => setMonthShowAdd(true)} 
@@ -420,6 +424,14 @@ export default function MonthlyPage() {
           > 
  
             <div className="task-list"> 
+
+              {nextMonthTasks.length === 0 && (
+                <p className="section-message"> 
+                  タスクがありません
+                  <br />
+                  「新しいタスクを追加」から始められます。 
+                </p> 
+              )} 
  
               {nextMonthTasks.map(task => ( 
                 <TaskItem 
@@ -528,12 +540,13 @@ export default function MonthlyPage() {
                   } 
                   onKeyDown={async (e) => { 
                     if (e.key === "Enter") { 
+                      const text = addText
+                      setAddText("")
                       await addMonthlyRecord( 
-                        addText, 
+                        text, 
                         nextMonthStart 
                       ) 
  
-                      setAddText("") 
                       setNextMonthShowAdd(false) 
                     } 
                   }} 
@@ -542,12 +555,13 @@ export default function MonthlyPage() {
                 <button 
                   className="task-add-button" 
                   onClick={async () => { 
+                    const text = addText
+                    setAddText("") 
                     await addMonthlyRecord( 
                       addText, 
                       nextMonthStart 
                     ) 
  
-                    setAddText("") 
                     setNextMonthShowAdd(false) 
                   }} 
                 > 

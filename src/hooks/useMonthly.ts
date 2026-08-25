@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react"
 import type { MonthlyRecord } from "../types/monthly"
 import type { Task } from "../types/baseTask"
+import { getCurrentUser } from "../api/authApi"
 import { getNextOrderIndex } from "../api/orderIndexApi"
 import {
+  getMonthlyPlanByDateInDB,
   createdFirstMonthlyTaskInDB,
   addMonthlyTaskInDB,
   updateMonthlyTaskTitleInDB,
@@ -40,7 +42,8 @@ export default function useMonthly() {
   const addMonthlyRecord = async (text: string, date: string) => {
     try {
       if (text.trim() === "") throw alert("タスク名を入力してください")
-      const currentDate = monthlyRecords.find(month => month.month === date)
+      const user = await getCurrentUser()
+      const currentDateId = await getMonthlyPlanByDateInDB(date, user.id)
 
       const startDate = new Date(date)
       const endDate = new Date(startDate)
@@ -49,9 +52,9 @@ export default function useMonthly() {
 
       const monthEnd = endDate.toISOString().split("T")[0]
 
-      if (!currentDate) {
+      if (!currentDateId) {
         const orderIndex = 0
-        const taskData = await createdFirstMonthlyTaskInDB(date, monthEnd, text, orderIndex)
+        const taskData = await createdFirstMonthlyTaskInDB(date, monthEnd, text, orderIndex, user.id)
 
         const task: Task = {
           id: taskData.id,
@@ -70,12 +73,11 @@ export default function useMonthly() {
 
       } else {
         const orderIndex = await getNextOrderIndex(
-          "monthly_plans", 
           "monthly_tasks", 
-          "month_start", 
-          date
+          currentDateId,
+          user.id
         )
-        const taskData = await addMonthlyTaskInDB(date, text, orderIndex)
+        const taskData = await addMonthlyTaskInDB(text, orderIndex, currentDateId, user.id)
 
         const task: Task = {
           id: taskData.id,
@@ -100,7 +102,8 @@ export default function useMonthly() {
 
   const updateMonthlyTaskTitle = async (id: string, text: string, date: string) => {
     try {
-      await updateMonthlyTaskTitleInDB(id, text)
+      const user = await getCurrentUser()
+      await updateMonthlyTaskTitleInDB(id, text, user.id)
 
       setMonthlyRecords(prev => prev.map(month => month.month === date ? 
         {
@@ -119,7 +122,8 @@ export default function useMonthly() {
 
   const updateMonthlyTaskToggle = async (id: string, completed: boolean, date: string) => {
     try {
-      await updateMonthlyTaskToggleInDB(id, completed)
+      const user = await getCurrentUser()
+      await updateMonthlyTaskToggleInDB(id, completed, user.id)
 
       setMonthlyRecords(prev => prev.map(month => month.month === date ? 
         {
@@ -139,7 +143,8 @@ export default function useMonthly() {
 
   const updateMonthlyRecordReflection = async (text: string, date: string) => {
     try {
-      await updateMonthlyReflectionInDB(text, date)
+      const user = await getCurrentUser()
+      await updateMonthlyReflectionInDB(text, date, user.id)
 
       setMonthlyRecords(prev => prev.map(month => month.month === date ? 
         {
@@ -156,7 +161,8 @@ export default function useMonthly() {
 
   const deleteMonthlyTask = async (id: string, date: string) => {
     try {
-     await deleteMonthlyTaskInDB(id)
+      const user = await getCurrentUser()
+      await deleteMonthlyTaskInDB(id, user.id)
 
       setMonthlyRecords(prev => prev.map(month => month.month === date ? 
         {
@@ -174,10 +180,12 @@ export default function useMonthly() {
   useEffect(() => {
     const fetch = async () => {
       try {
+        const user = await getCurrentUser()
         const { plansData, tasksData } = await getMonthlyRecords(
           monthlyDate("start"),
           monthlyDate("start", -1),
-          monthlyDate("start", 1)
+          monthlyDate("start", 1),
+          user.id
         )
 
         const tasks: Task[] = tasksData?.map(task => ({

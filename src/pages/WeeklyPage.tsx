@@ -130,7 +130,9 @@ export default function WeeklyPage() {
 
                 {weekTasks.length === 0 && ( 
                   <p className="weekly-section-message"> 
-                    タスクを追加してください 
+                    タスクがありません
+                  <br />
+                  「新しいタスクを追加」から始められます。 
                   </p> 
                 )}
  
@@ -248,12 +250,13 @@ export default function WeeklyPage() {
                     } 
                     onKeyDown={async (e) => { 
                       if (e.key === "Enter") { 
+                        const text = addText
+                        setAddText("") 
                         await addWeeklyRecord( 
-                          addText,
+                          text,
                           weekStart, 
                           weekEnd 
                         ) 
-                        setAddText("") 
                         setWeekShowAdd(false)
                       } 
                     }} 
@@ -262,12 +265,13 @@ export default function WeeklyPage() {
                   <button
                     className="weekly-task-add-button" 
                     onClick={async () => { 
+                      const text = addText
+                      setAddText("") 
                       await addWeeklyRecord( 
-                        addText,
+                        text,
                         weekStart, 
                         weekEnd 
                       ) 
-                      setAddText("") 
                       setWeekShowAdd(false) 
                     }} 
                   > 
@@ -345,7 +349,9 @@ export default function WeeklyPage() {
 
                 {nextWeekTasks.length === 0 && ( 
                   <p className="weekly-section-message"> 
-                    タスクを追加してください 
+                    タスクがありません
+                  <br />
+                  「新しいタスクを追加」から始められます。 
                   </p> 
                 )}
 
@@ -450,12 +456,13 @@ export default function WeeklyPage() {
                     } 
                     onKeyDown={async (e) => { 
                       if (e.key === "Enter") { 
+                        const text = addText
+                        setAddText("")
                         await addWeeklyRecord( 
-                          addText, 
+                          text, 
                           nextWeekStart, 
                           nextWeekEnd 
-                        ) 
-                        setAddText("") 
+                        )  
                         setNextWeekShowAdd(false)
                       } 
                     }} 
@@ -464,12 +471,13 @@ export default function WeeklyPage() {
                   <button 
                     className="weekly-task-add-button"
                     onClick={async () => { 
+                      const text = addText
+                      setAddText("") 
                       await addWeeklyRecord( 
-                        addText, 
+                        text, 
                         nextWeekStart, 
                         nextWeekEnd 
                       ) 
-                      setAddText("") 
                       setNextWeekShowAdd(false) 
                     }} 
                   > 

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react"
 import type { WeeklyRecord } from "../types/weekly"
 import type { Task } from "../types/baseTask"
+import { getCurrentUser } from "../api/authApi"
 import { getNextOrderIndex } from "../api/orderIndexApi"
 import {
+  getWeeklyPlanByDateInDB,
   createdFirstWeeklyTaskInDB,
   addWeeklyTaskInDB,
   updateWeeklyTaskTitleInDB,
@@ -44,13 +46,14 @@ export default function useWeekly() {
   const addWeeklyRecord = async (text: string, startDate: string, endDate: string) => {
     try {
       if (text.trim() === "") throw alert("タスクを入力して下さい")
+      const user = await getCurrentUser()
 
-      const contentsDate = weeklyRecords.find(week => week.week === startDate)
+      const contentsDateId = await getWeeklyPlanByDateInDB(startDate, user.id)
 
-      if (!contentsDate) {
+      if (!contentsDateId) {
         const orderIndex = 0
 
-        const taskData = await createdFirstWeeklyTaskInDB(startDate, endDate, text, orderIndex)
+        const taskData = await createdFirstWeeklyTaskInDB(startDate, endDate, text, orderIndex, user.id)
 
         const task: Task = {
           id: taskData.id,
@@ -69,13 +72,12 @@ export default function useWeekly() {
    
       } else {
         const orderIndex = await getNextOrderIndex(
-          "weekly_plans", 
           "weekly_tasks", 
-          "week_start", 
-          startDate
+          contentsDateId,
+          user.id
         )
 
-        const taskData = await addWeeklyTaskInDB(startDate, text, orderIndex)
+        const taskData = await addWeeklyTaskInDB(text, orderIndex, user.id, contentsDateId)
 
         const task: Task = {
           id: taskData.id,
@@ -102,7 +104,9 @@ export default function useWeekly() {
   const updateWeeklyTaskTitle = async (id: string, text: string, date: string) => {
     try {
       if (text.trim() === "") throw alert("タスク名を入力してください")
-      await updateWeeklyTaskTitleInDB(id, text)
+      const user = await getCurrentUser()
+
+      await updateWeeklyTaskTitleInDB(id, text, user.id)
 
       setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
@@ -121,7 +125,8 @@ export default function useWeekly() {
 
   const updateTaskToggle = async (id: string, completed: boolean, date: string) => {
     try {
-      await updateWeeklyTaskToggleInDB(id, completed)
+      const user = await getCurrentUser()
+      await updateWeeklyTaskToggleInDB(id, completed, user.id)
 
       setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
@@ -140,7 +145,8 @@ export default function useWeekly() {
 
   const updateWeeklyRecordReflection = async (text: string, date: string) => {
     try {
-      await updateWeeklyReflectionInDB(text, date)
+      const user = await getCurrentUser()
+      await updateWeeklyReflectionInDB(text, date, user.id)
 
       setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
@@ -157,7 +163,8 @@ export default function useWeekly() {
 
   const deleteWeeklyTask = async (id: string, date: string) => {
     try {
-      await daleteWeeklyTaskInDB(id)
+      const user = await getCurrentUser()
+      await daleteWeeklyTaskInDB(id, user.id)
 
       setWeeklyRecords(prev => prev.map(week => week.week === date ? 
         {
@@ -175,10 +182,13 @@ export default function useWeekly() {
   useEffect(() => {
     const fetch = async () => {
       try {
+        const user = await getCurrentUser()
+
         const { plansData, tasksData } = await getWeeklyRecords(
           weeklyDate("start"), 
           weeklyDate("start", -1), 
-          weeklyDate("start", 1)
+          weeklyDate("start", 1),
+          user.id
         )
  
         const weeklyRecord: WeeklyRecord[] = plansData.map(plan => {

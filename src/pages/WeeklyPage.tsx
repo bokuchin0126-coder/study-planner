@@ -1,10 +1,11 @@
 import useWeekly from "../hooks/useWeekly" 
 import useDaily from "../hooks/useDaily" 
 import Sidebar from "../components/Sidebar" 
-import { useState, useEffect } from "react" 
+import { useState, useEffect, useRef } from "react" 
 import type { DailyRecord } from "../types/daily" 
 import type { Task } from "../types/baseTask" 
 import handleDragEnd from "../utils/dragAndDrop" 
+import { useOutsideClick } from "../hooks/useOutsideClick"
 import TaskItem from "../components/TaskItem" 
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable" 
 import { 
@@ -62,6 +63,13 @@ export default function WeeklyPage() {
   const [weekTasks, setWeekTasks] = useState<Task[]>([]) 
   const [nextWeekTasks, setNextWeekTasks] = useState<Task[]>([]) 
 
+  const [expandadTaskId, setExpandadTaskId] = useState<string | null>(null)
+  const expandadTaskRef = useRef<HTMLParagraphElement>(null)
+
+  useOutsideClick(expandadTaskRef, () => {
+    setExpandadTaskId(null)
+  })
+
   const thisWeekDailyPlans = dailyRecords.filter( 
     (day: DailyRecord) => 
       weekStart <= day.date && day.date <= weekEnd 
@@ -95,6 +103,7 @@ export default function WeeklyPage() {
       setNextWeekTasks(nextWeekPlan.tasks) 
     }
   }, [nextWeekPlan]) 
+
  
   return ( 
     <div className="weekly-page"> 
@@ -198,8 +207,26 @@ export default function WeeklyPage() {
                       ) : ( 
                         <div className="weekly-task-content"> 
       
-                          <p className="weekly-task-title"> 
-                            {task.title} 
+                          <p
+                            ref={
+                              expandadTaskId === task.id
+                                ? expandadTaskRef
+                                : null
+                            }
+                            className={`weekly-task-title ${
+                              expandadTaskId === task.id
+                                ? "weekly-task-title-expanded"
+                                : ""
+                            }`}
+                            onClick={() => {
+                              setExpandadTaskId(
+                                expandadTaskId === task.id
+                                  ? null
+                                  : task.id
+                              )
+                            }}
+                          >
+                            {task.title}
                           </p> 
    
                           <button 
@@ -404,8 +431,26 @@ export default function WeeklyPage() {
                       ) : ( 
                         <div className="weekly-task-content"> 
    
-                          <p className="weekly-task-title"> 
-                            {task.title} 
+                          <p
+                            ref={
+                              expandadTaskId === task.id
+                                ? expandadTaskRef
+                                : null
+                            }
+                            className={`weekly-task-title ${
+                              expandadTaskId === task.id
+                                ? "weekly-task-title-expanded"
+                                : ""
+                            }`}
+                            onClick={() => {
+                              setExpandadTaskId(
+                                expandadTaskId === task.id
+                                  ? null
+                                  : task.id
+                              )
+                            }}
+                          >
+                            {task.title}
                           </p> 
    
                           <button 

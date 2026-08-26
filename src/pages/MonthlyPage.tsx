@@ -2,10 +2,11 @@ import useMonthly from "../hooks/useMonthly"
 import useWeekly from "../hooks/useWeekly"
 import type { WeeklyRecord } from "../types/weekly"
 import type { Task } from "../types/baseTask"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Sidebar from "../components/Sidebar"
 import handleDragEnd from "../utils/dragAndDrop"
 import TaskItem from "../components/TaskItem"
+import { useOutsideClick } from "../hooks/useOutsideClick"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import {
   DndContext,
@@ -83,6 +84,13 @@ export default function MonthlyPage() {
   const [monthTasks, setMonthTasks] = useState<Task[]>(month?.tasks ?? [])
   const [nextMonthTasks, setNextMonthTasks] = useState<Task[]>(nextMonth?.tasks ?? [])
 
+  const [expandadTaskId, setExpandadTaskId] = useState<string | null>(null)
+  const expandadTaskRef = useRef<HTMLParagraphElement>(null)
+
+  useOutsideClick(expandadTaskRef, () => {
+    setExpandadTaskId(null)
+  })
+
   useEffect(() => {
     if (month) {
       setMonthTasks(month.tasks)
@@ -99,573 +107,661 @@ export default function MonthlyPage() {
     setReflectionText(month?.reflection ?? "")
   }, [month])
 
-  return ( 
-  <div className="monthly-page"> 
-    <Sidebar /> 
 
-    <main className="monthly-content"> 
+  return (
+  <div className="monthly-page">
+    <Sidebar />
 
-      <header className="monthly-header"> 
-        <p className="monthly-date"> 
-          {monthStart} ～ {monthEnd} 
-        </p> 
- 
-        <h1 className="monthly-title"> 
-          今月の学習 
-        </h1> 
-      </header> 
- 
- 
-      <section className="monthly-section last-month-section"> 
- 
-        <div className="section-header"> 
+    <main className="monthly-content">
+
+      <header className="monthly-header">
+
+        <p className="monthly-date">
+          {monthStart} ～ {monthEnd}
+        </p>
+
+        <h1 className="monthly-title">
+          今月の学習
+        </h1>
+
+      </header>
+
+
+      <section className="monthly-section monthly-last-month-section">
+
+        <div className="monthly-section-header">
           <h2>先月の達成</h2>
         </div>
 
         {lastMonth ? (
-          completedLastMonthTasks && 
-          completedLastMonthTasks.length > 0 ? ( 
+          completedLastMonthTasks &&
+          completedLastMonthTasks.length > 0 ? (
 
-            <ul className="completed-task-list">
-              {completedLastMonthTasks.map(task => ( 
+            <ul className="monthly-completed-task-list">
+
+              {completedLastMonthTasks.map(task => (
                 <li key={task.id}>
                   {task.title}
-                </li> 
-              ))} 
-            </ul> 
+                </li>
+              ))}
 
-          ) : ( 
+            </ul>
 
-            <p className="section-message"> 
-              先月達成したタスクはありません 
-            </p> 
- 
-          ) 
-        ) : ( 
- 
-          <p className="section-message"> 
-            先月のタスクはありません 
-          </p> 
- 
-        )} 
- 
-      </section> 
- 
- 
-      <DndContext 
-        sensors={sensors} 
+          ) : (
+
+            <p className="monthly-section-message">
+              先月達成したタスクはありません
+            </p>
+
+          )
+        ) : (
+
+          <p className="monthly-section-message">
+            先月のタスクはありません
+          </p>
+
+        )}
+
+      </section>
+
+
+      <DndContext
+        sensors={sensors}
         onDragEnd={(event) =>
-          handleDragEnd( 
-            event, 
-            monthTasks, 
-            "monthly_tasks", 
-            setMonthTasks 
-          ) 
-        } 
-      > 
- 
-        <section className="monthly-section this-month-section"> 
- 
-          <div className="section-header"> 
+          handleDragEnd(
+            event,
+            monthTasks,
+            "monthly_tasks",
+            setMonthTasks
+          )
+        }
+      >
+
+        <section className="monthly-section monthly-this-month-section">
+
+          <div className="monthly-section-header">
+
             <div>
-              <h2>今月の課題</h2> 
- 
-              <p className="section-description"> 
-                今月取り組むタスク 
-              </p> 
-            </div> 
-          </div> 
- 
- 
-          <SortableContext 
-            items={monthTasks} 
+
+              <h2>今月の課題</h2>
+
+              <p className="monthly-section-description">
+                今月取り組むタスク
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <SortableContext
+            items={monthTasks}
             strategy={verticalListSortingStrategy}
           >
- 
-            <div className="task-list">
+
+            <div className="monthly-task-list">
 
               {monthTasks.length === 0 && (
-                <p className="section-message"> 
+                <p className="monthly-section-message">
                   タスクがありません
                   <br />
                   「新しいタスクを追加」から始められます。
-                </p> 
-              )} 
+                </p>
+              )}
 
               {monthTasks.map(task => (
-                <TaskItem 
-                  key={task.id} 
-                  id={task.id} 
-                > 
 
-                  <button 
-                    className="task-toggle"
-                    onClick={() => 
-                      updateMonthlyTaskToggle( 
-                        task.id, 
-                        task.completed, 
-                        monthStart 
-                      ) 
-                    } 
-                  > 
-                    {task.completed ? "☑" : "□"} 
-                  </button> 
- 
- 
-                  {editingId === task.id ? ( 
- 
-                    <div className="task-edit"> 
- 
-                      <input 
-                        value={editText} 
-                        autoFocus
-                        onChange={(e) => 
-                          setEditText(e.target.value) 
-                        } 
-                        onKeyDown={async (e) => { 
-                          if (e.key === "Enter") { 
-                            await updateMonthlyTaskTitle( 
-                              task.id, 
-                              editText, 
-                              monthStart 
-                            ) 
+                <TaskItem
+                  key={task.id}
+                  id={task.id}
+                >
 
-                            setEditText("") 
-                            setEditingId("") 
-                          } 
-                        }} 
-                      /> 
- 
-                      <button 
-                        className="task-action" 
-                        onClick={async () => { 
-                          await updateMonthlyTaskTitle( 
-                            task.id, 
-                            editText, 
-                            monthStart 
-                          ) 
- 
-                          setEditText("") 
-                          setEditingId("") 
-                        }} 
-                      > 
-                        保存 
-                      </button> 
- 
-                    </div> 
- 
-                  ) : ( 
- 
-                    <div className="task-content"> 
- 
-                      <p className="task-title"> 
-                        {task.title} 
-                      </p> 
-
-                      <button 
-                        className="task-action" 
-                        onClick={() => { 
-                          setEditingId(task.id) 
-                          setEditText(task.title) 
-                        }} 
-                      > 
-                        編集
-                      </button> 
- 
-                    </div> 
- 
-                  )} 
- 
- 
                   <button
-                    className="task-delete"
-                    onClick={() => 
-                      deleteMonthlyTask( 
-                        task.id, 
-                        monthStart 
-                      ) 
-                    } 
+                    className="monthly-task-toggle"
+                    onClick={() =>
+                      updateMonthlyTaskToggle(
+                        task.id,
+                        task.completed,
+                        monthStart
+                      )
+                    }
                   >
-                    削除 
-                  </button> 
- 
-                </TaskItem> 
-              ))} 
- 
-            </div> 
- 
+                    {task.completed ? "☑" : "□"}
+                  </button>
+
+
+                  {editingId === task.id ? (
+
+                    <div className="monthly-task-edit">
+
+                      <input
+                        value={editText}
+                        autoFocus
+                        onChange={(e) =>
+                          setEditText(e.target.value)
+                        }
+                        onKeyDown={async (e) => {
+
+                          if (e.key === "Enter") {
+
+                            await updateMonthlyTaskTitle(
+                              task.id,
+                              editText,
+                              monthStart
+                            )
+
+                            setEditText("")
+                            setEditingId("")
+
+                          }
+
+                        }}
+                      />
+
+                      <button
+                        className="monthly-task-action"
+                        onClick={async () => {
+
+                          await updateMonthlyTaskTitle(
+                            task.id,
+                            editText,
+                            monthStart
+                          )
+
+                          setEditText("")
+                          setEditingId("")
+
+                        }}
+                      >
+                        保存
+                      </button>
+
+                    </div>
+
+                  ) : (
+
+                    <div className="monthly-task-content">
+
+                      <p
+                        ref={
+                          expandadTaskId === task.id
+                            ? expandadTaskRef
+                            : null
+                          }
+                        className={`monthly-task-title ${
+                          expandadTaskId === task.id
+                            ? "monthly-task-title-expanded"
+                            : ""
+                        }`}
+                        onClick={() => {
+                          setExpandadTaskId(
+                            expandadTaskId === task.id
+                              ? null
+                              : task.id
+                          )
+                        }}
+                      >
+                        {task.title}
+                      </p>
+
+                      <button
+                        className="monthly-task-action"
+                        onClick={() => {
+                          setEditingId(task.id)
+                          setEditText(task.title)
+                        }}
+                      >
+                        編集
+                      </button>
+
+                    </div>
+
+                  )}
+
+
+                  <button
+                    className="monthly-task-delete"
+                    onClick={() =>
+                      deleteMonthlyTask(
+                        task.id,
+                        monthStart
+                      )
+                    }
+                  >
+                    削除
+                  </button>
+
+                </TaskItem>
+
+              ))}
+
+            </div>
+
           </SortableContext>
- 
- 
-          <div className="task-add">
 
-            {monthShowAdd ? ( 
- 
-              <div className="task-add-form"> 
- 
-                <input 
-                  className="task-add-input" 
-                  value={addText} 
-                  autoFocus 
-                  placeholder="タスク名を入力..." 
-                  onChange={(e) => 
-                    setAddText(e.target.value) 
-                  } 
-                  onKeyDown={async (e) => { 
-                    if (e.key === "Enter") { 
+
+          <div className="monthly-task-add">
+
+            {monthShowAdd ? (
+
+              <div className="monthly-task-add-form">
+
+                <input
+                  className="monthly-task-add-input"
+                  value={addText}
+                  autoFocus
+                  placeholder="タスク名を入力..."
+                  onChange={(e) =>
+                    setAddText(e.target.value)
+                  }
+                  onKeyDown={async (e) => {
+
+                    if (e.key === "Enter") {
+
                       const text = addText
-                      setAddText("") 
-                      await addMonthlyRecord( 
-                        text, 
-                        monthStart 
-                      ) 
 
-                      setMonthShowAdd(false) 
-                    } 
-                  }} 
-                /> 
- 
-                <button 
-                  className="task-add-button" 
-                  onClick={async () => { 
-                    const text = addText
-                    setAddText("")
-                    await addMonthlyRecord( 
-                      text, 
-                      monthStart 
-                    ) 
-  
-                    setMonthShowAdd(false) 
+                      setAddText("")
+
+                      await addMonthlyRecord(
+                        text,
+                        monthStart
+                      )
+
+                      setMonthShowAdd(false)
+
+                    }
+
                   }}
-                > 
-                  追加 
-                </button> 
- 
-              </div> 
- 
-            ) : ( 
- 
-              <div> 
+                />
 
-                <button 
-                  className="add-task-button" 
-                  onClick={() => setMonthShowAdd(true)} 
-                > 
-                  新しいタスクを追加 
-                </button> 
- 
-              </div> 
- 
-            )} 
- 
-          </div> 
- 
-        </section> 
- 
-      </DndContext> 
- 
- 
-      <section className="monthly-section reflection-section">
+                <button
+                  className="monthly-task-add-button"
+                  onClick={async () => {
 
-        <div className="section-header"> 
-          <h2>今月の振り返り</h2> 
-        </div> 
- 
-        <textarea 
-          className="reflection-input" 
+                    const text = addText
+
+                    setAddText("")
+
+                    await addMonthlyRecord(
+                      text,
+                      monthStart
+                    )
+
+                    setMonthShowAdd(false)
+
+                  }}
+                >
+                  追加
+                </button>
+
+              </div>
+
+            ) : (
+
+              <button
+                className="monthly-add-task-button"
+                onClick={() =>
+                  setMonthShowAdd(true)
+                }
+              >
+                新しいタスクを追加
+              </button>
+
+            )}
+
+          </div>
+
+        </section>
+
+      </DndContext>
+
+
+      <section className="monthly-section monthly-reflection-section">
+
+        <div className="monthly-section-header">
+          <h2>今月の振り返り</h2>
+        </div>
+
+        <textarea
+          className="monthly-reflection-input"
           placeholder="今月の学習で気づいたこと、できたこと、改善したいこと..."
-          onBlur={() => 
-            updateMonthlyRecordReflection( 
-              reflectionText, 
+          onBlur={() =>
+            updateMonthlyRecordReflection(
+              reflectionText,
               monthStart
-            ) 
-          } 
+            )
+          }
           value={reflectionText}
-          onChange={( 
-            e: React.ChangeEvent<HTMLTextAreaElement> 
-          ) => 
-            setReflectionText(e.target.value) 
-          } 
-        /> 
- 
-      </section> 
- 
+          onChange={(
+            e: React.ChangeEvent<HTMLTextAreaElement>
+          ) =>
+            setReflectionText(e.target.value)
+          }
+        />
 
-      <DndContext 
-        sensors={sensors} 
-        onDragEnd={(event) => 
-          handleDragEnd( 
-            event, 
-            nextMonthTasks, 
-            "monthly_tasks", 
-            setNextMonthTasks 
-          ) 
-        } 
-      > 
- 
-        <section className="monthly-section next-month-section"> 
- 
-          <div className="section-header">
- 
-            <div> 
-              <h2>来月の課題</h2> 
- 
-              <p className="section-description"> 
-                来月取り組むタスクを準備しておきましょう 
-              </p> 
-            </div> 
- 
-          </div> 
- 
- 
-          <SortableContext 
-            items={nextMonthTasks} 
-            strategy={verticalListSortingStrategy} 
-          > 
- 
-            <div className="task-list"> 
+      </section>
+
+
+      <DndContext
+        sensors={sensors}
+        onDragEnd={(event) =>
+          handleDragEnd(
+            event,
+            nextMonthTasks,
+            "monthly_tasks",
+            setNextMonthTasks
+          )
+        }
+      >
+
+        <section className="monthly-section monthly-next-month-section">
+
+          <div className="monthly-section-header">
+
+            <div>
+
+              <h2>来月の課題</h2>
+
+              <p className="monthly-section-description">
+                来月取り組むタスクを準備しておきましょう
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <SortableContext
+            items={nextMonthTasks}
+            strategy={verticalListSortingStrategy}
+          >
+
+            <div className="monthly-task-list">
 
               {nextMonthTasks.length === 0 && (
-                <p className="section-message"> 
+                <p className="monthly-section-message">
                   タスクがありません
                   <br />
-                  「新しいタスクを追加」から始められます。 
-                </p> 
-              )} 
- 
-              {nextMonthTasks.map(task => ( 
-                <TaskItem 
+                  「新しいタスクを追加」から始められます。
+                </p>
+              )}
+
+              {nextMonthTasks.map(task => (
+
+                <TaskItem
                   key={task.id}
-                  id={task.id} 
-                > 
- 
-                  {editingId === task.id ? ( 
- 
-                    <div className="task-edit"> 
- 
-                      <input 
-                        value={editText} 
-                        autoFocus 
-                        onChange={(e) => 
-                          setEditText(e.target.value) 
+                  id={task.id}
+                >
+
+                  {editingId === task.id ? (
+
+                    <div className="monthly-task-edit">
+
+                      <input
+                        value={editText}
+                        autoFocus
+                        onChange={(e) =>
+                          setEditText(e.target.value)
                         }
-                        onKeyDown={async (e) => { 
-                          if (e.key === "Enter") { 
-                            await updateMonthlyTaskTitle( 
-                              task.id, 
+                        onKeyDown={async (e) => {
+
+                          if (e.key === "Enter") {
+
+                            await updateMonthlyTaskTitle(
+                              task.id,
                               editText,
-                              nextMonthStart 
-                            ) 
- 
-                            setEditText("") 
-                            setEditingId("") 
+                              nextMonthStart
+                            )
+
+                            setEditText("")
+                            setEditingId("")
+
                           }
-                        }} 
-                      /> 
- 
-                      <button 
-                        className="task-action" 
-                        onClick={async () => { 
-                          await updateMonthlyTaskTitle( 
-                            task.id, 
-                            editText, 
-                            nextMonthStart 
-                          ) 
- 
-                          setEditText("") 
-                          setEditingId("") 
-                        }} 
-                      > 
-                        保存 
-                      </button> 
- 
-                    </div> 
- 
-                  ) : ( 
- 
-                    <div className="task-content"> 
 
-                      <p className="task-title"> 
-                        {task.title} 
-                      </p> 
- 
-                      <button 
-                        className="task-action" 
-                        onClick={() => { 
-                          setEditingId(task.id) 
-                          setEditText(task.title) 
-                        }} 
-                      > 
-                        編集 
-                      </button> 
- 
-                    </div> 
- 
-                  )} 
- 
- 
-                  <button 
-                    className="task-delete" 
-                    onClick={() => 
-                      deleteMonthlyTask( 
-                        task.id, 
-                        nextMonthStart 
-                      ) 
-                    } 
-                  > 
-                    削除 
-                  </button> 
- 
-                </TaskItem> 
-              ))} 
- 
-            </div> 
- 
-          </SortableContext> 
- 
- 
-          <div className="task-add"> 
- 
-            {nextMonthShowAdd ? ( 
+                        }}
+                      />
 
-              <div className="task-add-form"> 
+                      <button
+                        className="monthly-task-action"
+                        onClick={async () => {
 
-                <input 
-                  className="task-add-input" 
-                  value={addText} 
-                  autoFocus 
-                  placeholder="タスク名を入力..." 
-                  onChange={(e) => 
-                    setAddText(e.target.value) 
-                  } 
-                  onKeyDown={async (e) => { 
-                    if (e.key === "Enter") { 
+                          await updateMonthlyTaskTitle(
+                            task.id,
+                            editText,
+                            nextMonthStart
+                          )
+
+                          setEditText("")
+                          setEditingId("")
+
+                        }}
+                      >
+                        保存
+                      </button>
+
+                    </div>
+
+                  ) : (
+
+                    <div className="monthly-task-content">
+
+                      <p
+                        ref={
+                          expandadTaskId === task.id
+                            ? expandadTaskRef
+                            : null
+                          }
+                        className={`monthly-task-title ${
+                          expandadTaskId === task.id
+                            ? "monthly-task-title-expanded"
+                            : ""
+                        }`}
+                        onClick={() => {
+                          setExpandadTaskId(
+                            expandadTaskId === task.id
+                              ? null
+                              : task.id
+                          )
+                        }}
+                      >
+                        {task.title}
+                      </p>
+
+                      <button
+                        className="monthly-task-action"
+                        onClick={() => {
+                          setEditingId(task.id)
+                          setEditText(task.title)
+                        }}
+                      >
+                        編集
+                      </button>
+
+                    </div>
+
+                  )}
+
+
+                  <button
+                    className="monthly-task-delete"
+                    onClick={() =>
+                      deleteMonthlyTask(
+                        task.id,
+                        nextMonthStart
+                      )
+                    }
+                  >
+                    削除
+                  </button>
+
+                </TaskItem>
+
+              ))}
+
+            </div>
+
+          </SortableContext>
+
+
+          <div className="monthly-task-add">
+
+            {nextMonthShowAdd ? (
+
+              <div className="monthly-task-add-form">
+
+                <input
+                  className="monthly-task-add-input"
+                  value={addText}
+                  autoFocus
+                  placeholder="タスク名を入力..."
+                  onChange={(e) =>
+                    setAddText(e.target.value)
+                  }
+                  onKeyDown={async (e) => {
+
+                    if (e.key === "Enter") {
+
                       const text = addText
+
                       setAddText("")
-                      await addMonthlyRecord( 
-                        text, 
-                        nextMonthStart 
-                      ) 
- 
-                      setNextMonthShowAdd(false) 
-                    } 
-                  }} 
-                /> 
- 
-                <button 
-                  className="task-add-button" 
-                  onClick={async () => { 
+
+                      await addMonthlyRecord(
+                        text,
+                        nextMonthStart
+                      )
+
+                      setNextMonthShowAdd(false)
+
+                    }
+
+                  }}
+                />
+
+                <button
+                  className="monthly-task-add-button"
+                  onClick={async () => {
+
                     const text = addText
-                    setAddText("") 
-                    await addMonthlyRecord( 
-                      addText, 
-                      nextMonthStart 
-                    ) 
- 
-                    setNextMonthShowAdd(false) 
-                  }} 
-                > 
-                  追加 
-                </button> 
- 
-              </div> 
- 
-            ) : ( 
- 
-              <button 
-                className="add-task-button" 
-                onClick={() => 
-                  setNextMonthShowAdd(true) 
-                } 
-              > 
-                新しいタスクを追加 
-              </button> 
- 
-            )} 
- 
-          </div> 
- 
-        </section> 
- 
-      </DndContext> 
- 
- 
-      <section className="monthly-section completed-weekly-section"> 
- 
-        <div className="section-header"> 
- 
-          <div> 
-            <h2>今月達成したウィークリータスク</h2> 
- 
-            <p className="section-description"> 
-              今月のWeeklyページで達成したタスク 
-            </p> 
+
+                    setAddText("")
+
+                    await addMonthlyRecord(
+                      text,
+                      nextMonthStart
+                    )
+
+                    setNextMonthShowAdd(false)
+
+                  }}
+                >
+                  追加
+                </button>
+
+              </div>
+
+            ) : (
+
+              <button
+                className="monthly-add-task-button"
+                onClick={() =>
+                  setNextMonthShowAdd(true)
+                }
+              >
+                新しいタスクを追加
+              </button>
+
+            )}
+
           </div>
- 
-        </div> 
- 
 
-        {completedThisMonthWeeklyPlans.length > 0 ? ( 
- 
-          <div className="completed-weekly-list"> 
- 
-            {weeks.map(number => { 
- 
-              const week = 
-                completedThisMonthWeeklyPlans.find( 
-                  item => 
-                    getWeekNumber(item.week) === number 
-                ) 
- 
-              return ( 
-                <div 
-                  className="completed-weekly-group" 
-                  key={number} 
-                > 
+        </section>
 
-                  <p className="completed-weekly-title"> 
-                    Week {number} 
-                  </p> 
- 
- 
-                  {week && week.tasks.length > 0 ? ( 
- 
-                    <ul className="completed-task-list"> 
- 
-                      {week.tasks.map(task => ( 
-                        <li key={task.id}> 
-                          ✓ {task.title} 
-                        </li> 
-                      ))} 
- 
-                    </ul> 
- 
-                  ) : ( 
- 
-                    <p className="section-message"> 
-                      達成した課題はありません 
-                    </p> 
- 
-                  )} 
+      </DndContext>
 
-                </div> 
-              ) 
- 
-            })} 
- 
-          </div> 
- 
-        ) : ( 
- 
-          <p className="section-message"> 
-            今月達成したウィークリータスクはありません 
-          </p> 
- 
+
+      <section className="monthly-section monthly-completed-weekly-section">
+
+        <div className="monthly-section-header">
+
+          <div>
+
+            <h2>今月達成したウィークリータスク</h2>
+
+            <p className="monthly-section-description">
+              今月のWeeklyページで達成したタスク
+            </p>
+
+          </div>
+
+        </div>
+
+
+        {completedThisMonthWeeklyPlans.length > 0 ? (
+
+          <div className="monthly-completed-weekly-list">
+
+            {weeks.map(number => {
+
+              const week =
+                completedThisMonthWeeklyPlans.find(
+                  item =>
+                    getWeekNumber(item.week) === number
+                )
+
+              return (
+
+                <div
+                  className="monthly-completed-weekly-group"
+                  key={number}
+                >
+
+                  <p className="monthly-completed-weekly-title">
+                    Week {number}
+                  </p>
+
+
+                  {week && week.tasks.length > 0 ? (
+
+                    <ul className="monthly-completed-task-list">
+
+                      {week.tasks.map(task => (
+
+                        <li key={task.id}>
+                          ✓ {task.title}
+                        </li>
+
+                      ))}
+
+                    </ul>
+
+                  ) : (
+
+                    <p className="monthly-section-message">
+                      達成した課題はありません
+                    </p>
+
+                  )}
+
+                </div>
+
+              )
+
+            })}
+
+          </div>
+
+        ) : (
+
+          <p className="monthly-section-message">
+            今月達成したウィークリータスクはありません
+          </p>
+
         )}
+
+      </section>
+
+    </main>
+  </div>
+)
  
-      </section> 
- 
-    </main> 
-  </div> 
-  ) 
 }

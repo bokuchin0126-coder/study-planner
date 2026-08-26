@@ -1,8 +1,9 @@
 import useDaily from "../hooks/useDaily" 
-import { useState, useEffect } from "react" 
+import { useState, useEffect, useRef } from "react" 
 import Sidebar from "../components/Sidebar" 
 import handleDragEnd from "../utils/dragAndDrop" 
 import TaskItem from "../components/TaskItem" 
+import { useOutsideClick } from "../hooks/useOutsideClick"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable" 
 import { 
   DndContext, 
@@ -48,6 +49,13 @@ export default function DailyPage() {
   const [tomorrowShowAdd, setTomorrowShowAdd] = useState<boolean>(false) 
  
   const [editingId, setEditingId] = useState<string | null>(null) 
+
+  const [expandadTaskId, setExpandadTaskId] = useState<string | null>(null)
+  const expandadTaskRef = useRef<HTMLParagraphElement>(null)
+
+  useOutsideClick(expandadTaskRef, () => {
+    setExpandadTaskId(null)
+  })
  
   const completedYesterdayTasks = yesterdayPlan?.tasks.filter(task => task.completed) 
  
@@ -56,388 +64,466 @@ export default function DailyPage() {
       setReflectionText(todayPlan.reflection) 
     } 
   }, [todayPlan]) 
-   
-  return ( 
-    <div className="daily-page"> 
-      <Sidebar /> 
- 
-      <main className="daily-content">  
- 
-        <DndContext  
-          sensors={sensors} 
-          onDragEnd={(event) => 
-            handleDragEnd( 
-              event,
-              todayTasks, 
-              "daily_tasks",
-              setTodayTasks 
-            ) 
-          } 
-        > 
-          <section className="daily-section today-section">
- 
-            <div className="section-header">
-              <div>
-                <h2>今日の課題</h2>
-              </div> 
-            </div> 
 
-            {todayTasks.length !== 0 ? ( 
-              <SortableContext 
-                items={todayTasks} 
-                strategy={verticalListSortingStrategy} 
-              > 
-                <div className="task-list"> 
-                  {todayTasks.map(task => 
-                    <TaskItem 
-                      key={task.id} 
-                      id={task.id} 
-                    > 
-                      <div className="task-row">
-                        <button  
-                          className="task-toggle" 
-                          onClick={async () => { 
-                            await updateDailyTaskToggle( 
-                              task.id, 
-                              task.completed, 
-                              today 
-                            ) 
-                          }} 
-                        > 
-                          {task.completed ? "☑" : "□"}
-                        </button> 
    
-                        {editingId === task.id ? ( 
-                          <div className="task-edit"> 
-                            <input 
-                              autoFocus 
-                              value={editText} 
-                              onChange={(e) => setEditText(e.target.value)}
-                              onKeyDown={async (e) => { 
-                                if (e.key === "Enter") {
-                                  await updateDailyTaskTitle( 
-                                    task.id, 
-                                    editText,
-                                    today 
-                                 ) 
-                                  setEditText("") 
-                                  setEditingId(null)
-                                } 
-                              }} 
-                            /> 
-   
-                            <button  
-                              className="task-action"
-                              onClick={async () => { 
-                                await updateDailyTaskTitle( 
-                                  task.id, 
+  return (
+  <div className="daily-page">
+    <Sidebar />
+
+    <main className="daily-content">
+
+      <DndContext
+        sensors={sensors}
+        onDragEnd={(event) =>
+          handleDragEnd(
+            event,
+            todayTasks,
+            "daily_tasks",
+            setTodayTasks
+          )
+        }
+      >
+        <section className="daily-section daily-today-section">
+
+          <div className="daily-section-header">
+            <div>
+              <h2>今日の課題</h2>
+            </div>
+          </div>
+
+          {todayTasks.length !== 0 ? (
+            <SortableContext
+              items={todayTasks}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="daily-task-list">
+
+                {todayTasks.map(task =>
+                  <TaskItem
+                    key={task.id}
+                    id={task.id}
+                  >
+                    <div className="daily-task-row">
+
+                      <button
+                        className="daily-task-toggle"
+                        onClick={async () => {
+                          await updateDailyTaskToggle(
+                            task.id,
+                            task.completed,
+                            today
+                          )
+                        }}
+                      >
+                        {task.completed ? "☑" : "□"}
+                      </button>
+
+                      {editingId === task.id ? (
+                        <div className="daily-task-edit">
+
+                          <input
+                            autoFocus
+                            value={editText}
+                            onChange={(e) => setEditText(e.target.value)}
+                            onKeyDown={async (e) => {
+                              if (e.key === "Enter") {
+                                await updateDailyTaskTitle(
+                                  task.id,
                                   editText,
                                   today
-                                ) 
-                                setEditText("") 
-                                setEditingId(null) 
-                              }}
-                            >
-                              保存 
-                            </button> 
-                          </div> 
-                        ) : (
-                          <div className="task-content"> 
+                                )
+                                setEditText("")
+                                setEditingId(null)
+                              }
+                            }}
+                          />
 
-                            <p className="task-title">
-                              {task.title}
-                            </p> 
+                          <button
+                            className="daily-task-action"
+                            onClick={async () => {
+                              await updateDailyTaskTitle(
+                                task.id,
+                                editText,
+                                today
+                              )
+                              setEditText("")
+                              setEditingId(null)
+                            }}
+                          >
+                            保存
+                          </button>
 
-                            <button 
-                              className="task-action" 
-                              onClick={() => { 
-                                setEditingId(task.id) 
-                                setEditText(task.title) 
-                              }} 
-                            > 
-                              編集 
-                            </button> 
-                          </div> 
-                        )} 
-   
-                        <button  
-                          className="task-delete" 
-                          onClick={async () => { 
-                            await deleteDailyTask(task.id, today) 
-                          }} 
-                        > 
-                          削除 
-                        </button> 
-                      </div>
-                    </TaskItem> 
-                  )} 
-                </div> 
-              </SortableContext> 
-            ) : ( 
-              <p className="section-message"> 
-                タスクがありません
-                  <br />
-                  「新しいタスクを追加」から始められます。 
-              </p> 
-            )} 
- 
-            <div className="task-add"> 
-              {todayShowAdd ? ( 
-                <div className="task-add-form"> 
-                  <input 
-                    className="task-add-input"
-                    placeholder="タスク名を入力..." 
-                    autoFocus 
-                    value={addText} 
-                    onChange={(e) => setAddText(e.target.value)} 
-                    onKeyDown={async (e) => { 
-                      if (e.key === "Enter") { 
-                        const text = addText
-                        setAddText("") 
+                        </div>
+                      ) : (
+                        <div className="daily-task-content">
 
-                        const task = await addDailyRecord(text, today) 
-                        setTodayShowAdd(false) 
+                          <p
+                            ref={
+                              expandadTaskId === task.id
+                                ? expandadTaskRef
+                                : null
+                            }
+                            className={`daily-task-title ${
+                              expandadTaskId === task.id
+                                ? "daily-task-title-expanded"
+                                : ""
+                            }`}
+                            onClick={() => {
+                              setExpandadTaskId(
+                                expandadTaskId === task.id
+                                  ? null
+                                  : task.id
+                              )
+                            }}
+                          >
+                            {task.title}
+                          </p>
 
-                        await carryOverRecords(task) 
-                      }
-                    }} 
-                  /> 
- 
-                  <button 
-                    className="task-add-button" 
-                    onClick={async () => { 
+                          <button
+                            className="daily-task-action"
+                            onClick={() => {
+                              setEditingId(task.id)
+                              setEditText(task.title)
+                            }}
+                          >
+                            編集
+                          </button>
+
+                        </div>
+                      )}
+
+                      <button
+                        className="daily-task-delete"
+                        onClick={async () => {
+                          await deleteDailyTask(
+                            task.id,
+                            today
+                          )
+                        }}
+                      >
+                        削除
+                      </button>
+
+                    </div>
+                  </TaskItem>
+                )}
+
+              </div>
+            </SortableContext>
+          ) : (
+            <p className="daily-section-message">
+              タスクがありません
+              <br />
+              「新しいタスクを追加」から始められます。
+            </p>
+          )}
+
+          <div className="daily-task-add">
+
+            {todayShowAdd ? (
+              <div className="daily-task-add-form">
+
+                <input
+                  className="daily-task-add-input"
+                  placeholder="タスク名を入力..."
+                  autoFocus
+                  value={addText}
+                  onChange={(e) => setAddText(e.target.value)}
+                  onKeyDown={async (e) => {
+                    if (e.key === "Enter") {
                       const text = addText
-                      setAddText("") 
-
-                      const task = await addDailyRecord(text, today) 
+                      setAddText("")
+                      const task = await addDailyRecord(
+                        text,
+                        today
+                      )
                       setTodayShowAdd(false)
+                      await carryOverRecords(task)
+                    }
+                  }}
+                />
 
-                      await carryOverRecords(task)  
-                    }}
-                  > 
-                    追加 
-                  </button> 
-                </div>
-              ) : ( 
-                <button  
-                  className="add-task-button" 
-                  onClick={() => setTodayShowAdd(true)} 
-                > 
-                  新しいタスクを追加 
-                </button> 
-              )} 
-            </div>
- 
-            <p className="carryover-note">
-              ※達成されなかったタスクは自動で明日に引き継がれます 
-            </p> 
- 
-          </section> 
-        </DndContext> 
+                <button
+                  className="daily-task-add-button"
+                  onClick={async () => {
+                    const text = addText
+                    setAddText("")
+                    const task = await addDailyRecord(
+                      text,
+                      today
+                    )
+                    setTodayShowAdd(false)
+                    await carryOverRecords(task)
+                  }}
+                >
+                  追加
+                </button>
 
-        <section className="daily-section reflection-section"> 
-          <div className="section-header"> 
-            <h2>今日の振り返り</h2> 
-          </div> 
- 
-          <textarea 
-            className="reflection-input" 
-            placeholder="今日の学習で気づいたこと、できたこと、改善したいこと..." 
-            onBlur={() => { 
-              updateDailyRecordReflection(reflectionText, today) 
-            }} 
-            value={reflectionText} 
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => { 
-              setReflectionText(e.target.value) 
-            }} 
-          />
+              </div>
+            ) : (
+              <button
+                className="daily-add-task-button"
+                onClick={() => setTodayShowAdd(true)}
+              >
+                新しいタスクを追加
+              </button>
+            )}
 
-        </section> 
+          </div>
 
-        <DndContext 
-          sensors={sensors}  
-          onDragEnd={(event) => 
-            handleDragEnd( 
-              event, 
-              tomorrowTasks, 
-              "daily_tasks",
-              setTomorrowTasks 
-            )
-          } 
-        > 
-          <section className="daily-section tomorrow-section"> 
+          <p className="daily-carryover-note">
+            ※達成されなかったタスクは自動で明日に引き継がれます
+          </p>
 
-            <div className="section-header"> 
-              <div>
-                <h2>明日の課題</h2> 
-              </div> 
-            </div> 
- 
-            {tomorrowTasks.length !== 0 ? (
-              <SortableContext 
-                items={tomorrowTasks} 
-                strategy={verticalListSortingStrategy} 
-              > 
-                <div className="task-list"> 
-                  {tomorrowTasks.map(task => 
-                    <TaskItem 
-                      key={task.id} 
-                      id={task.id} 
-                    > 
-                      <div className="task-row">
- 
-                        {editingId === task.id ? ( 
-                          <div className="task-edit"> 
-   
-                            <input 
-                              autoFocus 
-                              value={editText} 
-                              onChange={(e) => setEditText(e.target.value)} 
-                              onKeyDown={async (e) => { 
-                                if (e.key === "Enter") { 
-                                  await updateDailyTaskTitle( 
-                                    task.id, 
-                                    editText, 
-                                    tomorrowDate 
-                                  ) 
-                                  setEditText("") 
-                                  setEditingId(null) 
-                                } 
-                              }} 
-                            /> 
-   
-                            <button  
-                              className="task-action"
-                              onClick={async () => { 
-                                await updateDailyTaskTitle( 
-                                  task.id, 
-                                  editText, 
-                                  tomorrowDate 
-                                ) 
-                                setEditText("") 
-                                setEditingId(null) 
-                              }} 
-                            > 
-                              保存 
-                            </button> 
-   
-                          </div> 
-                        ) : ( 
-                          <div className="task-content"> 
-   
-                            <p className="task-title">
-                              {task.title} 
-                            </p> 
-   
-                            <button 
-                              className="task-action" 
-                              onClick={() => { 
-                                setEditingId(task.id) 
-                                setEditText(task.title) 
-                              }} 
-                            > 
-                              編集 
-                            </button> 
-   
-                          </div> 
-                        )} 
-  
-                        <button 
-                          className="task-delete" 
-                          onClick={() => { 
-                            deleteDailyTask(task.id, tomorrowDate) 
-                          }} 
-                        > 
-                          削除 
-                        </button> 
-
-                      </div>
-                    </TaskItem> 
-                  )} 
-                </div> 
-              </SortableContext> 
-            ) : ( 
-              <p className="section-message"> 
-                タスクがありません
-                  <br />
-                  「新しいタスクを追加」から始められます。 
-              </p> 
-            )} 
- 
-            <div className="task-add">
-              {tomorrowShowAdd ? ( 
-                <div className="task-add-form"> 
-                  <input
-                    className="task-add-input" 
-                    placeholder="タスク名を入力..." 
-                    autoFocus 
-                    value={addText} 
-                    onChange={(e) => setAddText(e.target.value)} 
-                    onKeyDown={async (e) => {
-                      if (e.key === "Enter") { 
-                        const text = addText
-                        setAddText("") 
-
-                        await addDailyRecord(text, tomorrowDate) 
-                        setTomorrowShowAdd(false) 
-                      } 
-                    }} 
-                  /> 
- 
-                  <button  
-                    className="task-add-button"
-                    onClick={async () => { 
-                      const text = addText
-                      setAddText("") 
-
-                      await addDailyRecord(text, tomorrowDate) 
-                      setTomorrowShowAdd(false)
-                    }} 
-                  > 
-                    追加 
-                  </button> 
-                </div> 
-              ) : ( 
-                <button  
-                  className="add-task-button" 
-                  onClick={() => setTomorrowShowAdd(true)} 
-                > 
-                  新しいタスクを追加 
-                </button> 
-              )} 
-
-            </div> 
- 
-          </section> 
-        </DndContext>
-
-        <section className="daily-section yesterday-section"> 
-          <div className="section-header"> 
-            <h2>昨日達成した課題</h2> 
-          </div> 
- 
-          {yesterdayPlan ? ( 
-            completedYesterdayTasks && completedYesterdayTasks.length > 0 ? ( 
-              <ul className="completed-task-list"> 
-                {completedYesterdayTasks.map(task => ( 
-                  <li key={task.id}> 
-                    {task.title} 
-                  </li> 
-                ))} 
-              </ul> 
-            ) : ( 
-              <p className="section-message"> 
-                昨日達成したタスクはありません 
-              </p> 
-            ) 
-          ) : ( 
-            <p className="section-message"> 
-              昨日のタスクはありません 
-            </p> 
-          )} 
         </section>
+      </DndContext>
+
+
+      <section className="daily-section daily-reflection-section">
+
+        <div className="daily-section-header">
+          <h2>今日の振り返り</h2>
+        </div>
+
+        <textarea
+          className="daily-reflection-input"
+          placeholder="今日の学習で気づいたこと、できたこと、改善したいこと..."
+          onBlur={() => {
+            updateDailyRecordReflection(
+              reflectionText,
+              today
+            )
+          }}
+          value={reflectionText}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+            setReflectionText(e.target.value)
+          }}
+        />
+
+      </section>
+
+
+      <DndContext
+        sensors={sensors}
+        onDragEnd={(event) =>
+          handleDragEnd(
+            event,
+            tomorrowTasks,
+            "daily_tasks",
+            setTomorrowTasks
+          )
+        }
+      >
+        <section className="daily-section daily-tomorrow-section">
+
+          <div className="daily-section-header">
+            <div>
+              <h2>明日の課題</h2>
+            </div>
+          </div>
+
+          {tomorrowTasks.length !== 0 ? (
+            <SortableContext
+              items={tomorrowTasks}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="daily-task-list">
+
+                {tomorrowTasks.map(task =>
+                  <TaskItem
+                    key={task.id}
+                    id={task.id}
+                  >
+                    <div className="daily-task-row">
+
+                      {editingId === task.id ? (
+                        <div className="daily-task-edit">
+
+                          <input
+                            autoFocus
+                            value={editText}
+                            onChange={(e) => setEditText(e.target.value)}
+                            onKeyDown={async (e) => {
+                              if (e.key === "Enter") {
+                                await updateDailyTaskTitle(
+                                  task.id,
+                                  editText,
+                                  tomorrowDate
+                                )
+                                setEditText("")
+                                setEditingId(null)
+                              }
+                            }}
+                          />
+
+                          <button
+                            className="daily-task-action"
+                            onClick={async () => {
+                              await updateDailyTaskTitle(
+                                task.id,
+                                editText,
+                                tomorrowDate
+                              )
+                              setEditText("")
+                              setEditingId(null)
+                            }}
+                          >
+                            保存
+                          </button>
+
+                        </div>
+                      ) : (
+                        <div className="daily-task-content">
+
+                          <p
+                            ref={
+                              expandadTaskId === task.id
+                                ? expandadTaskRef
+                                : null
+                            }
+                            className={`daily-task-title ${
+                              expandadTaskId === task.id
+                                ? "daily-task-title-expanded"
+                                : ""
+                            }`}
+                            onClick={() => {
+                              setExpandadTaskId(
+                                expandadTaskId === task.id
+                                  ? null
+                                  : task.id
+                              )
+                            }}
+                          >
+                            {task.title}
+                          </p>
+
+                          <button
+                            className="daily-task-action"
+                            onClick={() => {
+                              setEditingId(task.id)
+                              setEditText(task.title)
+                            }}
+                          >
+                            編集
+                          </button>
+
+                        </div>
+                      )}
+
+                      <button
+                        className="daily-task-delete"
+                        onClick={() => {
+                          deleteDailyTask(
+                            task.id,
+                            tomorrowDate
+                          )
+                        }}
+                      >
+                        削除
+                      </button>
+
+                    </div>
+                  </TaskItem>
+                )}
+
+              </div>
+            </SortableContext>
+          ) : (
+            <p className="daily-section-message">
+              タスクがありません
+              <br />
+              「新しいタスクを追加」から始められます。
+            </p>
+          )}
+
+          <div className="daily-task-add">
+
+            {tomorrowShowAdd ? (
+              <div className="daily-task-add-form">
+
+                <input
+                  className="daily-task-add-input"
+                  placeholder="タスク名を入力..."
+                  autoFocus
+                  value={addText}
+                  onChange={(e) => setAddText(e.target.value)}
+                  onKeyDown={async (e) => {
+                    if (e.key === "Enter") {
+                      const text = addText
+                      setAddText("")
+                      await addDailyRecord(
+                        text,
+                        tomorrowDate
+                      )
+                      setTomorrowShowAdd(false)
+                    }
+                  }}
+                />
+
+                <button
+                  className="daily-task-add-button"
+                  onClick={async () => {
+                    const text = addText
+                    setAddText("")
+                    await addDailyRecord(
+                      text,
+                      tomorrowDate
+                    )
+                    setTomorrowShowAdd(false)
+                  }}
+                >
+                  追加
+                </button>
+
+              </div>
+            ) : (
+              <button
+                className="daily-add-task-button"
+                onClick={() => setTomorrowShowAdd(true)}
+              >
+                新しいタスクを追加
+              </button>
+            )}
+
+          </div>
+
+        </section>
+      </DndContext>
+
+
+      <section className="daily-section daily-yesterday-section">
+
+        <div className="daily-section-header">
+          <h2>昨日達成した課題</h2>
+        </div>
+
+        {yesterdayPlan ? (
+          completedYesterdayTasks &&
+          completedYesterdayTasks.length > 0 ? (
+            <ul className="daily-completed-task-list">
+
+              {completedYesterdayTasks.map(task => (
+                <li key={task.id}>
+                  {task.title}
+                </li>
+              ))}
+
+            </ul>
+          ) : (
+            <p className="daily-section-message">
+              昨日達成したタスクはありません
+            </p>
+          )
+        ) : (
+          <p className="daily-section-message">
+            昨日のタスクはありません
+          </p>
+        )}
+
+      </section>
+
+    </main>
+  </div>
+)
  
-      </main> 
-    </div> 
-  ) 
 } 

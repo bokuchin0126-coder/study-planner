@@ -1,33 +1,24 @@
 /* ========================================
    Layout
 ======================================== */
-
 .daily-page {
   width: 100%;
   height: 100vh;
-
   display: flex;
-
   overflow: hidden;
-
   background-color: #ffffff;
   color: #111111;
 }
 
-
 /* ========================================
    Main Content
 ======================================== */
-
 .daily-content {
   flex: 1;
   min-width: 0;
   min-height: 0;
-
   height: 100vh;
-
   box-sizing: border-box;
-
   display: grid;
 
   /* 左60% : 右40% */
@@ -35,6 +26,7 @@
 
   /*
     全体を10分割。
+
     左：
       今日の課題 7
       振り返り 3
@@ -49,20 +41,17 @@
   padding: 20px;
 
   overflow: hidden;
+
   background-color: #f4f5f6;
 }
-
 
 /* ========================================
    Section
 ======================================== */
-
 .daily-section {
   position: relative;
-
   min-width: 0;
   min-height: 0;
-
   box-sizing: border-box;
 
   display: flex;
@@ -71,79 +60,65 @@
   padding: 20px 16px 60px;
 
   background-color: #ffffff;
-
   border-radius: 2px;
 
   overflow: hidden;
 }
 
-
 /* ========================================
    Section Position
 ======================================== */
-
-.today-section {
+.daily-today-section {
   grid-column: 1;
   grid-row: 1 / 7;
-
   margin-bottom: -20px;
 }
 
-.reflection-section {
+.daily-reflection-section {
   grid-column: 1;
   grid-row: 7 / 11;
-
   padding-bottom: 15px;
   border-top: 1px solid #dddddd;
 }
 
-
-.tomorrow-section {
+.daily-tomorrow-section {
   grid-column: 2;
   grid-row: 1 / 7;
 }
 
-.yesterday-section {
+.daily-yesterday-section {
   grid-column: 2;
   grid-row: 7 / 11;
 }
 
-
 /* ========================================
    Section Header
 ======================================== */
-
-.section-header {
+.daily-section-header {
   flex-shrink: 0;
-
   margin-bottom: 12px;
 }
 
-.section-header h2 {
+.daily-section-header h2 {
   margin: 0;
-
   color: #111111;
-
   font-size: 17px;
   font-weight: 700;
   line-height: 1.5;
 }
 
-.section-description {
+.daily-section-description {
   display: none;
 }
-
 
 /* ========================================
    Task List
 ======================================== */
-
-.task-list {
+.daily-task-list {
   min-width: 0;
   min-height: 0;
 
   flex: 1;
-
   width: 100%;
 
   box-sizing: border-box;
@@ -160,35 +135,31 @@
   scrollbar-color: #cccccc transparent;
 }
 
-.task-list > * {
+.daily-task-list > * {
   border-bottom: 1px solid #dddddd;
 }
 
 /* ========================================
    Task List Scrollbar
 ======================================== */
-
-.task-list::-webkit-scrollbar {
+.daily-task-list::-webkit-scrollbar {
   width: 6px;
 }
 
-.task-list::-webkit-scrollbar-track {
+.daily-task-list::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.task-list::-webkit-scrollbar-thumb {
+.daily-task-list::-webkit-scrollbar-thumb {
   background-color: #cccccc;
   border-radius: 2px;
 }
 
-
 /* ========================================
    Task Row
 ======================================== */
-
-.task-row {
+.daily-task-row {
   width: 100%;
-
   min-height: 46px;
 
   box-sizing: border-box;
@@ -201,21 +172,17 @@
   background-color: #ffffff;
 }
 
-
 /*
   最後のタスクは外枠の線を使用
 */
-
-.task-row:last-child {
+.daily-task-row:last-child {
   border-bottom: none;
 }
-
 
 /* ========================================
    Task Toggle Button
 ======================================== */
-
-.task-toggle {
+.daily-task-toggle {
   width: 30px;
   height: 30px;
 
@@ -245,19 +212,16 @@
     border-color 0.15s ease;
 }
 
-.task-toggle:hover {
+.daily-task-toggle:hover {
   background-color: #eeeeee;
   border-color: #cccccc;
 }
 
-
 /* ========================================
    Task Content
 ======================================== */
-
-.task-content {
+.daily-task-content {
   min-width: 0;
-
   flex: 1;
 
   display: flex;
@@ -266,9 +230,10 @@
   gap: 7px;
 }
 
-.task-title {
+.daily-task-title {
   min-width: 0;
 
+  white-space: nowrap;
   flex: 1;
 
   margin: 0;
@@ -279,16 +244,26 @@
   font-weight: 400;
   line-height: 1.5;
 
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  cursor: pointer;
 }
 
+.daily-task-title.daily-task-title-expanded {
+  display: block;
+
+  overflow: visible;
+  white-space: normal;
+
+  overflow-wrap: anywhere;
+}
 
 /* ========================================
    Edit / Delete Button
 ======================================== */
-
-.task-action,
-.task-delete {
+.daily-task-action,
+.daily-task-delete {
   flex-shrink: 0;
 
   padding: 6px 8px;
@@ -311,34 +286,31 @@
     border-color 0.15s ease;
 }
 
-.task-action:hover,
-.task-delete:hover {
+.daily-task-action:hover,
+.daily-task-delete:hover {
   background-color: #eeeeee;
   border-color: #c8c8c8;
 
   text-decoration: none;
 }
 
-.task-action:focus-visible,
-.task-delete:focus-visible {
+.daily-task-action:focus-visible,
+.daily-task-delete:focus-visible {
   outline: 2px solid #111111;
   outline-offset: 1px;
 
   text-decoration: none;
 }
 
-.task-delete {
+.daily-task-delete {
   margin-left: 3px;
 }
-
 
 /* ========================================
    Task Edit
 ======================================== */
-
-.task-edit {
+.daily-task-edit {
   min-width: 0;
-
   flex: 1;
 
   display: flex;
@@ -347,9 +319,8 @@
   gap: 7px;
 }
 
-.task-edit input {
+.daily-task-edit input {
   min-width: 0;
-
   flex: 1;
 
   height: 32px;
@@ -370,17 +341,15 @@
   outline: none;
 }
 
-.task-edit input:focus {
+.daily-task-edit input:focus {
   border-color: #111111;
 }
-
 
 /* ========================================
    Task Bottom Area
 ======================================== */
-
-.today-section .task-add,
-.tomorrow-section .task-add {
+.daily-today-section .daily-task-add,
+.daily-tomorrow-section .daily-task-add {
   position: absolute;
 
   right: 18px;
@@ -394,13 +363,11 @@
   margin: 0;
 }
 
-
 /* ========================================
    Carry Over Message
 ======================================== */
-
-.today-section .carryover-note,
-.tomorrow-section .carryover-note {
+.daily-today-section .daily-carryover-note,
+.daily-tomorrow-section .daily-carryover-note {
   position: absolute;
 
   left: 18px;
@@ -408,25 +375,19 @@
 
   margin: 0;
 
-  /*
-    前回より濃く
-  */
   color: #212121;
 
   font-size: 11px;
   line-height: 34px;
 }
 
-
 /* ========================================
    Add Task Button
 ======================================== */
-
-.add-task-button {
+.daily-add-task-button {
   height: 34px;
 
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
 
@@ -450,7 +411,7 @@
     border-color 0.15s ease;
 }
 
-.add-task-button::before {
+.daily-add-task-button::before {
   content: "+";
 
   margin-right: 6px;
@@ -460,35 +421,30 @@
   line-height: 1;
 }
 
-.add-task-button:hover {
+.daily-add-task-button:hover {
   background-color: #eeeeee;
   border-color: #aaaaaa;
 }
 
-.add-task-button:focus-visible {
+.daily-add-task-button:focus-visible {
   outline: 2px solid #111111;
   outline-offset: 1px;
 }
 
-
 /* ========================================
    Add Task Form
 ======================================== */
-
-.task-add-form {
+.daily-task-add-form {
   display: flex;
   align-items: center;
 
   gap: 7px;
-
   margin: 0;
 }
 
-.task-add-input {
+.daily-task-add-input {
   min-width: 0;
-
   width: 220px;
-
   height: 34px;
 
   box-sizing: border-box;
@@ -507,20 +463,18 @@
   outline: none;
 }
 
-.task-add-input:focus {
+.daily-task-add-input:focus {
   border-color: #111111;
 }
 
-.task-add-input::placeholder {
+.daily-task-add-input::placeholder {
   color: #999999;
 }
-
 
 /* ========================================
    Add Button
 ======================================== */
-
-.task-add-button {
+.daily-task-add-button {
   height: 34px;
 
   flex-shrink: 0;
@@ -543,27 +497,24 @@
     border-color 0.15s ease;
 }
 
-.task-add-button:hover {
+.daily-task-add-button:hover {
   background-color: #444444;
   border-color: #444444;
 }
 
-.task-add-button:focus-visible {
+.daily-task-add-button:focus-visible {
   outline: 2px solid #111111;
   outline-offset: 1px;
 }
 
-
 /* ========================================
    Reflection
 ======================================== */
-
-.reflection-input {
+.daily-reflection-input {
   min-width: 0;
   min-height: 0;
 
   flex: 1;
-
   width: 100%;
 
   box-sizing: border-box;
@@ -579,9 +530,7 @@
   color: #111111;
 
   font-family: inherit;
-
   font-size: 13px;
-
   line-height: 36px;
 
   outline: none;
@@ -589,13 +538,10 @@
   background-image:
     repeating-linear-gradient(
       to bottom,
-
       transparent 0,
       transparent 35px,
-
       #e5e5e5 35px,
       #e5e5e5 36px,
-
       transparent 36px,
       transparent 37px
     );
@@ -610,31 +556,26 @@
   background-attachment: local;
 }
 
-.reflection-input:focus {
+.daily-reflection-input:focus {
   border-color: #cccccc;
 }
 
-.reflection-input::placeholder {
+.daily-reflection-input::placeholder {
   color: #888888;
 }
-
 
 /* ========================================
    Message
 ======================================== */
-
-.section-message {
+.daily-section-message {
   flex: 1;
-
   min-height: 0;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
   margin: 0;
-
   padding: 20px;
 
   box-sizing: border-box;
@@ -645,20 +586,16 @@
   color: #777777;
 
   font-size: 13px;
-
   line-height: 1.6;
 
   text-align: center;
 }
 
-
 /* ========================================
    Completed Tasks
 ======================================== */
-
-.completed-task-list {
+.daily-completed-task-list {
   min-height: 0;
-
   flex: 1;
 
   margin: 0;
@@ -674,21 +611,20 @@
   scrollbar-color: #cccccc transparent;
 }
 
-.completed-task-list::-webkit-scrollbar {
+.daily-completed-task-list::-webkit-scrollbar {
   width: 6px;
 }
 
-.completed-task-list::-webkit-scrollbar-track {
+.daily-completed-task-list::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.completed-task-list::-webkit-scrollbar-thumb {
+.daily-completed-task-list::-webkit-scrollbar-thumb {
   background-color: #cccccc;
-
   border-radius: 2px;
 }
 
-.completed-task-list li {
+.daily-completed-task-list li {
   padding: 12px 8px;
 
   border-bottom: 1px solid #e5e5e5;
@@ -696,11 +632,10 @@
   color: #222222;
 
   font-size: 13px;
-
   line-height: 1.5;
 }
 
-.completed-task-list li::before {
+.daily-completed-task-list li::before {
   content: "•";
 
   margin-right: 10px;
@@ -711,7 +646,6 @@
 /* ========================================
    Responsive
 ======================================== */
-
 @media (max-width: 900px) {
   .daily-page {
     display: block;
@@ -719,19 +653,15 @@
 
   .daily-page .sidebar {
     width: 100%;
-
     min-width: 0;
-
     height: 56px;
 
     display: flex;
-
     align-items: center;
 
     padding: 6px 12px;
 
     border-right: none;
-
     border-bottom: 1px solid #eeeeee;
   }
 
@@ -739,11 +669,9 @@
     height: calc(100vh - 56px);
 
     padding: 14px;
-
     gap: 14px;
   }
 }
-
 
 @media (max-width: 700px) {
   .daily-content {
@@ -755,22 +683,22 @@
     overflow-y: auto;
   }
 
-  .today-section {
+  .daily-today-section {
     grid-column: 1;
     grid-row: 1;
   }
 
-  .tomorrow-section {
+  .daily-tomorrow-section {
     grid-column: 1;
     grid-row: 2;
   }
 
-  .reflection-section {
+  .daily-reflection-section {
     grid-column: 1;
     grid-row: 3;
   }
 
-  .yesterday-section {
+  .daily-yesterday-section {
     grid-column: 1;
     grid-row: 4;
   }

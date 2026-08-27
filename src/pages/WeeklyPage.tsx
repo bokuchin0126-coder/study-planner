@@ -45,7 +45,7 @@ export default function WeeklyPage() {
   const [editText, setEditText] = useState<string>("")
   const [reflectionText, setReflectionText] = useState<string>("") 
  
-  const [editingId, setEditingId] = useState<string>("") 
+  const [editingId, setEditingId] = useState<string | null>(null) 
  
   const weekStart = weeklyDate("start") 
   const weekEnd = weeklyDate("end")
@@ -68,6 +68,25 @@ export default function WeeklyPage() {
 
   useOutsideClick(expandadTaskRef, () => {
     setExpandadTaskId(null)
+  })
+
+  const weekAddRef = useRef<HTMLDivElement | null>(null)
+  const nextWeekAddRef = useRef<HTMLDivElement | null>(null)
+  const editRef = useRef<HTMLDivElement | null>(null)
+
+  useOutsideClick(weekAddRef, () => {
+    setWeekShowAdd(false)
+    setAddText("")
+  })
+
+  useOutsideClick(nextWeekAddRef, () => {
+    setNextWeekShowAdd(false)
+    setAddText("")
+  })
+
+  useOutsideClick(editRef, () => {
+    setEditingId(null)
+    setEditText("")
   })
 
   const thisWeekDailyPlans = dailyRecords.filter( 
@@ -167,7 +186,10 @@ export default function WeeklyPage() {
                       </button> 
    
                       {editingId === task.id ? (
-                        <div className="weekly-task-edit"> 
+                        <div 
+                          className="weekly-task-edit"
+                          ref={editRef}
+                        > 
   
                           <input 
                             value={editText}
@@ -217,6 +239,9 @@ export default function WeeklyPage() {
                               expandadTaskId === task.id
                                 ? "weekly-task-title-expanded"
                                 : ""
+                            } ${
+                              task.completed ? "task-completed"
+                              : ""
                             }`}
                             onClick={() => {
                               setExpandadTaskId(
@@ -265,7 +290,10 @@ export default function WeeklyPage() {
             <div className="weekly-task-add"> 
  
               {weekShowAdd ? ( 
-                <div className="weekly-task-add-form"> 
+                <div 
+                  className="weekly-task-add-form"
+                  ref={weekAddRef}
+                >  
  
                   <input 
                     className="weekly-task-add-input" 
@@ -391,7 +419,10 @@ export default function WeeklyPage() {
                     <div className="weekly-task-row">
  
                       {editingId === task.id ? ( 
-                        <div className="weekly-task-edit"> 
+                        <div 
+                          className="weekly-task-edit"
+                          ref={editRef}
+                        >  
  
                           <input 
                             value={editText} 
@@ -489,7 +520,10 @@ export default function WeeklyPage() {
             <div className="weekly-task-add"> 
  
               {nextWeekShowAdd ? ( 
-                <div className="weekly-task-add-form"> 
+                <div 
+                  className="weekly-task-add-form"
+                  ref={nextWeekAddRef}
+                > 
  
                   <input 
                     className="weekly-task-add-input" 

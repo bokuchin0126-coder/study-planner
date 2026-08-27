@@ -14,6 +14,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core"
+import "../css/monthly.css"
 
 
 export default function MonthlyPage() {
@@ -43,7 +44,7 @@ export default function MonthlyPage() {
 
   const [monthShowAdd, setMonthShowAdd] = useState<boolean>(false)
   const [nextMonthShowAdd, setNextMonthShowAdd] = useState<boolean>(false)
-  const [editingId, setEditingId] = useState<string>("")
+  const [editingId, setEditingId] = useState<string | null>(null)
 
   const monthStart = monthlyDate("start")
   const monthEnd = monthlyDate("end")
@@ -89,6 +90,25 @@ export default function MonthlyPage() {
 
   useOutsideClick(expandadTaskRef, () => {
     setExpandadTaskId(null)
+  })
+
+  const monthAddRef = useRef<HTMLDivElement | null>(null)
+  const nextMonthAddRef = useRef<HTMLDivElement | null>(null)
+  const editRef = useRef<HTMLDivElement | null>(null)
+  
+  useOutsideClick(monthAddRef, () => {
+    setMonthShowAdd(false)
+    setAddText("")
+  })
+  
+  useOutsideClick(nextMonthAddRef, () => {
+    setNextMonthShowAdd(false)
+    setAddText("")
+  })
+  
+  useOutsideClick(editRef, () => {
+    setEditingId(null)
+    setEditText("")
   })
 
   useEffect(() => {
@@ -232,7 +252,10 @@ export default function MonthlyPage() {
 
                   {editingId === task.id ? (
 
-                    <div className="monthly-task-edit">
+                    <div
+                      className="monthly-task-edit"
+                      ref={editRef}
+                    >
 
                       <input
                         value={editText}
@@ -292,6 +315,9 @@ export default function MonthlyPage() {
                           expandadTaskId === task.id
                             ? "monthly-task-title-expanded"
                             : ""
+                        } ${
+                          task.completed ? "task-completed"
+                          : ""
                         }`}
                         onClick={() => {
                           setExpandadTaskId(
@@ -344,7 +370,10 @@ export default function MonthlyPage() {
 
             {monthShowAdd ? (
 
-              <div className="monthly-task-add-form">
+              <div 
+                className="monthly-task-add-form"
+                ref={monthAddRef}
+              >
 
                 <input
                   className="monthly-task-add-input"
@@ -495,7 +524,10 @@ export default function MonthlyPage() {
 
                   {editingId === task.id ? (
 
-                    <div className="monthly-task-edit">
+                    <div
+                      className="monthly-task-edit"
+                      ref={editRef}
+                    >
 
                       <input
                         value={editText}
@@ -607,7 +639,10 @@ export default function MonthlyPage() {
 
             {nextMonthShowAdd ? (
 
-              <div className="monthly-task-add-form">
+              <div 
+                className="monthly-task-add-form"
+                ref={nextMonthAddRef}
+              >
 
                 <input
                   className="monthly-task-add-input"

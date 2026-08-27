@@ -47,7 +47,7 @@ export default function LongTermPage() {
   const [goalText, setGoalText] = useState<string>("")
   const [reflectionText, setReflectionText] = useState<string>("")
 
-  const [editingId, setEditingId] = useState<string>("")
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [showAdd, setShowAdd] = useState<boolean>(false)
 
   const [editingType, setEditingType] = useState<"start" | "end" | null>(null)
@@ -65,6 +65,19 @@ export default function LongTermPage() {
 
   useOutsideClick(expandadTaskRef, () => {
     setExpandadTaskId(null)
+  })
+
+  const addRef = useRef<HTMLDivElement | null>(null)
+  const editRef = useRef<HTMLDivElement | null>(null)
+    
+  useOutsideClick(addRef, () => {
+    setShowAdd(false)
+    setAddText("")
+  })
+    
+  useOutsideClick(editRef, () => {
+    setEditingId(null)
+    setEditText("")
   })
 
   const saveStartDate = `${startYear}-${String(startMonth).padStart(2, "0")}-${String(startDay).padStart(2, "0")}`
@@ -96,6 +109,32 @@ export default function LongTermPage() {
 
     return groups
   }, {} as Record<string, string[]>)
+
+  const handleDatePickerClose = async () => {
+    if (editingType === "start") {
+      if (endDate < startDate) {
+        const correctedEndDate =
+          `${startYear}-${String(startMonth).padStart(2, "0")}-${String(startDay).padStart(2, "0")}`
+
+        setEndYear(startYear)
+        setEndMonth(startMonth)
+        setEndDay(startDay)
+
+        await updateLongTermEndDate(correctedEndDate)
+      }
+  
+      await updateLongTermStartDate(saveStartDate)
+
+    } else if (editingType === "end") {
+      await updateLongTermEndDate(saveEndDate)
+    }
+
+    setEditingType(null)
+  }
+
+  useOutsideClick(pickerRef, () => {
+    handleDatePickerClose()
+  })
 
   useEffect(() => {
     const maxStartDay = new Date(startYear, startMonth, 0).getDate()
@@ -132,51 +171,6 @@ export default function LongTermPage() {
     setEndDay(endDay)
   }, [longTermRecord])
 
-
-  useEffect(() => {
-    const handleClickOutside = async (e: MouseEvent) => {
-      if (
-        pickerRef.current &&
-        !pickerRef.current.contains(e.target as Node)
-      ) {
-        if (editingType === "start") {
-          if (endDate < startDate) {
-            const correctedEndDate =
-              `${startYear}-${String(startMonth).padStart(2, "0")}-${String(startDay).padStart(2, "0")}`
-
-            setEndYear(startYear)
-            setEndMonth(startMonth)
-            setEndDay(startDay)
-  
-            await updateLongTermEndDate(correctedEndDate)
-          }
-
-          await updateLongTermStartDate(saveStartDate)
-        } else if (editingType === "end") {
-          await updateLongTermEndDate(saveEndDate)
-        }
-  
-        setEditingType(null)
-      }
-    }
-  
-    document.addEventListener("mousedown", handleClickOutside)
-  
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [
-    editingType,
-    saveStartDate,
-    saveEndDate,
-    startDate,
-    endDate,
-    startYear,
-    startMonth,
-    startDay,
-    updateLongTermStartDate,
-    updateLongTermEndDate
-  ])
 
   useEffect(() => {
     if (!longTermRecord) return
@@ -549,7 +543,10 @@ export default function LongTermPage() {
 
                   {editingId === task.id ? (
 
-                    <div className="task-edit">
+                    <div 
+                      className="task-edit"
+                      ref={editRef}
+                    >
 
                       <input
                         value={editText}
@@ -607,6 +604,9 @@ export default function LongTermPage() {
                           expandadTaskId === task.id
                             ? "task-title-expanded"
                             : ""
+                        } ${
+                          task.completed ? "task-completed"
+                          : ""
                         }`}
                         onClick={() => {
                           setExpandadTaskId(
@@ -658,7 +658,10 @@ export default function LongTermPage() {
 
             {showAdd ? (
 
-              <div className="task-add-form">
+              <div 
+                className="task-add-form"
+                ref={addRef}
+              >
 
                 <input
                   className="task-add-input"

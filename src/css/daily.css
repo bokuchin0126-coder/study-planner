@@ -259,6 +259,12 @@
   overflow-wrap: anywhere;
 }
 
+.daily-task-title.task-completed {
+  text-decoration: line-through;
+  text-decoration-color: rgba(17, 17, 17, 0.45);
+  text-decoration-thickness: 1px;
+}
+
 /* ========================================
    Edit / Delete Button
 ======================================== */

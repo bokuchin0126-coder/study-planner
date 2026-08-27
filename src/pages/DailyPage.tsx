@@ -51,10 +51,29 @@ export default function DailyPage() {
   const [editingId, setEditingId] = useState<string | null>(null) 
 
   const [expandadTaskId, setExpandadTaskId] = useState<string | null>(null)
-  const expandadTaskRef = useRef<HTMLParagraphElement>(null)
+  const expandadTaskRef = useRef<HTMLParagraphElement | null>(null)
 
   useOutsideClick(expandadTaskRef, () => {
     setExpandadTaskId(null)
+  })
+
+  const todayAddRef = useRef<HTMLDivElement | null>(null)
+  const tomorrowAddRef = useRef<HTMLDivElement | null>(null)
+  const editRef = useRef<HTMLDivElement | null>(null)
+
+  useOutsideClick(todayAddRef, () => {
+    setTodayShowAdd(false)
+    setAddText("")
+  })
+
+  useOutsideClick(tomorrowAddRef, () => {
+    setTomorrowShowAdd(false)
+    setAddText("")
+  })
+
+  useOutsideClick(editRef, () => {
+    setEditingId(null)
+    setEditText("")
   })
  
   const completedYesterdayTasks = yesterdayPlan?.tasks.filter(task => task.completed) 
@@ -119,7 +138,10 @@ export default function DailyPage() {
                       </button>
 
                       {editingId === task.id ? (
-                        <div className="daily-task-edit">
+                        <div 
+                          className="daily-task-edit"
+                          ref={editRef}
+                        >
 
                           <input
                             autoFocus
@@ -167,6 +189,9 @@ export default function DailyPage() {
                               expandadTaskId === task.id
                                 ? "daily-task-title-expanded"
                                 : ""
+                            } ${
+                              task.completed ? "task-completed"
+                              : ""
                             }`}
                             onClick={() => {
                               setExpandadTaskId(
@@ -221,7 +246,10 @@ export default function DailyPage() {
           <div className="daily-task-add">
 
             {todayShowAdd ? (
-              <div className="daily-task-add-form">
+              <div 
+                className="daily-task-add-form"
+                ref={todayAddRef}
+              >
 
                 <input
                   className="daily-task-add-input"
@@ -337,7 +365,10 @@ export default function DailyPage() {
                     <div className="daily-task-row">
 
                       {editingId === task.id ? (
-                        <div className="daily-task-edit">
+                        <div 
+                          className="daily-task-edit"
+                          ref={editRef}
+                        >
 
                           <input
                             autoFocus
@@ -439,7 +470,10 @@ export default function DailyPage() {
           <div className="daily-task-add">
 
             {tomorrowShowAdd ? (
-              <div className="daily-task-add-form">
+              <div 
+                className="daily-task-add-form"
+                ref={tomorrowAddRef}
+              >
 
                 <input
                   className="daily-task-add-input"

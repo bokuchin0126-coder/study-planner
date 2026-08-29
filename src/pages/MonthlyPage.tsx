@@ -134,19 +134,6 @@ export default function MonthlyPage() {
 
     <main className="monthly-content">
 
-      <header className="monthly-header">
-
-        <p className="monthly-date">
-          {monthStart} ～ {monthEnd}
-        </p>
-
-        <h1 className="monthly-title">
-          今月の学習
-        </h1>
-
-      </header>
-
-
       <section className="monthly-section monthly-last-month-section">
 
         <div className="monthly-section-header">
@@ -205,10 +192,6 @@ export default function MonthlyPage() {
 
               <h2>今月の課題</h2>
 
-              <p className="monthly-section-description">
-                今月取り組むタスク
-              </p>
-
             </div>
 
           </div>
@@ -236,126 +219,130 @@ export default function MonthlyPage() {
                   id={task.id}
                 >
 
-                  <button
-                    className="monthly-task-toggle"
-                    onClick={() =>
-                      updateMonthlyTaskToggle(
-                        task.id,
-                        task.completed,
-                        monthStart
-                      )
-                    }
-                  >
-                    {task.completed ? "☑" : "□"}
-                  </button>
+                  <div className="monthly-task-row">
 
-
-                  {editingId === task.id ? (
-
-                    <div
-                      className="monthly-task-edit"
-                      ref={editRef}
+                    <button
+                      className="monthly-task-toggle"
+                      onClick={() =>
+                        updateMonthlyTaskToggle(
+                          task.id,
+                          task.completed,
+                          monthStart
+                        )
+                      }
                     >
-
-                      <input
-                        value={editText}
-                        autoFocus
-                        onChange={(e) =>
-                          setEditText(e.target.value)
-                        }
-                        onKeyDown={async (e) => {
-
-                          if (e.key === "Enter") {
-
+                      {task.completed ? "☑" : "□"}
+                    </button>
+  
+  
+                    {editingId === task.id ? (
+  
+                      <div
+                        className="monthly-task-edit"
+                        ref={editRef}
+                      >
+ 
+                        <input
+                          value={editText}
+                          autoFocus
+                          onChange={(e) =>
+                            setEditText(e.target.value)
+                          }
+                          onKeyDown={async (e) => {
+  
+                            if (e.key === "Enter") {
+  
+                              await updateMonthlyTaskTitle(
+                                task.id,
+                                editText,
+                                monthStart
+                              )
+  
+                              setEditText("")
+                              setEditingId("")
+  
+                            }
+  
+                          }}
+                        />
+  
+                        <button
+                          className="monthly-task-action"
+                          onClick={async () => {
+  
                             await updateMonthlyTaskTitle(
                               task.id,
                               editText,
                               monthStart
                             )
-
+  
                             setEditText("")
                             setEditingId("")
+  
+                          }}
+                        >
+                           保存
+                        </button>
 
-                          }
+                      </div>
 
-                        }}
-                      />
+                    ) : (
 
-                      <button
-                        className="monthly-task-action"
-                        onClick={async () => {
+                      <div className="monthly-task-content">
 
-                          await updateMonthlyTaskTitle(
-                            task.id,
-                            editText,
-                            monthStart
-                          )
-
-                          setEditText("")
-                          setEditingId("")
-
-                        }}
-                      >
-                        保存
-                      </button>
-
-                    </div>
-
-                  ) : (
-
-                    <div className="monthly-task-content">
-
-                      <p
-                        ref={
-                          expandadTaskId === task.id
-                            ? expandadTaskRef
-                            : null
-                          }
-                        className={`monthly-task-title ${
-                          expandadTaskId === task.id
-                            ? "monthly-task-title-expanded"
-                            : ""
-                        } ${
-                          task.completed ? "task-completed"
-                          : ""
-                        }`}
-                        onClick={() => {
-                          setExpandadTaskId(
+                        <p
+                          ref={
                             expandadTaskId === task.id
-                              ? null
-                              : task.id
-                          )
-                        }}
-                      >
-                        {task.title}
-                      </p>
-
-                      <button
-                        className="monthly-task-action"
-                        onClick={() => {
-                          setEditingId(task.id)
-                          setEditText(task.title)
-                        }}
-                      >
-                        編集
-                      </button>
-
-                    </div>
-
-                  )}
-
-
-                  <button
-                    className="monthly-task-delete"
-                    onClick={() =>
-                      deleteMonthlyTask(
-                        task.id,
-                        monthStart
-                      )
-                    }
-                  >
-                    削除
-                  </button>
+                              ? expandadTaskRef
+                              : null
+                            }
+                          className={`monthly-task-title ${
+                            expandadTaskId === task.id
+                              ? "monthly-task-title-expanded"
+                              : ""
+                          } ${
+                            task.completed ? "task-completed"
+                            : ""
+                          }`}
+                          onClick={() => {
+                            setExpandadTaskId(
+                              expandadTaskId === task.id
+                                ? null
+                                : task.id
+                            )
+                          }}
+                        >
+                          {task.title}
+                        </p>
+  
+                        <button
+                          className="monthly-task-action"
+                          onClick={() => {
+                            setEditingId(task.id)
+                            setEditText(task.title)
+                          }}
+                        >
+                          編集
+                        </button>
+  
+                      </div>
+  
+                    )}
+  
+  
+                    <button
+                      className="monthly-task-delete"
+                      onClick={() =>
+                        deleteMonthlyTask(
+                          task.id,
+                          monthStart
+                        )
+                      }
+                    >
+                      削除
+                    </button>
+  
+                  </div>
 
                 </TaskItem>
 
@@ -491,10 +478,6 @@ export default function MonthlyPage() {
 
               <h2>来月の課題</h2>
 
-              <p className="monthly-section-description">
-                来月取り組むタスクを準備しておきましょう
-              </p>
-
             </div>
 
           </div>
@@ -522,110 +505,114 @@ export default function MonthlyPage() {
                   id={task.id}
                 >
 
-                  {editingId === task.id ? (
+                  <div className="monthly-task-row">
 
-                    <div
-                      className="monthly-task-edit"
-                      ref={editRef}
-                    >
-
-                      <input
-                        value={editText}
-                        autoFocus
-                        onChange={(e) =>
-                          setEditText(e.target.value)
-                        }
-                        onKeyDown={async (e) => {
-
-                          if (e.key === "Enter") {
-
+                    {editingId === task.id ? (
+  
+                      <div
+                        className="monthly-task-edit"
+                        ref={editRef}
+                      >
+  
+                        <input
+                          value={editText}
+                          autoFocus
+                          onChange={(e) =>
+                            setEditText(e.target.value)
+                          }
+                          onKeyDown={async (e) => {
+  
+                            if (e.key === "Enter") {
+  
+                              await updateMonthlyTaskTitle(
+                                task.id,
+                                editText,
+                                nextMonthStart
+                              )
+  
+                              setEditText("")
+                              setEditingId("")
+  
+                            }
+  
+                          }}
+                        />
+  
+                        <button
+                          className="monthly-task-action"
+                          onClick={async () => {
+  
                             await updateMonthlyTaskTitle(
                               task.id,
                               editText,
                               nextMonthStart
                             )
-
+  
                             setEditText("")
                             setEditingId("")
-
-                          }
-
-                        }}
-                      />
-
-                      <button
-                        className="monthly-task-action"
-                        onClick={async () => {
-
-                          await updateMonthlyTaskTitle(
-                            task.id,
-                            editText,
-                            nextMonthStart
-                          )
-
-                          setEditText("")
-                          setEditingId("")
-
-                        }}
-                      >
-                        保存
-                      </button>
-
-                    </div>
-
-                  ) : (
-
-                    <div className="monthly-task-content">
-
-                      <p
-                        ref={
-                          expandadTaskId === task.id
-                            ? expandadTaskRef
-                            : null
-                          }
-                        className={`monthly-task-title ${
-                          expandadTaskId === task.id
-                            ? "monthly-task-title-expanded"
-                            : ""
-                        }`}
-                        onClick={() => {
-                          setExpandadTaskId(
+  
+                          }}
+                        >
+                          保存
+                        </button>
+  
+                      </div>
+  
+                    ) : (
+  
+                      <div className="monthly-task-content">
+  
+                        <p
+                          ref={
                             expandadTaskId === task.id
-                              ? null
-                              : task.id
-                          )
-                        }}
-                      >
-                        {task.title}
-                      </p>
-
-                      <button
-                        className="monthly-task-action"
-                        onClick={() => {
-                          setEditingId(task.id)
-                          setEditText(task.title)
-                        }}
-                      >
-                        編集
-                      </button>
-
-                    </div>
-
-                  )}
-
-
-                  <button
-                    className="monthly-task-delete"
-                    onClick={() =>
-                      deleteMonthlyTask(
-                        task.id,
-                        nextMonthStart
-                      )
-                    }
-                  >
-                    削除
-                  </button>
-
+                              ? expandadTaskRef
+                              : null
+                            }
+                          className={`monthly-task-title ${
+                            expandadTaskId === task.id
+                              ? "monthly-task-title-expanded"
+                              : ""
+                          }`}
+                          onClick={() => {
+                            setExpandadTaskId(
+                              expandadTaskId === task.id
+                                ? null
+                                : task.id
+                            )
+                          }}
+                        >
+                          {task.title}
+                        </p>
+  
+                        <button
+                          className="monthly-task-action"
+                          onClick={() => {
+                            setEditingId(task.id)
+                            setEditText(task.title)
+                          }}
+                        >
+                          編集
+                        </button>
+ 
+                      </div>
+  
+                    )}
+  
+  
+                    <button
+                      className="monthly-task-delete"
+                      onClick={() =>
+                        deleteMonthlyTask(
+                          task.id,
+                          nextMonthStart
+                        )
+                      }
+                    >
+                      削除
+                    </button>
+  
+                  </div>
+  
                 </TaskItem>
 
               ))}
@@ -721,10 +708,6 @@ export default function MonthlyPage() {
           <div>
 
             <h2>今月達成したウィークリータスク</h2>
-
-            <p className="monthly-section-description">
-              今月のWeeklyページで達成したタスク
-            </p>
 
           </div>
 

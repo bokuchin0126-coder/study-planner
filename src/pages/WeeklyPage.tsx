@@ -615,35 +615,50 @@ export default function WeeklyPage() {
           </div> 
  
           {completedThisWeekDailyPlans.length > 0 ? ( 
-            <div className="completed-daily-list"> 
+            <div className="completed-daily-list">
+              {Array.from({ length: 7 }, (_, index) => {
+              const date = new Date(`${weekStart}T00:00:00`)
+              date.setDate(date.getDate() + index)
+
+              const dateString = new Intl.DateTimeFormat("sv-SE", {
+                timeZone: "Asia/Tokyo",
+              }).format(date)
+    
+              const [, month, day] = dateString.split("-")
+              const displayDate = `${Number(month)}/${Number(day)}`
+
+              const tasks = completedThisWeekDailyPlans.filter(
+                task => task.date === dateString
+              )
+
+              return (
+                <div
+                  className="completed-daily-group"
+                  key={dateString}
+                >
+                  <p className="completed-daily-date">
+                    {displayDate}
+                  </p>
+  
+                  {tasks.length > 0 ? (
+                    tasks.map(task => (
+                      <p
+                        className="completed-daily-task"
+                        key={task.id}
+                      >
+                        ✓ {task.title}
+                      </p>
+                    ))
+                  ) : (
+                    <p className="completed-daily-empty">
+                      達成した課題はありません
+                    </p>
+                  )}
+                </div>
+              )
+            })}
+          </div>
  
-              {completedThisWeekDailyPlans.map((task, index) => { 
-                const [, month, day] = task.date.split("-")
-                const displayDate = `${Number(month)}/${Number(day)}` 
-                const prevDate = 
-                  index > 0 
-                    ? completedThisWeekDailyPlans[index - 1].date 
-                    : null 
- 
-                return ( 
-                  <div 
-                    className="completed-daily-group" 
-                    key={task.id} 
-                  > 
-                    {task.date !== prevDate && ( 
-                      <p className="completed-daily-date"> 
-                        {displayDate} 
-                      </p> 
-                    )} 
- 
-                    <p className="completed-daily-task"> 
-                      ✓ {task.title} 
-                    </p> 
-                  </div> 
-                ) 
-              })} 
- 
-            </div> 
           ) : ( 
             <p className="weekly-section-message"> 
               今週達成したタスクはありません 

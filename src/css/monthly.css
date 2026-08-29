@@ -1,15 +1,527 @@
+/* =========================================================
+   Monthly Page
+   ========================================================= */
 .monthly-page {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+  background-color: #f7f8fa;
 }
 
+/* =========================================================
+   Main Layout
+   ========================================================= */
 .monthly-content {
-    flex: 1;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+
+  height: 100vh;
+  box-sizing: border-box;
+
+  display: grid;
+
+  /* Weeklyと完全に同じ */
+  grid-template-columns: 5fr 3fr 2fr;
+  grid-template-rows:
+    minmax(0, 3fr)
+    minmax(0, 2fr);
+
+  gap: 14px;
+  padding: 18px;
+
+  overflow: hidden;
 }
 
-.monthly-task-title.task-completed {
+/* =========================================================
+   Section Base
+   ========================================================= */
+.monthly-page .monthly-section {
+  min-width: 0;
+  min-height: 0;
+
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 16px;
+
+  background-color: #ffffff;
+  border-radius: 3px;
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   Section Position
+   ========================================================= */
+
+.monthly-page .monthly-this-month-section {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.monthly-page .monthly-reflection-section {
+  grid-column: 1;
+  grid-row: 2;
+
+  margin-top: -14px;
+}
+
+.monthly-page .monthly-next-month-section {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.monthly-page .monthly-last-month-section {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.monthly-page .monthly-completed-weekly-section {
+  grid-column: 3;
+  grid-row: 1 / 3;
+}
+
+/* =========================================================
+   Section Header
+   ========================================================= */
+.monthly-page .monthly-section-header {
+  flex-shrink: 0;
+  margin-bottom: 12px;
+}
+
+.monthly-page .monthly-section-header h2 {
+  margin: 0;
+
+  color: #222222;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.monthly-page .monthly-section-description {
+  margin: 3px 0 0;
+
+  color: #888888;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   Task List
+   ========================================================= */
+.monthly-page .monthly-task-list {
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 2px;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cccccc transparent;
+}
+
+.monthly-page .monthly-task-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.monthly-page .monthly-task-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.monthly-page .monthly-task-list::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+  border-radius: 3px;
+}
+
+/* =========================================================
+   Monthly Task Row 
+========================================================= */
+
+.monthly-page .monthly-task-row {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #dddddd;
+}
+
+.monthly-page .monthly-task-list > .task-row:last-child
+  .monthly-task-row {
+  border-bottom: none;
+}
+
+/* =========================================================
+   Monthly Task Toggle
+   ========================================================= */
+.monthly-page .monthly-task-toggle {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #555555;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   Monthly Task Content
+   ========================================================= */
+.monthly-page .monthly-task-content {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.monthly-page .monthly-task-title {
+  min-width: 0;
+  flex: 1;
+  margin: 0;
+  color: #111111;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.monthly-page .monthly-task-title.monthly-task-title-expanded {
+  display: block;
+  overflow: visible;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.monthly-page .monthly-task-title.task-completed {
   text-decoration: line-through;
   text-decoration-color: rgba(17, 17, 17, 0.45);
   text-decoration-thickness: 1px;
+}
+
+/* =========================================================
+   Monthly Edit
+   ========================================================= */
+.monthly-page .monthly-task-edit {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.monthly-page .monthly-task-edit input {
+  min-width: 0;
+  flex: 1;
+  height: 30px;
+  box-sizing: border-box;
+  padding: 0 7px;
+  border: 1px solid #cccccc;
+  border-radius: 2px;
+  background-color: #ffffff;
+  color: #333333;
+  font-size: 14px;
+  outline: none;
+}
+
+.monthly-page .monthly-task-edit input:focus {
+  border-color: #999999;
+}
+
+/* =========================================================
+   Monthly Task Action
+   ========================================================= */
+.monthly-page .monthly-task-action,
+.monthly-page .monthly-task-delete {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 5px 7px;
+  border: none;
+  color: #555555;
+  background: transparent;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.monthly-page .monthly-task-action:hover,
+.monthly-page .monthly-task-delete:hover {
+  color: #222222;
+  background-color: #eeeeee;
+}
+
+
+/* =========================================================
+   Add Task
+   ========================================================= */
+.monthly-page .monthly-task-add {
+  display: flex;
+  justify-content: flex-end;
+
+  flex-shrink: 0;
+
+  margin-top: 8px;
+}
+
+.monthly-page .monthly-add-task-button {
+  height: 32px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 12px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #dddddd;
+  border-radius: 2px;
+
+  background-color: #f5f4f6;
+  color: #111111;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+.monthly-page .monthly-add-task-button::before {
+  content: "+";
+
+  margin-right: 6px;
+
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.monthly-page .monthly-add-task-button:hover {
+  background-color: #eeeeee;
+  border-color: #aaaaaa;
+}
+
+/* =========================================================
+   Add Task Form
+   ========================================================= */
+.monthly-page .monthly-task-add-form {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+}
+
+.monthly-page .monthly-task-add-input {
+  min-width: 0;
+  flex: 1;
+
+  height: 30px;
+
+  box-sizing: border-box;
+
+  padding: 0 8px;
+
+  border: 1px solid #cccccc;
+  border-radius: 2px;
+
+  background-color: #ffffff;
+  color: #333333;
+
+  font-size: 14px;
+
+  outline: none;
+}
+
+.monthly-page .monthly-task-add-input:focus {
+  border-color: #999999;
+}
+
+.monthly-page .monthly-task-add-button {
+  flex-shrink: 0;
+
+  width: 50px;
+  height: 30px;
+
+  padding: 0;
+
+  border: 1px solid #111111;
+  border-radius: 2px;
+
+  background-color: #111111;
+  color: #ffffff;
+
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+.monthly-page .monthly-task-add-button:hover {
+  background-color: #444444;
+  border-color: #444444;
+}
+
+/* =========================================================
+   Reflection
+   ========================================================= */
+.monthly-page .monthly-reflection-input {
+  width: 100%;
+  flex: 1;
+
+  min-height: 0;
+
+  box-sizing: border-box;
+
+  resize: none;
+
+  padding: 10px 14px;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 2px;
+
+  background-color: #ffffff;
+  color: #333333;
+
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 28px;
+
+  outline: none;
+
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 27px,
+      #e5e5e5 27px,
+      #e5e5e5 28px,
+      transparent 28px,
+      transparent 29px
+    );
+
+  background-size:
+    calc(100% - 24px) 100%;
+
+  background-position: center 9px;
+  background-repeat: no-repeat;
+  background-attachment: local;
+}
+
+.monthly-page .monthly-reflection-input:focus {
+  border-color: #cccccc;
+}
+
+/* =========================================================
+   Last Month
+   ========================================================= */
+.monthly-page .monthly-completed-task-list {
+  flex: 1;
+  min-height: 0;
+
+  margin: 0;
+  padding: 0 0 0 18px;
+
+  overflow-y: auto;
+
+  color: #555555;
+  font-size: 13px;
+}
+
+.monthly-page .monthly-completed-task-list li {
+  margin-bottom: 7px;
+}
+
+/* =========================================================
+   Completed Weekly Tasks
+   ========================================================= */
+.monthly-page .monthly-completed-weekly-list {
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-right: 3px;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cccccc transparent;
+}
+
+.monthly-page .monthly-completed-weekly-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.monthly-page .monthly-completed-weekly-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.monthly-page .monthly-completed-weekly-list::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+  border-radius: 3px;
+}
+
+/* Week 1 / Week 2 ... */
+.monthly-page .monthly-completed-weekly-title {
+  margin: 0 0 5px;
+
+  color: #777777;
+
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.monthly-page .monthly-completed-weekly-group {
+  margin-bottom: 10px;
+}
+
+/* =========================================================
+   Empty Message
+   ========================================================= */
+.monthly-page .monthly-section-message {
+  margin: 12px;
+
+  color: #999999;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+@media (max-width: 1000px) {
+  .monthly-content {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .monthly-page .monthly-section {
+    padding: 12px;
+  }
+
+  .monthly-page .monthly-section-header h2 {
+    font-size: 15px;
+  }
+
+  .monthly-page .monthly-task-title {
+    font-size: 13px;
+  }
 }

@@ -572,7 +572,6 @@
 }
 
 
-/* 日付 */
 .weekly-page .completed-daily-date {
   margin: 0 0 5px;
 
@@ -585,7 +584,7 @@
 
 
 .weekly-page .completed-daily-task {
-  margin: 0;
+  margin: 0 0 4px;
 
   color: #444444;
 
@@ -599,6 +598,14 @@
 .weekly-page .completed-daily-group {
   margin-bottom: 10px;
 }
+
+.weekly-page .completed-daily-empty {
+  margin: 0;
+  color: #999999;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 
 
 /* =========================================================

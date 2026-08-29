@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar"
 import handleDragEnd from "../utils/dragAndDrop" 
 import TaskItem from "../components/TaskItem" 
 import { useOutsideClick } from "../hooks/useOutsideClick"
+import useLongTerm from "../hooks/useLongTerm"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable" 
 import { 
   DndContext, 
@@ -77,6 +78,12 @@ export default function DailyPage() {
   })
  
   const completedYesterdayTasks = yesterdayPlan?.tasks.filter(task => task.completed) 
+
+  const completedTaskCount = todayTasks.filter(task => task.completed).length
+  const incompleteTaskCount = todayTasks.filter(task => !task.completed).length
+
+  const { longTermRecord } = useLongTerm()
+  const estimatedTomorrowTaskCount = tomorrowTasks.length + incompleteTaskCount 
  
   useEffect(() => { 
     if (todayPlan) { 
@@ -555,6 +562,43 @@ export default function DailyPage() {
         )}
 
       </section>
+
+      <section className="daily-section daily-summary-section">
+
+        <h2>今日の概要</h2>
+
+        <div className="daily-summary-item">
+          <h3>長期目標</h3>
+          <p className="daily-summary-value">
+            {longTermRecord?.goal}
+          </p>
+        </div>
+  
+        <div className="daily-summary-item">
+          <h3>未達成</h3>
+          <p className="daily-summary-value">
+            {incompleteTaskCount}
+          </p>
+        </div>
+  
+        <div className="daily-summary-item">
+          <h3>達成</h3>
+          <p className="daily-summary-value">
+            {completedTaskCount}
+          </p>
+        </div>
+ 
+        <div className="daily-summary-item">
+          <h3>明日の推定タスク</h3>
+          <p className="daily-summary-value">
+            {estimatedTomorrowTaskCount}
+          </p>
+        </div>
+ 
+      </section>
+
+
+
 
     </main>
   </div>

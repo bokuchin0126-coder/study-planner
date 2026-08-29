@@ -13,6 +13,7 @@
 /* ========================================
    Main Content
 ======================================== */
+
 .daily-content {
   flex: 1;
   min-width: 0;
@@ -21,29 +22,17 @@
   box-sizing: border-box;
   display: grid;
 
-  /* 左60% : 右40% */
-  grid-template-columns: 5.5fr 4.5fr;
+  grid-template-columns: 5fr 3fr 2fr;
 
-  /*
-    全体を10分割。
-
-    左：
-      今日の課題 7
-      振り返り 3
-
-    右：
-      明日の課題 5
-      昨日の達成 5
-  */
   grid-template-rows: repeat(10, minmax(0, 1fr));
 
-  gap: 15px;
-  padding: 20px;
+  gap: 14px;
+  padding: 18px;
 
   overflow: hidden;
-
   background-color: #f4f5f6;
 }
+
 
 /* ========================================
    Section
@@ -90,6 +79,25 @@
   grid-column: 2;
   grid-row: 7 / 11;
 }
+
+.daily-summary-section {
+  grid-column: 3;
+  grid-row: 1 / 11;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 20px 16px;
+
+  gap: 22px;
+
+  background-color: #ffffff;
+  border-radius: 2px;
+
+  overflow: hidden;
+}
+
+
 
 /* ========================================
    Section Header
@@ -648,6 +656,45 @@
 
   color: #888888;
 }
+
+/* ========================================
+   Summary Item
+======================================== */
+.daily-summary-item {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  min-width: 0;
+}
+
+.daily-summary-item h3,
+.daily-summary-label {
+  margin: 0;
+
+  color: #555555;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.daily-summary-value {
+  margin: 0;
+
+  color: #111111;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.daily-summary-item:first-of-type .daily-summary-value {
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+
 
 /* ========================================
    Responsive

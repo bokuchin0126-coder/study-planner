@@ -9,9 +9,9 @@
 
   padding: 24px 12px;
 
-  background-color: #ffffff;
+  background: #fef9f3;
 
-  border-right: 1px solid #eeeeee;
+  border-right: 1px solid #eed385;
 
   overflow: hidden;
 }
@@ -23,7 +23,7 @@
 
   padding: 0 14px;
 
-  color: #111111;
+  color: #663912;
 
   font-size: 18px;
 
@@ -52,7 +52,7 @@
 
   background-color: transparent;
 
-  color: #111111;
+  color: #663912;
 
   font-family: inherit;
 
@@ -69,9 +69,11 @@
 
 .sidebar a:hover,
 .sidebar button:hover {
-  background-color: #eeeeee;
+  background-color: #f5e8d8;
 
-  border-color: #dddddd;
+  border-color: #eed385;
+
+  color: #663912;
 
   text-decoration: none;
 }

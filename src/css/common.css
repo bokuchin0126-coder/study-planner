@@ -18,3 +18,17 @@ body,
     width: 100%;
     min-height: 100%;
 }
+
+body {
+  background-image:
+    linear-gradient(
+      rgba(255, 248, 238, 0.35),
+      rgba(255, 248, 238, 0.35)
+    ),
+    url("/images/wood-background.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}

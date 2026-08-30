@@ -561,7 +561,7 @@
   color: #111111;
 
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 36px;
 
   outline: none;
@@ -675,48 +675,253 @@
   border-bottom: 1px solid #e5e5e5;
 
   color: #222222;
-
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 500;
   line-height: 1.5;
+
+  text-align: left;
 }
 
 .daily-completed-task-list li::before {
-  content: "•";
+  content: "・";
 
   margin-right: 10px;
 
   color: #888888;
 }
 
-/* ========================================
-   Summary Item
-======================================== */
-.daily-summary-item {
+/* =========================================
+   Summary
+========================================= */
+
+.daily-summary-section {
+  grid-column: 3;
+  grid-row: 1 / 11;
+
   display: flex;
   flex-direction: column;
 
-  gap: 4px;
+  padding: 20px 16px;
 
-  min-width: 0;
+  background: rgba(255, 252, 245, 0.96);
+  border-radius: 2px;
+
+  overflow: hidden;
 }
 
-.daily-summary-item h3,
-.daily-summary-label {
-  margin: 0;
 
-  color: #555555;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.5;
+/* -----------------------------------------
+   Header
+----------------------------------------- */
+
+.daily-summary-section .daily-section-header {
+  display: flex;
+  align-items: center;
+
+  margin-bottom: 18px;
 }
 
-.daily-summary-value {
+.daily-summary-section .daily-section-header svg {
+  flex-shrink: 0;
+
+  margin-right: 10px;
+
+  color: #6d4326;
+}
+
+.daily-summary-section .daily-section-header h2 {
   margin: 0;
 
   color: #111111;
-  font-size: 20px;
+
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+
+/* -----------------------------------------
+   Long Term Goal
+----------------------------------------- */
+
+.daily-summary-goal {
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+
+  border-bottom: 1px solid #e5ddd4;
+
+  text-align: center;
+}
+
+.daily-summary-label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #756457;
+
+  font-size: 11px;
   font-weight: 500;
   line-height: 1.4;
+}
+
+.daily-summary-goal-value {
+  margin: 0 auto;
+
+  max-width: 230px;
+
+  color: #332922;
+
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+
+/* -----------------------------------------
+   Today's Progress
+----------------------------------------- */
+
+.daily-summary-progress {
+  padding: 13px 0 15px;
+
+  border-bottom: 1px solid #e5ddd4;
+}
+
+.daily-summary-progress-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+
+  margin-bottom: 9px;
+
+  color: #75685e;
+
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.daily-summary-progress-heading strong {
+  color: #6d4326;
+
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.daily-summary-progress-track {
+  width: 100%;
+  height: 4px;
+
+  overflow: hidden;
+
+  background: #e7ddd3;
+  border-radius: 2px;
+}
+
+.daily-summary-progress-bar {
+  height: 100%;
+
+  background: #8b5e3c;
+  border-radius: 2px;
+
+  transition: width 0.25s ease;
+}
+
+
+/* -----------------------------------------
+   Yesterday
+----------------------------------------- */
+
+.daily-summary-yesterday {
+  padding: 13px 0;
+
+  border-bottom: 1px solid #e5ddd4;
+}
+
+.daily-summary-yesterday-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  color: #75685e;
+
+  font-size: 12px;
+}
+
+.daily-summary-yesterday-row strong {
+  color: #6d4326;
+
+  font-size: 16px;
+  font-weight: 500;
+}
+
+
+/* -----------------------------------------
+   Stats
+----------------------------------------- */
+
+.daily-summary-stats {
+  margin-top: 4px;
+}
+
+.daily-summary-stat-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.daily-summary-stat {
+  min-width: 0;
+  padding: 14px 8px 13px;
+  text-align: center;
+}
+
+.daily-summary-stat:first-child {
+  border-right: 1px solid #e5ddd4;
+}
+
+.daily-summary-stat .daily-summary-label {
+  margin-bottom: 5px;
+}
+
+.daily-summary-value {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+
+  color: #332922;
+
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.daily-summary-value small {
+  color: #756457;
+
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.daily-summary-stat-divider {
+  height: 1px;
+  background: #e5ddd4;
+  margin: 0 4px;
+}
+
+
+/* -----------------------------------------
+   Note
+----------------------------------------- */
+
+.daily-summary-note {
+  margin-top: auto;
+  padding-top: 15px;
+
+  color: #111111;
+
+  font-size: 10px;
+  line-height: 1.6;
 }
 
 

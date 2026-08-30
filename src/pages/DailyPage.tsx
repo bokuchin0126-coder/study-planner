@@ -11,7 +11,7 @@ import {
   CalendarDays,
   NotebookPen,
   Trophy,
-  BarChart3,
+  BarChart,
 } from "lucide-react"
 import { 
   DndContext, 
@@ -82,14 +82,44 @@ export default function DailyPage() {
     setEditingId(null)
     setEditText("")
   })
- 
-  const completedYesterdayTasks = yesterdayPlan?.tasks.filter(task => task.completed) 
 
   const completedTaskCount = todayTasks.filter(task => task.completed).length
   const incompleteTaskCount = todayTasks.filter(task => !task.completed).length
 
   const { longTermRecord } = useLongTerm()
   const estimatedTomorrowTaskCount = tomorrowTasks.length + incompleteTaskCount 
+
+  const completedYesterdayTasks = yesterdayPlan?.tasks.filter(task => task.completed)
+
+  const todayTotalTaskCount = completedTaskCount + incompleteTaskCount
+
+  const todayCompletionRate =
+    todayTotalTaskCount > 0
+      ? Math.round((completedTaskCount / todayTotalTaskCount) * 100)
+      : 0
+
+  const todayCompletionText =
+    todayTotalTaskCount === 0
+      ? "タスクなし"
+      : todayCompletionRate === 100
+        ? "すべて達成"
+        : todayCompletionRate >= 70
+          ? "順調"
+          : todayCompletionRate >= 40
+            ? "もうひと踏ん張り"
+            : "これから"
+
+  const yesterdayCompletedTaskCount = completedYesterdayTasks?.length  ?? 0
+
+  const yesterdayTotalTaskCount = yesterdayPlan?.tasks.length ?? 0
+
+  const yesterdayCompletionRate =
+    yesterdayTotalTaskCount > 0
+      ? Math.round(
+          (yesterdayCompletedTaskCount / yesterdayTotalTaskCount) * 100
+        )
+      : 0
+
  
   useEffect(() => { 
     if (todayPlan) { 
@@ -577,43 +607,86 @@ export default function DailyPage() {
       </section>
 
       <section className="daily-section daily-summary-section">
-
         <div className="daily-section-header">
-          <BarChart3 size={22} strokeWidth={1.8} />
+          <BarChart size={22} strokeWidth={1.8} />
           <h2>今日の概要</h2>
         </div>
-
-        <div className="daily-summary-item">
-          <h3>長期目標</h3>
-          <p className="daily-summary-value">
+  
+        <div className="daily-summary-goal">
+          <span className="daily-summary-label">長期目標</span>
+          <p className="daily-summary-goal-value">
             {longTermRecord?.goal}
           </p>
         </div>
   
-        <div className="daily-summary-item">
-          <h3>未達成</h3>
-          <p className="daily-summary-value">
-            {incompleteTaskCount}
-          </p>
+        <div className="daily-summary-progress">
+          <div className="daily-summary-progress-heading">
+            <span>今日の達成率</span>
+            <strong>{todayCompletionRate}%</strong>
+          </div>
+   
+          <div className="daily-summary-progress-track">
+            <div
+              className="daily-summary-progress-bar"
+              style={{ width: `${todayCompletionRate}%` }}
+            />
+          </div>
+        </div>
+ 
+        <div className="daily-summary-yesterday">
+          <div className="daily-summary-yesterday-row">
+            <span>昨日の達成率</span>
+            <strong>{yesterdayCompletionRate}%</strong>
+          </div>
         </div>
   
-        <div className="daily-summary-item">
-          <h3>達成</h3>
-          <p className="daily-summary-value">
-            {completedTaskCount}
-          </p>
+        <div className="daily-summary-stats">
+
+          <div className="daily-summary-stat-group">
+            <div className="daily-summary-stat">
+              <span className="daily-summary-label">達成</span>
+              <span className="daily-summary-value">
+                {completedTaskCount}
+                <small>タスク</small>
+              </span>
+            </div>
+
+            <div className="daily-summary-stat">
+               <span className="daily-summary-label">未達成</span>
+              <span className="daily-summary-value">
+                {incompleteTaskCount}
+                <small>タスク</small>
+              </span>
+            </div>
+          </div>
+
+          <div className="daily-summary-stat-divider" />
+
+          <div className="daily-summary-stat-group">
+            <div className="daily-summary-stat">
+              <span className="daily-summary-label">今日のタスク</span>
+              <span className="daily-summary-value">
+                {todayTotalTaskCount}
+                <small>タスク</small>
+              </span>
+            </div>
+  
+            <div className="daily-summary-stat">
+               <span className="daily-summary-label">明日の推定</span>
+              <span className="daily-summary-value">
+                {estimatedTomorrowTaskCount}
+                <small>タスク</small>
+              </span>
+            </div>
+          </div>
+
         </div>
- 
-        <div className="daily-summary-item">
-          <h3>明日の推定タスク</h3>
-          <p className="daily-summary-value">
-            {estimatedTomorrowTaskCount}
-          </p>
+
+  
+        <div className="daily-summary-note">
+          今日の進み具合を確認して、残りの課題に取り組みましょう。
         </div>
- 
       </section>
-
-
 
 
     </main>

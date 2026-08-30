@@ -11,9 +11,15 @@
 
   background: #fef9f3;
 
-  border-right: 1px solid #eed385;
+  border-right: 1px solid #eed398;
 
   overflow: hidden;
+}
+
+.sidebar svg {
+  color: #6b4326;
+  flex-shrink: 0;
+  margin-right: 8px;
 }
 
 .sidebar h1,

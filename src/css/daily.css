@@ -59,7 +59,7 @@
   grid-column: 1;
   grid-row: 1 / 7;
   margin-bottom: -20px;
-  background: #fefdfb;
+  background: #fffdf9;
 }
 
 .daily-reflection-section {
@@ -98,11 +98,11 @@
 }
 
 
-
 /* ========================================
    Section Header
 ======================================== */
 .daily-section-header {
+  display: flex;
   flex-shrink: 0;
   margin-bottom: 12px;
 }
@@ -110,9 +110,15 @@
 .daily-section-header h2 {
   margin: 0;
   color: #111111;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   line-height: 1.5;
+}
+
+.daily-section-header svg {
+  color: #6d4326;
+  flex-shrink: 0;
+  margin-right: 12px;
 }
 
 .daily-section-description {
@@ -131,13 +137,13 @@
 
   box-sizing: border-box;
 
-  border: 1px solid #edecea;
+  border: 1px solid #e8dfd5;
   border-radius: 2px;
 
   overflow-y: auto;
   overflow-x: hidden;
 
-  background: #ffffff;
+  background-color: #ffffff;
 
   scrollbar-width: thin;
   scrollbar-color: #cccccc transparent;
@@ -180,9 +186,6 @@
   background-color: #ffffff;
 }
 
-/*
-  最後のタスクは外枠の線を使用
-*/
 .daily-task-row:last-child {
   border-bottom: none;
 }
@@ -191,8 +194,8 @@
    Task Toggle Button
 ======================================== */
 .daily-task-toggle {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
 
   flex-shrink: 0;
 
@@ -200,17 +203,17 @@
   align-items: center;
   justify-content: center;
 
-  margin-right: 7px;
-  padding: 0;
+  padding: 0px;
+  margin-right: 8px;
 
-  border: 1px solid transparent;
+  border: 1.5px solid #3f342d;
   border-radius: 2px;
 
-  background-color: transparent;
   color: #111111;
+  background-color: #ffffff;
 
   font-family: inherit;
-  font-size: 20px;
+  font-size: 24px;
   line-height: 1;
 
   cursor: pointer;
@@ -220,9 +223,20 @@
     border-color 0.15s ease;
 }
 
+.daily-task-toggle.task-completed {
+  background-color: #663912;
+  color: #eeeeee;
+  font-size: 20px;
+}
+
 .daily-task-toggle:hover {
-  background-color: #eeeeee;
-  border-color: #cccccc;
+  background-color: #faf7f2;
+  border-color: #a8957f;
+}
+
+.daily-task-toggle.task-completed:hover {
+  background-color: #8a6a4c;
+  border-color: #8a6a4c;
 }
 
 /* ========================================
@@ -234,8 +248,9 @@
 
   display: flex;
   align-items: center;
+  background-color: #ffffff;
 
-  gap: 7px;
+  gap: 8px;
 }
 
 .daily-task-title {
@@ -246,10 +261,10 @@
 
   margin: 0;
 
-  color: #111111;
+  color: #3f342d;
 
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.5;
 
   overflow: hidden;
@@ -280,16 +295,17 @@
 .daily-task-delete {
   flex-shrink: 0;
 
-  padding: 6px 8px;
+  padding: 5px 7px;
 
   border: 1px solid transparent;
   border-radius: 2px;
 
   background-color: #ffffff;
-  color: #555555;
+  color: #6d3f1f;
 
   font-family: inherit;
   font-size: 12px;
+  font-weight: 420;
 
   cursor: pointer;
 
@@ -302,8 +318,9 @@
 
 .daily-task-action:hover,
 .daily-task-delete:hover {
-  background-color: #eeeeee;
-  border-color: #c8c8c8;
+  background-color: #faf7f2;
+  border-color: #c9d9a5;
+  color: #5f452f;
 
   text-decoration: none;
 }
@@ -409,11 +426,11 @@
 
   box-sizing: border-box;
 
-  border: 1px solid #dddddd;
+  border: 1px solid #6d3f1f;
   border-radius: 2px;
 
-  background-color: #f5f4f6;
-  color: #111111;
+  background-color: #6d3f1f;
+  color: #fff;
 
   font-family: inherit;
   font-size: 12px;
@@ -436,8 +453,8 @@
 }
 
 .daily-add-task-button:hover {
-  background-color: #eeeeee;
-  border-color: #aaaaaa;
+  background-color: #80552f;
+  border-color: #80552f;
 }
 
 .daily-add-task-button:focus-visible {
@@ -458,7 +475,7 @@
 
 .daily-task-add-input {
   min-width: 0;
-  width: 190px;
+  width: 185px;
   height: 34px;
 
   box-sizing: border-box;
@@ -495,10 +512,10 @@
 
   padding: 0 13px;
 
-  border: 1px solid #111111;
+  border: 1px solid #6d3f1f;
   border-radius: 2px;
 
-  background-color: #111111;
+  background-color: #6d3f1f;
   color: #ffffff;
 
   font-family: inherit;
@@ -512,8 +529,8 @@
 }
 
 .daily-task-add-button:hover {
-  background-color: #444444;
-  border-color: #444444;
+  background-color: #80552f;
+  border-color: #80552f;
 }
 
 .daily-task-add-button:focus-visible {
@@ -597,7 +614,8 @@
   border: 1px solid #e5e5e5;
   border-radius: 2px;
 
-  color: #777777;
+  color: #111111;
+  background-color: #ffffff;
 
   font-size: 13px;
   line-height: 1.6;
@@ -608,6 +626,14 @@
 /* ========================================
    Completed Tasks
 ======================================== */
+
+.daily-yesterday-content {
+  min-height: 160px;
+
+  background-color: #ffffff;
+  border: 1px solid #e5e5e5;
+}
+
 .daily-completed-task-list {
   min-height: 0;
   flex: 1;
@@ -620,6 +646,7 @@
   overflow-y: auto;
 
   border-top: 1px solid #e5e5e5;
+  background-color: #ffffff;
 
   scrollbar-width: thin;
   scrollbar-color: #cccccc transparent;
@@ -636,6 +663,10 @@
 .daily-completed-task-list::-webkit-scrollbar-thumb {
   background-color: #cccccc;
   border-radius: 2px;
+}
+
+.daily-completed-task-list:first-child {
+  border-top: none;
 }
 
 .daily-completed-task-list li {
@@ -674,7 +705,7 @@
   margin: 0;
 
   color: #555555;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1.5;
 }
@@ -683,17 +714,10 @@
   margin: 0;
 
   color: #111111;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 500;
   line-height: 1.4;
 }
-
-.daily-summary-item:first-of-type .daily-summary-value {
-  font-size: 14px;
-  line-height: 1.6;
-  overflow-wrap: anywhere;
-}
-
 
 
 /* ========================================

@@ -6,6 +6,13 @@ import TaskItem from "../components/TaskItem"
 import { useOutsideClick } from "../hooks/useOutsideClick"
 import useLongTerm from "../hooks/useLongTerm"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable" 
+import {
+  ClipboardList,
+  CalendarDays,
+  NotebookPen,
+  Trophy,
+  BarChart3,
+} from "lucide-react"
 import { 
   DndContext, 
   PointerSensor, 
@@ -24,7 +31,6 @@ export default function DailyPage() {
     setTomorrowTasks, 
     tomorrowDate, 
     todayPlan, 
-    tomorrowPlan, 
     yesterdayPlan, 
     addDailyRecord, 
     updateDailyTaskTitle, 
@@ -112,9 +118,8 @@ export default function DailyPage() {
         <section className="daily-section daily-today-section">
 
           <div className="daily-section-header">
-            <div>
-              <h2>今日の課題</h2>
-            </div>
+            <ClipboardList size={22} strokeWidth={1.8} />
+            <h2>今日の課題</h2>
           </div>
 
           {todayTasks.length !== 0 ? (
@@ -132,7 +137,10 @@ export default function DailyPage() {
                     <div className="daily-task-row">
 
                       <button
-                        className="daily-task-toggle"
+                        className={`daily-task-toggle ${
+                          task.completed ? "task-completed"
+                          : ""
+                        }`}
                         onClick={async () => {
                           await updateDailyTaskToggle(
                             task.id,
@@ -141,7 +149,7 @@ export default function DailyPage() {
                           )
                         }}
                       >
-                        {task.completed ? "☑" : "□"}
+                        {task.completed ? "✓" : ""}
                       </button>
 
                       {editingId === task.id ? (
@@ -317,6 +325,7 @@ export default function DailyPage() {
       <section className="daily-section daily-reflection-section">
 
         <div className="daily-section-header">
+          <NotebookPen size={22} strokeWidth={1.8} />
           <h2>今日の振り返り</h2>
         </div>
 
@@ -352,9 +361,8 @@ export default function DailyPage() {
         <section className="daily-section daily-tomorrow-section">
 
           <div className="daily-section-header">
-            <div>
-              <h2>明日の課題</h2>
-            </div>
+            <CalendarDays size={22} strokeWidth={1.8} />
+            <h2>明日の課題</h2>
           </div>
 
           {tomorrowTasks.length !== 0 ? (
@@ -535,37 +543,45 @@ export default function DailyPage() {
       <section className="daily-section daily-yesterday-section">
 
         <div className="daily-section-header">
+          <Trophy size={22} strokeWidth={1.8} />
           <h2>昨日達成した課題</h2>
         </div>
 
-        {yesterdayPlan ? (
-          completedYesterdayTasks &&
-          completedYesterdayTasks.length > 0 ? (
-            <ul className="daily-completed-task-list">
+        <div className="daily-yesterday-content">
 
-              {completedYesterdayTasks.map(task => (
-                <li key={task.id}>
-                  {task.title}
-                </li>
-              ))}
+          {yesterdayPlan ? (
+            completedYesterdayTasks &&
+            completedYesterdayTasks.length > 0 ? (
+              <ul className="daily-completed-task-list">
 
-            </ul>
+                {completedYesterdayTasks.map(task => (
+                  <li key={task.id}>
+                    {task.title}
+                  </li>
+                ))}
+
+              </ul>
+            ) : (
+              <p className="daily-section-message">
+                昨日達成したタスクはありません
+              </p>
+            )
           ) : (
             <p className="daily-section-message">
-              昨日達成したタスクはありません
+              昨日のタスクはありません
             </p>
-          )
-        ) : (
-          <p className="daily-section-message">
-            昨日のタスクはありません
-          </p>
-        )}
+          )}
+
+        </div>
 
       </section>
 
       <section className="daily-section daily-summary-section">
 
-        <h2>今日の概要</h2>
+        <div className="daily-section-header">
+          <BarChart3 size={22} strokeWidth={1.8} />
+          <h2>今日の概要</h2>
+        </div>
 
         <div className="daily-summary-item">
           <h3>長期目標</h3>

@@ -8,6 +8,13 @@ import handleDragEnd from "../utils/dragAndDrop"
 import { useOutsideClick } from "../hooks/useOutsideClick"
 import TaskItem from "../components/TaskItem" 
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable" 
+import {
+  ClipboardList,
+  NotebookPen,
+  CalendarDays,
+  Trophy,
+  CalendarCheck,
+} from "lucide-react"
 import { 
   DndContext, 
   PointerSensor,
@@ -144,11 +151,11 @@ export default function WeeklyPage() {
         > 
           <section className="weekly-section this-week-section"> 
  
-            <div className="weekly-section-header"> 
-              <div> 
-                <h2>今週の課題</h2> 
-              </div> 
-            </div> 
+            <div className="weekly-section-header">
+              <ClipboardList size={22} strokeWidth={1.8} />
+              <h2>今週の課題</h2>
+            </div>
+
  
             <SortableContext 
               items={weekTasks} 
@@ -173,7 +180,9 @@ export default function WeeklyPage() {
                     <div className="weekly-task-row">
                     
                       <button 
-                        className="weekly-task-toggle" 
+                        className={`weekly-task-toggle ${
+                          task.completed ? "task-completed" : ""
+                        }`} 
                         onClick={() =>
                           updateTaskToggle( 
                             task.id, 
@@ -182,7 +191,7 @@ export default function WeeklyPage() {
                           ) 
                         } 
                        > 
-                        {task.completed ? "☑" : "□"} 
+                        {task.completed ? "✓" : ""} 
                       </button> 
    
                       {editingId === task.id ? (
@@ -354,9 +363,11 @@ export default function WeeklyPage() {
  
         <section className="weekly-section reflection-section"> 
  
-          <div className="weekly-section-header"> 
-            <h2>今週の振り返り</h2> 
-          </div> 
+          <div className="weekly-section-header">
+            <NotebookPen size={22} strokeWidth={1.8} />
+            <h2>今週の振り返り</h2>
+          </div>
+
  
           <textarea 
             className="weekly-reflection-input" 
@@ -390,11 +401,11 @@ export default function WeeklyPage() {
         > 
           <section className="weekly-section next-week-section"> 
  
-            <div className="weekly-section-header"> 
-              <div> 
-                <h2>来週の課題</h2> 
-              </div> 
-            </div> 
+            <div className="weekly-section-header">
+              <CalendarDays size={22} strokeWidth={1.8} />
+              <h2>来週の課題</h2>
+            </div>
+
  
             <SortableContext
               items={nextWeekTasks} 
@@ -580,9 +591,12 @@ export default function WeeklyPage() {
         </DndContext> 
 
         <section className="weekly-section last-week-section"> 
-          <div className="weekly-section-header"> 
-            <h2>先週の達成</h2> 
+          
+          <div className="weekly-section-header">
+            <Trophy size={22} strokeWidth={1.8} />
+            <h2>先週の達成</h2>
           </div>
+
  
           {lastWeekPlan ? ( 
             completedLastWeekTasks && 
@@ -608,11 +622,11 @@ export default function WeeklyPage() {
  
         <section className="weekly-section completed-daily-section"> 
  
-          <div className="weekly-section-header"> 
-            <div> 
-              <h2>今週達成したデイリータスク</h2> 
-            </div> 
-          </div> 
+          <div className="weekly-section-header">
+            <CalendarCheck size={22} strokeWidth={1.8} />
+            <h2>今週達成したデイリータスク</h2>
+          </div>
+
  
           {completedThisWeekDailyPlans.length > 0 ? ( 
             <div className="completed-daily-list">

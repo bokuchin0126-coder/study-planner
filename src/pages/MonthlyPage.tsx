@@ -9,6 +9,13 @@ import TaskItem from "../components/TaskItem"
 import { useOutsideClick } from "../hooks/useOutsideClick"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import {
+  ClipboardList,
+  NotebookPen,
+  CalendarDays,
+  Trophy,
+  CalendarCheck,
+} from "lucide-react"
+import {
   DndContext,
   PointerSensor,
   useSensor,
@@ -137,6 +144,7 @@ export default function MonthlyPage() {
       <section className="monthly-section monthly-last-month-section">
 
         <div className="monthly-section-header">
+          <Trophy size={22} strokeWidth={1.8} />
           <h2>先月の達成</h2>
         </div>
 
@@ -155,18 +163,14 @@ export default function MonthlyPage() {
             </ul>
 
           ) : (
-
             <p className="monthly-section-message">
               先月達成したタスクはありません
             </p>
-
           )
         ) : (
-
           <p className="monthly-section-message">
             先月のタスクはありません
           </p>
-
         )}
 
       </section>
@@ -187,13 +191,8 @@ export default function MonthlyPage() {
         <section className="monthly-section monthly-this-month-section">
 
           <div className="monthly-section-header">
-
-            <div>
-
-              <h2>今月の課題</h2>
-
-            </div>
-
+            <NotebookPen size={22} strokeWidth={1.8} />
+            <h2>今月の課題</h2>
           </div>
 
 
@@ -222,7 +221,9 @@ export default function MonthlyPage() {
                   <div className="monthly-task-row">
 
                     <button
-                      className="monthly-task-toggle"
+                      className={`monthly-task-toggle ${
+                        task.completed ? "task-completed" : ""
+                      }`}
                       onClick={() =>
                         updateMonthlyTaskToggle(
                           task.id,
@@ -231,10 +232,10 @@ export default function MonthlyPage() {
                         )
                       }
                     >
-                      {task.completed ? "☑" : "□"}
+                      {task.completed ? "✓" : ""}
                     </button>
   
-  
+
                     {editingId === task.id ? (
   
                       <div
@@ -249,36 +250,28 @@ export default function MonthlyPage() {
                             setEditText(e.target.value)
                           }
                           onKeyDown={async (e) => {
-  
                             if (e.key === "Enter") {
-  
                               await updateMonthlyTaskTitle(
                                 task.id,
                                 editText,
                                 monthStart
                               )
-  
                               setEditText("")
                               setEditingId("")
-  
                             }
-  
                           }}
                         />
   
                         <button
                           className="monthly-task-action"
                           onClick={async () => {
-  
                             await updateMonthlyTaskTitle(
                               task.id,
                               editText,
                               monthStart
                             )
-  
                             setEditText("")
                             setEditingId("")
-  
                           }}
                         >
                            保存
@@ -287,7 +280,6 @@ export default function MonthlyPage() {
                       </div>
 
                     ) : (
-
                       <div className="monthly-task-content">
 
                         <p
@@ -326,9 +318,7 @@ export default function MonthlyPage() {
                         </button>
   
                       </div>
-  
                     )}
-  
   
                     <button
                       className="monthly-task-delete"
@@ -343,9 +333,8 @@ export default function MonthlyPage() {
                     </button>
   
                   </div>
-
+                  
                 </TaskItem>
-
               ))}
 
             </div>
@@ -356,7 +345,6 @@ export default function MonthlyPage() {
           <div className="monthly-task-add">
 
             {monthShowAdd ? (
-
               <div 
                 className="monthly-task-add-form"
                 ref={monthAddRef}
@@ -371,49 +359,35 @@ export default function MonthlyPage() {
                     setAddText(e.target.value)
                   }
                   onKeyDown={async (e) => {
-
                     if (e.key === "Enter") {
-
                       const text = addText
-
                       setAddText("")
-
                       await addMonthlyRecord(
                         text,
                         monthStart
                       )
-
                       setMonthShowAdd(false)
-
                     }
-
                   }}
                 />
 
                 <button
                   className="monthly-task-add-button"
                   onClick={async () => {
-
                     const text = addText
-
                     setAddText("")
-
                     await addMonthlyRecord(
                       text,
                       monthStart
                     )
-
                     setMonthShowAdd(false)
-
                   }}
                 >
                   追加
                 </button>
 
               </div>
-
             ) : (
-
               <button
                 className="monthly-add-task-button"
                 onClick={() =>
@@ -422,7 +396,6 @@ export default function MonthlyPage() {
               >
                 新しいタスクを追加
               </button>
-
             )}
 
           </div>
@@ -435,6 +408,7 @@ export default function MonthlyPage() {
       <section className="monthly-section monthly-reflection-section">
 
         <div className="monthly-section-header">
+          <NotebookPen size={22} strokeWidth={1.8} />
           <h2>今月の振り返り</h2>
         </div>
 
@@ -473,13 +447,8 @@ export default function MonthlyPage() {
         <section className="monthly-section monthly-next-month-section">
 
           <div className="monthly-section-header">
-
-            <div>
-
-              <h2>来月の課題</h2>
-
-            </div>
-
+            <CalendarDays size={22} strokeWidth={1.8} />
+            <h2>来月の課題</h2>
           </div>
 
 
@@ -508,7 +477,6 @@ export default function MonthlyPage() {
                   <div className="monthly-task-row">
 
                     {editingId === task.id ? (
-  
                       <div
                         className="monthly-task-edit"
                         ref={editRef}
@@ -521,45 +489,35 @@ export default function MonthlyPage() {
                             setEditText(e.target.value)
                           }
                           onKeyDown={async (e) => {
-  
                             if (e.key === "Enter") {
-  
                               await updateMonthlyTaskTitle(
                                 task.id,
                                 editText,
                                 nextMonthStart
                               )
-  
                               setEditText("")
                               setEditingId("")
-  
                             }
-  
                           }}
                         />
   
                         <button
                           className="monthly-task-action"
                           onClick={async () => {
-  
                             await updateMonthlyTaskTitle(
                               task.id,
                               editText,
                               nextMonthStart
                             )
-  
                             setEditText("")
                             setEditingId("")
-  
                           }}
                         >
                           保存
                         </button>
   
                       </div>
-  
                     ) : (
-  
                       <div className="monthly-task-content">
   
                         <p
@@ -595,7 +553,6 @@ export default function MonthlyPage() {
                         </button>
  
                       </div>
-  
                     )}
   
   
@@ -614,7 +571,6 @@ export default function MonthlyPage() {
                   </div>
   
                 </TaskItem>
-
               ))}
 
             </div>
@@ -625,7 +581,6 @@ export default function MonthlyPage() {
           <div className="monthly-task-add">
 
             {nextMonthShowAdd ? (
-
               <div 
                 className="monthly-task-add-form"
                 ref={nextMonthAddRef}
@@ -640,49 +595,35 @@ export default function MonthlyPage() {
                     setAddText(e.target.value)
                   }
                   onKeyDown={async (e) => {
-
                     if (e.key === "Enter") {
-
                       const text = addText
-
                       setAddText("")
-
                       await addMonthlyRecord(
                         text,
                         nextMonthStart
                       )
-
                       setNextMonthShowAdd(false)
-
                     }
-
                   }}
                 />
 
                 <button
                   className="monthly-task-add-button"
                   onClick={async () => {
-
                     const text = addText
-
                     setAddText("")
-
                     await addMonthlyRecord(
                       text,
                       nextMonthStart
                     )
-
                     setNextMonthShowAdd(false)
-
                   }}
                 >
                   追加
                 </button>
 
               </div>
-
             ) : (
-
               <button
                 className="monthly-add-task-button"
                 onClick={() =>
@@ -691,7 +632,6 @@ export default function MonthlyPage() {
               >
                 新しいタスクを追加
               </button>
-
             )}
 
           </div>
@@ -704,76 +644,51 @@ export default function MonthlyPage() {
       <section className="monthly-section monthly-completed-weekly-section">
 
         <div className="monthly-section-header">
-
-          <div>
-
-            <h2>今月達成したウィークリータスク</h2>
-
-          </div>
-
+          <CalendarCheck size={22} strokeWidth={1.8} />
+          <h2>今月達成したウィークリータスク</h2>
         </div>
 
 
         {completedThisMonthWeeklyPlans.length > 0 ? (
-
           <div className="monthly-completed-weekly-list">
 
             {weeks.map(number => {
-
               const week =
                 completedThisMonthWeeklyPlans.find(
                   item =>
                     getWeekNumber(item.week) === number
                 )
-
               return (
-
                 <div
                   className="monthly-completed-weekly-group"
                   key={number}
                 >
-
                   <p className="monthly-completed-weekly-title">
                     Week {number}
                   </p>
 
-
                   {week && week.tasks.length > 0 ? (
-
                     <ul className="monthly-completed-task-list">
-
                       {week.tasks.map(task => (
-
                         <li key={task.id}>
                           ✓ {task.title}
                         </li>
-
                       ))}
-
                     </ul>
-
                   ) : (
-
                     <p className="monthly-section-message">
                       達成した課題はありません
                     </p>
-
                   )}
-
                 </div>
-
               )
-
             })}
 
           </div>
-
         ) : (
-
           <p className="monthly-section-message">
             今月達成したウィークリータスクはありません
           </p>
-
         )}
 
       </section>

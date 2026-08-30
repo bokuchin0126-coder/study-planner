@@ -98,17 +98,6 @@ export default function DailyPage() {
       ? Math.round((completedTaskCount / todayTotalTaskCount) * 100)
       : 0
 
-  const todayCompletionText =
-    todayTotalTaskCount === 0
-      ? "タスクなし"
-      : todayCompletionRate === 100
-        ? "すべて達成"
-        : todayCompletionRate >= 70
-          ? "順調"
-          : todayCompletionRate >= 40
-            ? "もうひと踏ん張り"
-            : "これから"
-
   const yesterdayCompletedTaskCount = completedYesterdayTasks?.length  ?? 0
 
   const yesterdayTotalTaskCount = yesterdayPlan?.tasks.length ?? 0

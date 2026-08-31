@@ -695,12 +695,9 @@
 
 .daily-completed-task-list li::before {
   content: "・";
-
   margin-right: 10px;
-
   color: #888888;
 }
-
 
 /* -----------------------------------------
    Header

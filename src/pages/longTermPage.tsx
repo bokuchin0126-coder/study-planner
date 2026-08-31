@@ -7,6 +7,14 @@ import TaskItem from "../components/TaskItem"
 import { useOutsideClick } from "../hooks/useOutsideClick"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import {
+  Target,
+  CalendarDays,
+  ListTodo,
+  NotebookPen,
+  Trophy,
+  Flag
+} from "lucide-react"
+import {
   DndContext,
   PointerSensor,
   useSensor,
@@ -188,31 +196,17 @@ export default function LongTermPage() {
 
     <main className="content">
 
-      <header className="header">
-
-        <p className="label">
-          長期目標
-        </p>
-
-        <h1 className="title">
-          今の目標
-        </h1>
-
-      </header>
-
-
       <section className="section goal-section">
 
         <div className="section-header">
 
-          <div>
-
+          <div className="section-header-main">
+            <Target size={22} strokeWidth={1.8} />
             <h2>目標</h2>
+          </div>
 
-            <p className="section-description">
-              この期間で達成したいこと
-            </p>
-
+          <div className="section-description">
+            この期間で達成したいこと
           </div>
 
         </div>
@@ -228,7 +222,6 @@ export default function LongTermPage() {
             await updateLongTermGoal(goalText)
           }
         />
-
       </section>
 
 
@@ -236,23 +229,20 @@ export default function LongTermPage() {
 
         <div className="section-header">
 
-          <div>
-
+          <div className="section-header-main">
+            <CalendarDays size={22} strokeWidth={1.8} />
             <h2>期間</h2>
-
-            <p className="section-description">
-              長期目標に取り組む期間
-            </p>
-
           </div>
 
+          <div className="section-description">
+            長期目標に取り組む期間
+          </div>
+          
         </div>
-
 
         <div className="period-picker">
 
           <div className="period-date">
-
             <button
               className="date-button"
               onClick={() => {
@@ -262,20 +252,15 @@ export default function LongTermPage() {
               {displayStartDate}
             </button>
 
-
             {editingType === "start" && (
-
               <div
                 className="date-picker"
                 ref={pickerRef}
               >
-
                 <div className="year-list">
-
                   {Array.from(
                     { length: 30 },
                     (_, i) => (
-
                       <div
                         key={i}
                         className="date-option"
@@ -285,19 +270,14 @@ export default function LongTermPage() {
                       >
                         {lastYear + i}年
                       </div>
-
                     )
                   )}
-
                 </div>
 
-
                 <div className="month-list">
-
                   {Array.from(
                     { length: 12 },
                     (_, i) => (
-
                       <div
                         key={i}
                         className="date-option"
@@ -307,19 +287,14 @@ export default function LongTermPage() {
                       >
                         {i + 1}月
                       </div>
-
                     )
                   )}
-
                 </div>
 
-
                 <div className="day-list">
-
                   {Array.from(
                     { length: startDaysInMonth },
                     (_, i) => (
-
                       <div
                         key={i}
                         className="date-option"
@@ -329,16 +304,11 @@ export default function LongTermPage() {
                       >
                         {i + 1}日
                       </div>
-
                     )
                   )}
-
                 </div>
-
               </div>
-
             )}
-
           </div>
 
 
@@ -347,8 +317,8 @@ export default function LongTermPage() {
           </span>
 
 
+          {/* End Date */}
           <div className="period-date">
-
             <button
               className="date-button"
               onClick={() => {
@@ -358,31 +328,25 @@ export default function LongTermPage() {
               {displayEndDate}
             </button>
 
-
             {editingType === "end" && (
-
               <div
                 className="date-picker"
                 ref={pickerRef}
               >
-
                 <div className="year-list">
-
                   {Array.from(
                     {
                       length:
                         lastYear +
                         30 -
                         endFirstYear +
-                        1
+                        1,
                     },
                     (_, i) => {
-
                       const year =
                         endFirstYear + i
 
                       return (
-
                         <div
                           key={year}
                           className="date-option"
@@ -392,31 +356,24 @@ export default function LongTermPage() {
                         >
                           {year}年
                         </div>
-
                       )
-
                     }
                   )}
-
                 </div>
 
-
                 <div className="month-list">
-
                   {Array.from(
                     {
                       length:
                         12 -
                         endFirstMonth +
-                        1
+                        1,
                     },
                     (_, i) => {
-
                       const month =
                         endFirstMonth + i
 
                       return (
-
                         <div
                           key={month}
                           className="date-option"
@@ -426,31 +383,24 @@ export default function LongTermPage() {
                         >
                           {month}月
                         </div>
-
                       )
-
                     }
                   )}
-
                 </div>
 
-
                 <div className="day-list">
-
                   {Array.from(
                     {
                       length:
                         endDaysInMonth -
                         endFirstDay +
-                        1
+                        1,
                     },
                     (_, i) => {
-
                       const day =
                         endFirstDay + i
 
                       return (
-
                         <div
                           key={day}
                           className="date-option"
@@ -460,22 +410,15 @@ export default function LongTermPage() {
                         >
                           {day}日
                         </div>
-
                       )
-
                     }
                   )}
-
                 </div>
-
               </div>
-
             )}
-
           </div>
 
         </div>
-
       </section>
 
 
@@ -490,29 +433,21 @@ export default function LongTermPage() {
           )
         }
       >
-
         <section className="section task-section">
 
           <div className="section-header">
 
-            <div>
-
+            <div className="section-header-main">
+              <ListTodo size={22} strokeWidth={1.8} />
               <h2>タスク</h2>
-
-              <p className="section-description">
-                長期目標を達成するためのタスク
-              </p>
-
             </div>
 
           </div>
-
 
           <SortableContext
             items={longTermTasks}
             strategy={verticalListSortingStrategy}
           >
-
             <div className="task-list">
 
               {longTermTasks.length === 0 && (
@@ -523,146 +458,121 @@ export default function LongTermPage() {
                 </p>
               )}
 
-
-              {longTermTasks.map(task => (
-
+              {longTermTasks.map((task) => (
                 <TaskItem
                   key={task.id}
                   id={task.id}
                 >
-
-                  <button
-                    className="task-toggle"
-                    onClick={() =>
-                      updateLongTermTaskToggle(task.id)
-                    }
-                  >
-                    {task.completed ? "☑" : "□"}
-                  </button>
-
-
-                  {editingId === task.id ? (
-
-                    <div 
-                      className="task-edit"
-                      ref={editRef}
+                  <div className="task-row">
+                    <button
+                      className={`task-toggle ${
+                        task.completed ? "task-completed" : ""
+                      }`}    
+                      onClick={() =>
+                        updateLongTermTaskToggle(task.id)
+                      }
                     >
-
-                      <input
-                        value={editText}
-                        autoFocus
-                        onChange={(e) =>
-                          setEditText(e.target.value)
-                        }
-                        onKeyDown={(e) => {
-
-                          if (e.key === "Enter") {
-
+                      {task.completed ? "✓" : ""}
+                    </button>
+ 
+                    {editingId === task.id ? (
+                      <div
+                        className="task-edit"
+                        ref={editRef}
+                      >
+                        <input
+                          value={editText}
+                          autoFocus
+                          onChange={(e) =>
+                            setEditText(e.target.value)
+                          }
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              updateLongTermTaskTitle(
+                                task.id,
+                                editText
+                              )
+                              setEditText("")
+                              setEditingId("")
+                            }
+                          }}
+                        />
+  
+                        <button
+                          className="task-action"
+                          onClick={() => {
                             updateLongTermTaskTitle(
                               task.id,
                               editText
                             )
-
                             setEditText("")
                             setEditingId("")
-
-                          }
-
-                        }}
-                      />
-
-                      <button
-                        className="task-action"
-                        onClick={() => {
-
-                          updateLongTermTaskTitle(
-                            task.id,
-                            editText
-                          )
-
-                          setEditText("")
-                          setEditingId("")
-
-                        }}
-                      >
-                        保存
-                      </button>
-
-                    </div>
-
-                  ) : (
-
-                    <div className="task-content">
-
-                      <p
-                        ref={
-                          expandadTaskId === task.id
-                            ? expandadTaskRef
-                            : null
-                          }
-                        className={`task-title ${
-                          expandadTaskId === task.id
-                            ? "task-title-expanded"
-                            : ""
-                        } ${
-                          task.completed ? "task-completed"
-                          : ""
-                        }`}
-                        onClick={() => {
-                          setExpandadTaskId(
+                          }}
+                        >
+                          保存
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="task-content">
+                        <p
+                          ref={
                             expandadTaskId === task.id
-                              ? null
-                              : task.id
-                          )
-                        }}
-                      >
-                        {task.title}
-                      </p>
-
-                      <button
-                        className="task-action"
-                        onClick={() => {
-
-                          setEditingId(task.id)
-                          setEditText(task.title)
-
-                        }}
-                      >
-                        編集
-                      </button>
-
-                    </div>
-
-                  )}
-
-
-                  <button
-                    className="task-delete"
-                    onClick={() =>
-                      deleteLongTermTask(task.id)
-                    }
-                  >
-                    削除
-                  </button>
-
+                              ? expandadTaskRef
+                              : null
+                          }
+                          className={`task-title ${
+                            expandadTaskId === task.id
+                              ? "task-title-expanded"
+                              : ""
+                          } ${
+                            task.completed
+                              ? "task-completed"
+                              : ""
+                          }`}
+                          onClick={() => {
+                            setExpandadTaskId(
+                              expandadTaskId === task.id
+                                ? null
+                                : task.id
+                            )
+                          }}
+                        >
+                          {task.title}
+                        </p>
+  
+                        <button
+                          className="task-action"
+                          onClick={() => {
+                            setEditingId(task.id)
+                            setEditText(task.title)
+                          }}
+                        >
+                          編集
+                        </button>
+                      </div>
+                    )}
+  
+                    <button
+                      className="task-delete"
+                      onClick={() =>
+                        deleteLongTermTask(task.id)
+                      }
+                    >
+                      削除
+                    </button>
+                  </div>
                 </TaskItem>
-
               ))}
 
             </div>
-
           </SortableContext>
 
-
           <div className="task-add">
-
             {showAdd ? (
-
-              <div 
+              <div
                 className="task-add-form"
                 ref={addRef}
               >
-
                 <input
                   className="task-add-input"
                   value={addText}
@@ -672,43 +582,28 @@ export default function LongTermPage() {
                     setAddText(e.target.value)
                   }
                   onKeyDown={(e) => {
-
                     if (e.key === "Enter") {
-
                       const text = addText
-
                       setAddText("")
-
                       addLongTermTask(text)
-
                       setShowAdd(false)
-
                     }
-
                   }}
                 />
 
                 <button
                   className="task-add-button"
                   onClick={() => {
-
                     const text = addText
-
                     setAddText("")
-
                     addLongTermTask(text)
-
                     setShowAdd(false)
-
                   }}
                 >
                   追加
                 </button>
-
               </div>
-
             ) : (
-
               <button
                 className="add-task-button"
                 onClick={() =>
@@ -717,13 +612,10 @@ export default function LongTermPage() {
               >
                 新しいタスクを追加
               </button>
-
             )}
-
           </div>
 
         </section>
-
       </DndContext>
 
 
@@ -731,18 +623,11 @@ export default function LongTermPage() {
 
         <div className="section-header">
 
-          <div>
-
+          <div className="section-header-main">
+            <NotebookPen size={22} strokeWidth={1.8} />
             <h2>振り返り</h2>
-
-            <p className="section-description">
-              長期目標への取り組みを振り返る
-            </p>
-
           </div>
-
         </div>
-
 
         <textarea
           className="reflection-input"
@@ -767,72 +652,52 @@ export default function LongTermPage() {
 
         <div className="section-header">
 
-          <div>
-
+          <div className="section-header-main">
+            <Trophy size={22} strokeWidth={1.8} />  
             <h2>達成したタスク</h2>
-
-            <p className="section-description">
-              この長期目標の期間中に達成したMonthlyタスク
-            </p>
-
           </div>
 
+          <div className="section-description">
+            この長期目標の期間中に達成した月タスク
+          </div>
         </div>
 
-
         {Object.entries(groupedTasks).length > 0 ? (
-
           <div className="completed-task-groups">
 
             {Object.entries(groupedTasks).map(
               ([month, tasks]) => (
-
                 <div
                   className="completed-task-group"
                   key={month}
                 >
-
                   <h3 className="completed-task-month">
                     {new Date(month).getFullYear()}年
                     {new Date(month).getMonth() + 1}月
                   </h3>
 
-
                   {tasks.length === 0 ? (
-
                     <p className="section-message">
                       この期間中に達成したMonthlyタスクはありません
                     </p>
-
                   ) : (
-
                     <ul className="completed-task-list">
-
-                      {tasks.map(task => (
-
+                      {tasks.map((task) => (
                         <li key={task}>
                           {task}
                         </li>
-
                       ))}
-
                     </ul>
-
                   )}
-
                 </div>
-
               )
             )}
 
           </div>
-
         ) : (
-
           <p className="section-message">
             この期間中に達成したMonthlyタスクはありません
           </p>
-
         )}
 
       </section>
@@ -842,23 +707,20 @@ export default function LongTermPage() {
 
         <div className="section-header">
 
-          <div>
-
+          <div className="section-header-main">
+            <Flag size={22} strokeWidth={1.8} />
             <h2>目標を完了する</h2>
+          </div>
 
-            <p className="section-description">
-              長期目標の達成状況を確定します
-            </p>
-
+          <div className="section-description">
+            長期目標の達成状況を確定します
           </div>
 
         </div>
 
-
         <button
           className="completion-button"
           onClick={async () => {
-
             const isConfirmed = window.confirm(
               "達成にすると今の長期目標の画面はなくなり、新しい長期目標の画面へと更新されますがよろしいですか？"
             )
@@ -867,7 +729,6 @@ export default function LongTermPage() {
 
             await updateLongTermToggle()
             await initializeLongTermPlan()
-
           }}
         >
           完了
@@ -878,5 +739,6 @@ export default function LongTermPage() {
     </main>
   </div>
 )
+
  
 }

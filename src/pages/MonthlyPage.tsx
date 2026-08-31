@@ -191,7 +191,7 @@ export default function MonthlyPage() {
         <section className="monthly-section monthly-this-month-section">
 
           <div className="monthly-section-header">
-            <NotebookPen size={22} strokeWidth={1.8} />
+            <ClipboardList size={22} strokeWidth={1.8} />
             <h2>今月の課題</h2>
           </div>
 

@@ -1,15 +1,1007 @@
+/* =========================================================
+   Long Term Page
+========================================================= */
 .long-term-page {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+  color: #111111;
 }
 
-.long-term-content {
-    flex: 1;
+/* =========================================================
+   Main Layout
+========================================================= */
+.long-term-page .content {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  height: 100vh;
+  box-sizing: border-box;
+
+  display: grid;
+  grid-template-columns: 5fr 3fr 2fr;
+  grid-template-rows:
+    minmax(0, 1fr)
+    minmax(0, 1.9fr)
+    minmax(0, 0.8fr);
+
+  gap: 14px;
+  padding: 18px;
+
+  overflow: hidden;
 }
 
-.task-title.task-completed {
+/* =========================================================
+   Section
+========================================================= */
+.long-term-page .section {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 20px 16px;
+
+  background: rgba(255, 252, 245, 0.96);
+  border-radius: 2px;
+
+  overflow: hidden;
+}
+
+.long-term-page .period-section {
+  overflow: visible;
+}
+
+/* =========================================================
+   Section Header
+========================================================= */
+.long-term-page .section-header {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  margin-bottom: 14px;
+}
+
+.long-term-page .section-header-main {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 0;
+}
+
+.long-term-page .section-header-main svg {
+  flex-shrink: 0;
+  margin-right: 12px;
+  color: #6d4326;
+  transform: translateY(-0.8px);
+}
+
+.long-term-page .section-header-main h2 {
+  margin: 0;
+  color: #111111;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.long-term-page .section-description {
+  margin: 3px 0 0 34px;
+  text-align: left;
+  color: #888888;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.long-term-page .task-section .section-header-main svg {
+  transform: none;
+}
+
+
+/* =========================================================
+   Section Position
+========================================================= */
+
+/* -------------------------
+   Left Column
+------------------------- */
+.long-term-page .goal-section {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.long-term-page .task-section {
+  grid-column: 1;
+  grid-row: 2 / 4;
+}
+
+/* -------------------------
+   Center Column
+------------------------- */
+.long-term-page .period-section {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.long-term-page .reflection-section {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.long-term-page .completion-section {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+/* -------------------------
+   Right Column
+------------------------- */
+.long-term-page .completed-task-section {
+  grid-column: 3;
+  grid-row: 1 / 4;
+}
+
+/* =========================================================
+   Goal
+========================================================= */
+.long-term-page .goal-input {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+
+  box-sizing: border-box;
+  padding: 12px 14px;
+
+  border: 1px solid #e5ddd4;
+  border-radius: 2px;
+
+  background-color: #ffffff;
+  color: #332922;
+
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+
+  outline: none;
+}
+
+.long-term-page .goal-input:focus {
+  border-color: #cccccc;
+}
+
+.long-term-page .goal-input::placeholder {
+  color: #999999;
+}
+
+/* =========================================================
+   Period
+========================================================= */
+.long-term-page .period-picker {
+  min-width: 0;
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+}
+
+.long-term-page .period-date {
+  position: relative;
+  min-width: 0;
+  flex: 1;
+}
+
+.long-term-page .date-button {
+  width: 100%;
+  height: 42px;
+
+  box-sizing: border-box;
+  padding: 0 10px;
+
+  border: 1px solid #e5ddd4;
+  border-radius: 2px;
+
+  background-color: #ffffff;
+  color: #332922;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.long-term-page .date-button:hover {
+  background-color: #faf7f2;
+  border-color: #c9b9aa;
+}
+
+.long-term-page .date-button:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 1px;
+}
+
+.long-term-page .period-separator {
+  flex-shrink: 0;
+
+  color: #756457;
+  font-size: 14px;
+}
+
+/* =========================================================
+   Date Picker
+========================================================= */
+.long-term-page .date-picker {
+  position: absolute;
+  z-index: 20;
+
+  top: calc(100% + 7px);
+  left: 0;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+
+  width: 260px;
+  height: 210px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #ddd4ca;
+  border-radius: 2px;
+
+  background-color: #ffffff;
+
+  box-shadow: 0 5px 18px rgba(80, 55, 35, 0.12);
+
+  overflow: hidden;
+}
+
+.long-term-page .year-list,
+.long-term-page .month-list,
+.long-term-page .day-list {
+  min-width: 0;
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cccccc transparent;
+}
+
+.long-term-page .year-list::-webkit-scrollbar,
+.long-term-page .month-list::-webkit-scrollbar,
+.long-term-page .day-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.long-term-page .year-list::-webkit-scrollbar-track,
+.long-term-page .month-list::-webkit-scrollbar-track,
+.long-term-page .day-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.long-term-page .year-list::-webkit-scrollbar-thumb,
+.long-term-page .month-list::-webkit-scrollbar-thumb,
+.long-term-page .day-list::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+  border-radius: 2px;
+}
+
+.long-term-page .month-list {
+  border-left: 1px solid #eeeeee;
+  border-right: 1px solid #eeeeee;
+}
+
+.long-term-page .date-option {
+  padding: 9px 6px;
+
+  color: #3f342d;
+
+  font-size: 12px;
+  line-height: 1.4;
+
+  text-align: center;
+
+  cursor: pointer;
+
+  transition: background-color 0.15s ease;
+}
+
+.long-term-page .date-option:hover {
+  background-color: #faf7f2;
+}
+
+/* =========================================================
+   Task List
+========================================================= */
+.long-term-page .task-list {
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border: 1px solid #e8dfd5;
+  border-radius: 2px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  background-color: #ffffff;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cccccc transparent;
+}
+
+.long-term-page .task-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.long-term-page .task-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.long-term-page .task-list::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+  border-radius: 2px;
+}
+
+.long-term-page .task-list > * {
+  border-bottom: 1px solid #dddddd;
+}
+
+.long-term-page .task-list .section-message {
+  border: none;
+}
+
+/* =========================================================
+   Task Row
+========================================================= */
+.long-term-page .task-row {
+  width: 100%;
+  min-height: 46px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 12px;
+
+  background-color: #ffffff;
+}
+
+.long-term-page .task-row:last-child {
+  border-bottom: none;
+}
+
+/* =========================================================
+   Task Toggle
+========================================================= */
+.long-term-page .task-toggle {
+  width: 24px;
+  height: 24px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  margin-right: 8px;
+
+  border: 1.5px solid #3f342d;
+  border-radius: 2px;
+
+  color: #111111;
+  background-color: #ffffff;
+
+  font-family: inherit;
+  font-size: 20px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.long-term-page .task-toggle:hover {
+  background-color: #faf7f2;
+  border-color: #a8957f;
+}
+
+.long-term-page .task-toggle.task-completed {
+  background-color: #663912;
+  color: #eeeeee;
+  font-size: 20px;
+}
+
+.long-term-page .task-toggle.task-completed:hover {
+  background-color: #8a6a4c;
+  border-color: #8a6a4c;
+}
+
+/* =========================================================
+   Task Content
+========================================================= */
+.long-term-page .task-content {
+  min-width: 0;
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  background-color: #ffffff;
+}
+
+.long-term-page .task-title {
+  min-width: 0;
+  flex: 1;
+
+  margin: 0;
+
+  color: #3f342d;
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  cursor: pointer;
+}
+
+.long-term-page .task-title.task-title-expanded {
+  display: block;
+
+  overflow: visible;
+  white-space: normal;
+
+  overflow-wrap: anywhere;
+}
+
+.long-term-page .task-title.task-completed {
   text-decoration: line-through;
   text-decoration-color: rgba(17, 17, 17, 0.45);
   text-decoration-thickness: 1px;
+}
+
+/* =========================================================
+   Task Edit
+========================================================= */
+.long-term-page .task-edit {
+  min-width: 0;
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+}
+
+.long-term-page .task-edit input {
+  min-width: 0;
+  flex: 1;
+
+  height: 32px;
+
+  box-sizing: border-box;
+  padding: 0 8px;
+
+  border: 1px solid #cccccc;
+  border-radius: 2px;
+
+  background-color: #ffffff;
+  color: #111111;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  outline: none;
+}
+
+.long-term-page .task-edit input:focus {
+  border-color: #111111;
+}
+
+/* =========================================================
+   Task Action / Delete
+========================================================= */
+.long-term-page .task-action,
+.long-term-page .task-delete {
+  flex-shrink: 0;
+
+  padding: 5px 7px;
+  margin: 0;
+
+  border: 1px solid transparent;
+  border-radius: 2px;
+
+  background-color: #ffffff;
+  color: #6d3f1f;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 420;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.long-term-page .task-action:hover,
+.long-term-page .task-delete:hover {
+  background-color: #faf7f2;
+  border-color: #c9d9a5;
+  color: #5f452f;
+}
+
+.long-term-page .task-action:focus-visible,
+.long-term-page .task-delete:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 1px;
+}
+
+.long-term-page .task-delete {
+  margin-left: 3px;
+}
+
+/* =========================================================
+   Task Add
+========================================================= */
+.long-term-page .task-add {
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  height: 34px;
+
+  margin-top: 9px;
+}
+
+.long-term-page .add-task-button {
+  height: 34px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 12px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #6d3f1f;
+  border-radius: 2px;
+
+  background-color: #6d3f1f;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.long-term-page .add-task-button::before {
+  content: "+";
+
+  margin-right: 6px;
+
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.long-term-page .add-task-button:hover {
+  background-color: #80552f;
+  border-color: #80552f;
+}
+
+.long-term-page .add-task-button:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 1px;
+}
+
+/* =========================================================
+   Add Task Form
+========================================================= */
+.long-term-page .task-add-form {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  margin: 0;
+}
+
+.long-term-page .task-add-input {
+  min-width: 0;
+
+  width: 185px;
+  height: 34px;
+
+  box-sizing: border-box;
+  padding: 0 9px;
+
+  border: 1px solid #cccccc;
+  border-radius: 2px;
+
+  background-color: #ffffff;
+  color: #111111;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  outline: none;
+}
+
+.long-term-page .task-add-input:focus {
+  border-color: #111111;
+}
+
+.long-term-page .task-add-input::placeholder {
+  color: #999999;
+}
+
+.long-term-page .task-add-button {
+  height: 34px;
+
+  flex-shrink: 0;
+
+  padding: 0 13px;
+
+  border: 1px solid #6d3f1f;
+  border-radius: 2px;
+
+  background-color: #6d3f1f;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.long-term-page .task-add-button:hover {
+  background-color: #80552f;
+  border-color: #80552f;
+}
+
+.long-term-page .task-add-button:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 1px;
+}
+
+/* =========================================================
+   Empty Message
+========================================================= */
+.long-term-page .section-message {
+  flex: 1;
+
+  min-height: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0;
+  padding: 20px;
+
+  box-sizing: border-box;
+
+  color: #111111;
+  background-color: #ffffff;
+
+  font-size: 12px;
+  line-height: 1.6;
+
+  text-align: center;
+}
+
+/* =========================================================
+   Reflection
+========================================================= */
+.long-term-page .reflection-input {
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  resize: none;
+
+  padding: 7px 12px;
+
+  border: 1px solid #e5e5e5;
+  border-radius: 2px;
+
+  background-color: #ffffff;
+  color: #111111;
+
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 36px;
+
+  outline: none;
+
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 35px,
+      #e5e5e5 35px,
+      #e5e5e5 36px,
+      transparent 36px,
+      transparent 37px
+    );
+
+  background-size:
+    calc(100% - 24px) 100%;
+
+  background-position:
+    center;
+
+  background-repeat: no-repeat;
+
+  background-attachment: local;
+}
+
+.long-term-page .reflection-input:focus {
+  border-color: #cccccc;
+}
+
+.long-term-page .reflection-input::placeholder {
+  color: #888888;
+}
+
+/* =========================================================
+   Completed Tasks
+========================================================= */
+.long-term-page .completed-task-groups {
+  min-width: 0;
+  min-height: 0;
+
+  flex: 1;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cccccc transparent;
+}
+
+.long-term-page .completed-task-groups::-webkit-scrollbar {
+  width: 6px;
+}
+
+.long-term-page .completed-task-groups::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.long-term-page .completed-task-groups::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+  border-radius: 2px;
+}
+
+.long-term-page .completed-task-group {
+  margin: 0;
+}
+
+.long-term-page .completed-task-month {
+  margin: 0;
+
+  padding: 9px 0 7px;
+
+  border-top: 1px solid #e5ddd4;
+
+  color: #6d4326;
+
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.long-term-page .completed-task-group:first-child
+  .completed-task-month {
+  border-top: none;
+  padding-top: 0;
+}
+
+.long-term-page .completed-task-list {
+  margin: 0;
+  padding: 0 0 9px;
+
+  list-style: none;
+}
+
+.long-term-page .completed-task-list li {
+  padding: 6px 4px;
+
+  border-bottom: 1px solid #eeeeee;
+
+  color: #3f342d;
+
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+
+  text-align: left;
+}
+
+.long-term-page .completed-task-list li::before {
+  content: "・";
+
+  margin-right: 7px;
+
+  color: #888888;
+}
+
+/* =========================================================
+   Completion
+========================================================= */
+.long-term-page .completion-section {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.long-term-page .completion-section .section-header {
+  margin-bottom: 8px;
+}
+
+.long-term-page .completion-section .section-header svg {
+  margin-right: 10px;
+}
+
+.long-term-page .completion-section .section-header h2 {
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.long-term-page .completion-section .section-description {
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.long-term-page .completion-button {
+  width: 100%;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  box-sizing: border-box;
+
+  border: 1px solid #6d3f1f;
+  border-radius: 2px;
+
+  background-color: #6d3f1f;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.long-term-page .completion-button:hover {
+  background-color: #80552f;
+  border-color: #80552f;
+}
+
+.long-term-page .completion-button:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 1px;
+}
+
+/* =========================================================
+   Responsive
+========================================================= */
+@media (max-width: 1000px) {
+  .long-term-page .content {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .long-term-page .section {
+    padding: 16px 12px;
+  }
+
+  .long-term-page .section-header h2 {
+    font-size: 16px;
+  }
+
+  .long-term-page .section-header svg {
+    margin-right: 10px;
+  }
+
+  .long-term-page .task-title {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 700px) {
+  .long-term-page {
+    display: block;
+  }
+
+  .long-term-page .content {
+    height: calc(100vh - 56px);
+
+    grid-template-columns: 1fr;
+    grid-template-rows:
+      minmax(180px, auto)
+      minmax(300px, auto)
+      minmax(180px, auto)
+      minmax(180px, auto)
+      minmax(220px, auto)
+      minmax(130px, auto);
+
+    overflow-y: auto;
+  }
+
+  .long-term-page .goal-section {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .long-term-page .period-section {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .long-term-page .task-section {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .long-term-page .reflection-section {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .long-term-page .completed-task-section {
+    grid-column: 1;
+    grid-row: 5;
+  }
+
+  .long-term-page .completion-section {
+    grid-column: 1;
+    grid-row: 6;
+  }
 }

@@ -6,7 +6,7 @@
   height: 100vh;
   display: flex;
   overflow: hidden;
-  color: #111111;
+  color: var(--color-text);
 }
 
 /* =========================================================
@@ -18,17 +18,14 @@
   min-height: 0;
   height: 100vh;
   box-sizing: border-box;
-
   display: grid;
   grid-template-columns: 5fr 3fr 2fr;
   grid-template-rows:
     minmax(0, 1fr)
     minmax(0, 1.9fr)
     minmax(0, 0.8fr);
-
-  gap: 14px;
-  padding: 18px;
-
+  gap: var(--space-4);
+  padding: var(--space-5);
   overflow: hidden;
 }
 
@@ -40,15 +37,11 @@
   min-width: 0;
   min-height: 0;
   box-sizing: border-box;
-
   display: flex;
   flex-direction: column;
-
-  padding: 20px 16px;
-
+  padding: var(--space-5) var(--space-4);
   background: rgba(255, 252, 245, 0.96);
-  border-radius: 2px;
-
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
@@ -63,7 +56,7 @@
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  margin-bottom: 14px;
+  margin-bottom: var(--space-3);
 }
 
 .long-term-page .section-header-main {
@@ -75,26 +68,25 @@
 
 .long-term-page .section-header-main svg {
   flex-shrink: 0;
-  margin-right: 12px;
-  color: #6d4326;
+  margin-right: var(--space-3);
+  color: var(--color-primary-dark);
   transform: translateY(-0.8px);
 }
 
 .long-term-page .section-header-main h2 {
   margin: 0;
-  color: #111111;
-  font-size: 18px;
-  font-weight: 700;
+  color: var(--color-text);
+  font-size: var(--font-xl);
+  font-weight: var(--weight-bold);
   line-height: 1.5;
 }
 
 .long-term-page .section-description {
   margin: 3px 0 0 34px;
   text-align: left;
-  color: #888888;
-
-  font-size: 12px;
-  font-weight: 600;
+  color: var(--color-text-muted);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-semibold);
   line-height: 1.5;
 }
 
@@ -102,11 +94,9 @@
   transform: none;
 }
 
-
 /* =========================================================
    Section Position
 ========================================================= */
-
 /* -------------------------
    Left Column
 ------------------------- */
@@ -154,29 +144,24 @@
   min-width: 0;
   min-height: 0;
   flex: 1;
-
   box-sizing: border-box;
-  padding: 12px 14px;
-
-  border: 1px solid #e5ddd4;
-  border-radius: 2px;
-
-  background-color: #ffffff;
-  color: #332922;
-
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-md);
   line-height: 1.6;
-
   outline: none;
 }
 
 .long-term-page .goal-input:focus {
-  border-color: #cccccc;
+  border-color: var(--color-border-input);
 }
 
 .long-term-page .goal-input::placeholder {
-  color: #999999;
+  color: var(--color-text-muted);
 }
 
 /* =========================================================
@@ -185,12 +170,10 @@
 .long-term-page .period-picker {
   min-width: 0;
   flex: 1;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  gap: 10px;
+  gap: var(--space-2);
 }
 
 .long-term-page .period-date {
@@ -202,41 +185,34 @@
 .long-term-page .date-button {
   width: 100%;
   height: 42px;
-
   box-sizing: border-box;
-  padding: 0 10px;
-
-  border: 1px solid #e5ddd4;
-  border-radius: 2px;
-
-  background-color: #ffffff;
-  color: #332922;
-
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
   font-family: inherit;
-  font-size: 12px;
-
+  font-size: var(--font-sm);
   cursor: pointer;
-
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
 }
 
 .long-term-page .date-button:hover {
-  background-color: #faf7f2;
-  border-color: #c9b9aa;
+  background-color: var(--color-background-hover);
+  border-color: var(--color-border-hover);
 }
 
 .long-term-page .date-button:focus-visible {
-  outline: 2px solid #111111;
+  outline: 2px solid var(--color-text);
   outline-offset: 1px;
 }
 
 .long-term-page .period-separator {
   flex-shrink: 0;
-
-  color: #756457;
-  font-size: 14px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-md);
 }
 
 /* =========================================================
@@ -245,25 +221,17 @@
 .long-term-page .date-picker {
   position: absolute;
   z-index: 20;
-
   top: calc(100% + 7px);
   left: 0;
-
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-
   width: 260px;
   height: 210px;
-
   box-sizing: border-box;
-
-  border: 1px solid #ddd4ca;
-  border-radius: 2px;
-
-  background-color: #ffffff;
-
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
   box-shadow: 0 5px 18px rgba(80, 55, 35, 0.12);
-
   overflow: hidden;
 }
 
@@ -272,9 +240,8 @@
 .long-term-page .day-list {
   min-width: 0;
   overflow-y: auto;
-
   scrollbar-width: thin;
-  scrollbar-color: #cccccc transparent;
+  scrollbar-color: var(--color-border-input) transparent;
 }
 
 .long-term-page .year-list::-webkit-scrollbar,
@@ -292,32 +259,27 @@
 .long-term-page .year-list::-webkit-scrollbar-thumb,
 .long-term-page .month-list::-webkit-scrollbar-thumb,
 .long-term-page .day-list::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
-  border-radius: 2px;
+  background-color: var(--color-border-input);
+  border-radius: var(--radius-sm);
 }
 
 .long-term-page .month-list {
-  border-left: 1px solid #eeeeee;
-  border-right: 1px solid #eeeeee;
+  border-left: 1px solid var(--color-border-light);
+  border-right: 1px solid var(--color-border-light);
 }
 
 .long-term-page .date-option {
   padding: 9px 6px;
-
-  color: #3f342d;
-
-  font-size: 12px;
+  color: var(--color-text);
+  font-size: var(--font-sm);
   line-height: 1.4;
-
   text-align: center;
-
   cursor: pointer;
-
   transition: background-color 0.15s ease;
 }
 
 .long-term-page .date-option:hover {
-  background-color: #faf7f2;
+  background-color: var(--color-background-hover);
 }
 
 /* =========================================================
@@ -327,21 +289,15 @@
   min-width: 0;
   min-height: 0;
   flex: 1;
-
   width: 100%;
-
   box-sizing: border-box;
-
-  border: 1px solid #e8dfd5;
-  border-radius: 2px;
-
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   overflow-y: auto;
   overflow-x: hidden;
-
-  background-color: #ffffff;
-
+  background-color: var(--color-surface);
   scrollbar-width: thin;
-  scrollbar-color: #cccccc transparent;
+  scrollbar-color: var(--color-border-input) transparent;
 }
 
 .long-term-page .task-list::-webkit-scrollbar {
@@ -353,12 +309,12 @@
 }
 
 .long-term-page .task-list::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
-  border-radius: 2px;
+  background-color: var(--color-border-input);
+  border-radius: var(--radius-sm);
 }
 
 .long-term-page .task-list > * {
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .long-term-page .task-list .section-message {
@@ -371,15 +327,11 @@
 .long-term-page .task-row {
   width: 100%;
   min-height: 46px;
-
   box-sizing: border-box;
-
   display: flex;
   align-items: center;
-
-  padding: 0 12px;
-
-  background-color: #ffffff;
+  padding: 0 var(--space-3);
+  background-color: var(--color-surface);
 }
 
 .long-term-page .task-row:last-child {
@@ -392,47 +344,39 @@
 .long-term-page .task-toggle {
   width: 24px;
   height: 24px;
-
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   padding: 0;
-  margin-right: 8px;
-
-  border: 1.5px solid #3f342d;
-  border-radius: 2px;
-
-  color: #111111;
-  background-color: #ffffff;
-
+  margin-right: var(--space-2);
+  border: 1.5px solid var(--color-text);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  background-color: var(--color-surface);
   font-family: inherit;
-  font-size: 20px;
+  font-size: var(--font-2xl);
   line-height: 1;
-
   cursor: pointer;
-
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
 }
 
 .long-term-page .task-toggle:hover {
-  background-color: #faf7f2;
-  border-color: #a8957f;
+  background-color: var(--color-background-hover);
+  border-color: var(--color-primary-hover);
 }
 
 .long-term-page .task-toggle.task-completed {
-  background-color: #663912;
-  color: #eeeeee;
-  font-size: 20px;
+  background-color: var(--color-primary-dark);
+  color: var(--color-border-light);
+  font-size: var(--font-2xl);
 }
 
 .long-term-page .task-toggle.task-completed:hover {
-  background-color: #8a6a4c;
-  border-color: #8a6a4c;
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
 /* =========================================================
@@ -441,40 +385,30 @@
 .long-term-page .task-content {
   min-width: 0;
   flex: 1;
-
   display: flex;
   align-items: center;
-
-  gap: 8px;
-
-  background-color: #ffffff;
+  gap: var(--space-2);
+  background-color: var(--color-surface);
 }
 
 .long-term-page .task-title {
   min-width: 0;
   flex: 1;
-
   margin: 0;
-
-  color: #3f342d;
-
-  font-size: 14px;
-  font-weight: 500;
+  color: var(--color-text);
+  font-size: var(--font-md);
+  font-weight: var(--weight-medium);
   line-height: 1.5;
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
   cursor: pointer;
 }
 
 .long-term-page .task-title.task-title-expanded {
   display: block;
-
   overflow: visible;
   white-space: normal;
-
   overflow-wrap: anywhere;
 }
 
@@ -490,36 +424,28 @@
 .long-term-page .task-edit {
   min-width: 0;
   flex: 1;
-
   display: flex;
   align-items: center;
-
-  gap: 7px;
+  gap: var(--space-2);
 }
 
 .long-term-page .task-edit input {
   min-width: 0;
   flex: 1;
-
-  height: 32px;
-
+  height: var(--control-height-sm);
   box-sizing: border-box;
-  padding: 0 8px;
-
-  border: 1px solid #cccccc;
-  border-radius: 2px;
-
-  background-color: #ffffff;
-  color: #111111;
-
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
   font-family: inherit;
-  font-size: 13px;
-
+  font-size: var(--font-md);
   outline: none;
 }
 
 .long-term-page .task-edit input:focus {
-  border-color: #111111;
+  border-color: var(--color-text);
 }
 
 /* =========================================================
@@ -528,22 +454,16 @@
 .long-term-page .task-action,
 .long-term-page .task-delete {
   flex-shrink: 0;
-
-  padding: 5px 7px;
+  padding: var(--space-1) var(--space-2);
   margin: 0;
-
   border: 1px solid transparent;
-  border-radius: 2px;
-
-  background-color: #ffffff;
-  color: #6d3f1f;
-
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-primary);
   font-family: inherit;
-  font-size: 12px;
-  font-weight: 420;
-
+  font-size: var(--font-sm);
+  font-weight: var(--weight-regular);
   cursor: pointer;
-
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease,
@@ -552,19 +472,19 @@
 
 .long-term-page .task-action:hover,
 .long-term-page .task-delete:hover {
-  background-color: #faf7f2;
-  border-color: #c9d9a5;
-  color: #5f452f;
+  background-color: var(--color-background-hover);
+  border-color: var(--color-border-hover);
+  color: var(--color-primary-dark);
 }
 
 .long-term-page .task-action:focus-visible,
 .long-term-page .task-delete:focus-visible {
-  outline: 2px solid #111111;
+  outline: 2px solid var(--color-text);
   outline-offset: 1px;
 }
 
 .long-term-page .task-delete {
-  margin-left: 3px;
+  margin-left: var(--space-1);
 }
 
 /* =========================================================
@@ -572,38 +492,27 @@
 ========================================================= */
 .long-term-page .task-add {
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: flex-end;
-
-  height: 34px;
-
+  height: var(--control-height-md);
   margin-top: 9px;
 }
 
 .long-term-page .add-task-button {
-  height: 34px;
-
+  height: var(--control-height-md);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  padding: 0 12px;
-
+  padding: 0 var(--space-3);
   box-sizing: border-box;
-
-  border: 1px solid #6d3f1f;
-  border-radius: 2px;
-
-  background-color: #6d3f1f;
-  color: #ffffff;
-
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
   font-family: inherit;
-  font-size: 12px;
-
+  font-size: var(--font-sm);
   cursor: pointer;
-
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
@@ -611,21 +520,19 @@
 
 .long-term-page .add-task-button::before {
   content: "+";
-
-  margin-right: 6px;
-
-  font-size: 16px;
-  font-weight: 300;
+  margin-right: var(--space-2);
+  font-size: var(--font-lg);
+  font-weight: var(--weight-regular);
   line-height: 1;
 }
 
 .long-term-page .add-task-button:hover {
-  background-color: #80552f;
-  border-color: #80552f;
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
 .long-term-page .add-task-button:focus-visible {
-  outline: 2px solid #111111;
+  outline: 2px solid var(--color-text);
   outline-offset: 1px;
 }
 
@@ -635,71 +542,59 @@
 .long-term-page .task-add-form {
   display: flex;
   align-items: center;
-
-  gap: 7px;
-
+  gap: var(--space-2);
   margin: 0;
 }
 
 .long-term-page .task-add-input {
   min-width: 0;
-
   width: 185px;
-  height: 34px;
-
+  height: var(--control-height-md);
   box-sizing: border-box;
-  padding: 0 9px;
-
-  border: 1px solid #cccccc;
-  border-radius: 2px;
-
-  background-color: #ffffff;
-  color: #111111;
-
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
   font-family: inherit;
-  font-size: 12px;
-
+  font-size: var(--font-sm);
   outline: none;
 }
 
 .long-term-page .task-add-input:focus {
-  border-color: #111111;
+  border-color: var(--color-text);
 }
 
 .long-term-page .task-add-input::placeholder {
-  color: #999999;
+  color: var(--color-text-muted);
 }
 
+/* =========================================================
+   Add Button
+========================================================= */
 .long-term-page .task-add-button {
-  height: 34px;
-
+  height: var(--control-height-md);
   flex-shrink: 0;
-
-  padding: 0 13px;
-
-  border: 1px solid #6d3f1f;
-  border-radius: 2px;
-
-  background-color: #6d3f1f;
-  color: #ffffff;
-
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
   font-family: inherit;
-  font-size: 12px;
-
+  font-size: var(--font-sm);
   cursor: pointer;
-
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
 }
 
 .long-term-page .task-add-button:hover {
-  background-color: #80552f;
-  border-color: #80552f;
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
 .long-term-page .task-add-button:focus-visible {
-  outline: 2px solid #111111;
+  outline: 2px solid var(--color-text);
   outline-offset: 1px;
 }
 
@@ -708,24 +603,17 @@
 ========================================================= */
 .long-term-page .section-message {
   flex: 1;
-
   min-height: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   margin: 0;
-  padding: 20px;
-
+  padding: var(--space-5);
   box-sizing: border-box;
-
-  color: #111111;
-  background-color: #ffffff;
-
-  font-size: 12px;
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  font-size: var(--font-sm);
   line-height: 1.6;
-
   text-align: center;
 }
 
@@ -736,55 +624,42 @@
   min-width: 0;
   min-height: 0;
   flex: 1;
-
   width: 100%;
-
   box-sizing: border-box;
-
   resize: none;
-
-  padding: 7px 12px;
-
-  border: 1px solid #e5e5e5;
-  border-radius: 2px;
-
-  background-color: #ffffff;
-  color: #111111;
-
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-md);
   line-height: 36px;
-
   outline: none;
-
   background-image:
     repeating-linear-gradient(
       to bottom,
       transparent 0,
       transparent 35px,
-      #e5e5e5 35px,
-      #e5e5e5 36px,
+      var(--color-border) 35px,
+      var(--color-border) 36px,
       transparent 36px,
       transparent 37px
     );
-
   background-size:
     calc(100% - 24px) 100%;
-
   background-position:
     center;
-
   background-repeat: no-repeat;
-
   background-attachment: local;
 }
 
 .long-term-page .reflection-input:focus {
-  border-color: #cccccc;
+  border-color: var(--color-border-input);
 }
 
 .long-term-page .reflection-input::placeholder {
-  color: #888888;
+  color: var(--color-text-muted);
 }
 
 /* =========================================================
@@ -793,14 +668,11 @@
 .long-term-page .completed-task-groups {
   min-width: 0;
   min-height: 0;
-
   flex: 1;
-
   overflow-y: auto;
   overflow-x: hidden;
-
   scrollbar-width: thin;
-  scrollbar-color: #cccccc transparent;
+  scrollbar-color: var(--color-border-input) transparent;
 }
 
 .long-term-page .completed-task-groups::-webkit-scrollbar {
@@ -812,8 +684,8 @@
 }
 
 .long-term-page .completed-task-groups::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
-  border-radius: 2px;
+  background-color: var(--color-border-input);
+  border-radius: var(--radius-sm);
 }
 
 .long-term-page .completed-task-group {
@@ -822,15 +694,11 @@
 
 .long-term-page .completed-task-month {
   margin: 0;
-
   padding: 9px 0 7px;
-
-  border-top: 1px solid #e5ddd4;
-
-  color: #6d4326;
-
-  font-size: 14px;
-  font-weight: 600;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-primary-dark);
+  font-size: var(--font-md);
+  font-weight: var(--weight-semibold);
   line-height: 1.4;
 }
 
@@ -843,42 +711,35 @@
 .long-term-page .completed-task-list {
   margin: 0;
   padding: 0 0 9px;
-
   list-style: none;
 }
 
 .long-term-page .completed-task-list li {
   padding: 6px 4px;
-
-  border-bottom: 1px solid #eeeeee;
-
-  color: #3f342d;
-
-  font-size: 12px;
-  font-weight: 500;
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
   line-height: 1.5;
-
   text-align: left;
 }
 
 .long-term-page .completed-task-list li::before {
   content: "・";
-
   margin-right: 7px;
-
-  color: #888888;
+  color: var(--color-text-muted);
 }
 
 /* =========================================================
    Completion
 ========================================================= */
 .long-term-page .completion-section {
-  padding-top: 14px;
-  padding-bottom: 14px;
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
 }
 
 .long-term-page .completion-section .section-header {
-  margin-bottom: 8px;
+  margin-bottom: var(--space-2);
 }
 
 .long-term-page .completion-section .section-header svg {
@@ -891,78 +752,81 @@
 }
 
 .long-term-page .completion-section .section-description {
-  font-size: 10px;
+  font-size: var(--font-xs);
   line-height: 1.4;
 }
 
 .long-term-page .completion-button {
   width: 100%;
-  height: 34px;
-
+  height: var(--control-height-md);
   flex-shrink: 0;
-
   box-sizing: border-box;
-
-  border: 1px solid #6d3f1f;
-  border-radius: 2px;
-
-  background-color: #6d3f1f;
-  color: #ffffff;
-
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
   font-family: inherit;
-  font-size: 12px;
-
+  font-size: var(--font-sm);
   cursor: pointer;
-
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
 }
 
 .long-term-page .completion-button:hover {
-  background-color: #80552f;
-  border-color: #80552f;
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
 .long-term-page .completion-button:focus-visible {
-  outline: 2px solid #111111;
+  outline: 2px solid var(--color-text);
   outline-offset: 1px;
 }
 
 /* =========================================================
    Responsive
 ========================================================= */
-@media (max-width: 1000px) {
-  .long-term-page .content {
-    gap: 10px;
-    padding: 12px;
-  }
-
-  .long-term-page .section {
-    padding: 16px 12px;
-  }
-
-  .long-term-page .section-header h2 {
-    font-size: 16px;
-  }
-
-  .long-term-page .section-header svg {
-    margin-right: 10px;
-  }
-
-  .long-term-page .task-title {
-    font-size: 13px;
-  }
-}
-
-@media (max-width: 700px) {
+@media (max-width: 900px) {
   .long-term-page {
     display: block;
   }
 
+  .long-term-page .sidebar {
+    width: 100%;
+    min-width: 0;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
   .long-term-page .content {
     height: calc(100vh - 56px);
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
 
+  .long-term-page .section {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  .long-term-page .section-header h2 {
+    font-size: var(--font-lg);
+  }
+
+  .long-term-page .section-header svg {
+    margin-right: var(--space-2);
+  }
+
+  .long-term-page .task-title {
+    font-size: var(--font-md);
+  }
+}
+
+@media (max-width: 700px) {
+  .long-term-page .content {
     grid-template-columns: 1fr;
     grid-template-rows:
       minmax(180px, auto)
@@ -971,7 +835,6 @@
       minmax(180px, auto)
       minmax(220px, auto)
       minmax(130px, auto);
-
     overflow-y: auto;
   }
 

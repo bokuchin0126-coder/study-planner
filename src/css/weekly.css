@@ -265,7 +265,7 @@
 .weekly-task-action:hover,
 .weekly-task-delete:hover {
   background-color: var(--color-background-hover);
-  border-color: var(--color-border);
+  border-color: var(--color-border-hover);
   color: var(--color-primary-dark);
   text-decoration: none;
 }

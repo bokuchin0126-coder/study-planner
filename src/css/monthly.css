@@ -1,17 +1,17 @@
-/* =========================================================
-   Monthly Page
-========================================================= */
+/* ========================================
+   Layout
+======================================== */
 .monthly-page {
   width: 100%;
   height: 100vh;
   display: flex;
   overflow: hidden;
-  color: #111111;
+  color: var(--color-text);
 }
 
-/* =========================================================
-   Main Layout
-========================================================= */
+/* ========================================
+   Main Content
+======================================== */
 .monthly-content {
   flex: 1;
   min-width: 0;
@@ -19,743 +19,667 @@
   height: 100vh;
   box-sizing: border-box;
   display: grid;
-
   grid-template-columns: 5fr 3fr 2fr;
   grid-template-rows:
     minmax(0, 3fr)
     minmax(0, 2fr);
-
-  gap: 14px;
-  padding: 18px;
+  gap: var(--space-4);
+  padding: var(--space-5);
   overflow: hidden;
 }
 
-/* =========================================================
+/* ========================================
    Section
-========================================================= */
-.monthly-page .monthly-section {
+======================================== */
+.monthly-section {
   position: relative;
   min-width: 0;
   min-height: 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-
-  padding: 20px 16px 60px;
-
+  padding: var(--space-5) var(--space-4) 60px;
   background: rgba(255, 252, 245, 0.96);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
-/* =========================================================
+/* ========================================
    Section Position
-========================================================= */
-.monthly-page .monthly-this-month-section {
+======================================== */
+.monthly-this-month-section {
   grid-column: 1;
   grid-row: 1;
-  background: #fffdf9;
+  background: var(--color-background);
 }
 
-.monthly-page .monthly-reflection-section {
+.monthly-reflection-section {
   grid-column: 1;
   grid-row: 2;
-
-  margin-top: -14px;
-  padding-bottom: 15px;
-
-  border-top: 1px solid #dddddd;
-  background: #fffdf8;
+  margin-top: -16px;
+  padding-bottom: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-background);
 }
 
-.monthly-page .monthly-next-month-section {
+.monthly-next-month-section {
   grid-column: 2;
   grid-row: 1;
 }
 
-.monthly-page .monthly-last-month-section {
+.monthly-last-month-section {
   grid-column: 2;
   grid-row: 2;
 }
 
-.monthly-page .monthly-completed-weekly-section {
+.monthly-completed-weekly-section {
   grid-column: 3;
   grid-row: 1 / 3;
-
-  padding: 20px 16px;
+  padding: var(--space-5) var(--space-4);
 }
 
-/* =========================================================
+/* ========================================
    Section Header
-========================================================= */
-.monthly-page .monthly-section-header {
+======================================== */
+.monthly-section-header {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
 }
 
-.monthly-page .monthly-section-header h2 {
+.monthly-section-header h2 {
   margin: 0;
-
-  color: #111111;
-  font-size: 18px;
-  font-weight: 700;
+  color: var(--color-text);
+  font-size: var(--font-xl);
+  font-weight: var(--weight-bold);
   line-height: 1.5;
 }
 
-/* SVG
-   Weekly Page と同じ設定
-========================================================= */
-.monthly-page .monthly-section-header svg {
+.monthly-section-header svg {
   flex-shrink: 0;
-  margin-right: 12px;
-  color: #6d4326;
+  margin-right: var(--space-3);
+  color: var(--color-primary);
 }
 
-/* =========================================================
+/* ========================================
    Section Description
-   ※ 月ページで説明文を使う場合用
-========================================================= */
-.monthly-page .monthly-section-description {
+======================================== */
+.monthly-section-description {
   margin: 3px 0 0;
-  color: #888888;
-  font-size: 12px;
+  color: var(--color-text-muted);
+  font-size: var(--font-sm);
   line-height: 1.5;
 }
 
-/* =========================================================
+/* ========================================
    Task List
-========================================================= */
-.monthly-page .monthly-task-list {
+======================================== */
+.monthly-task-list {
   min-width: 0;
   min-height: 0;
   flex: 1;
   width: 100%;
   box-sizing: border-box;
-
-  border: 1px solid #e8dfd5;
-  border-radius: 2px;
-
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   overflow-y: auto;
   overflow-x: hidden;
-
-  background-color: #ffffff;
-
+  background-color: var(--color-surface);
   scrollbar-width: thin;
-  scrollbar-color: #cccccc transparent;
+  scrollbar-color: var(--color-border-input) transparent;
 }
 
-/* Task separators */
-.monthly-page .monthly-task-list > * {
-  border-bottom: 1px solid #dddddd;
+.monthly-task-list > * {
+  border-bottom: 1px solid var(--color-border);
 }
 
-/* =========================================================
+/* ========================================
    Task List Scrollbar
-========================================================= */
-.monthly-page .monthly-task-list::-webkit-scrollbar {
+======================================== */
+.monthly-task-list::-webkit-scrollbar {
   width: 6px;
 }
 
-.monthly-page .monthly-task-list::-webkit-scrollbar-track {
+.monthly-task-list::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.monthly-page .monthly-task-list::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
-  border-radius: 2px;
+.monthly-task-list::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-input);
+  border-radius: var(--radius-sm);
 }
 
-/* =========================================================
-   Monthly Task Row
-========================================================= */
-.monthly-page .monthly-task-row {
+/* ========================================
+   Task Row
+======================================== */
+.monthly-task-row {
   width: 100%;
   min-height: 46px;
   box-sizing: border-box;
-
   display: flex;
   align-items: center;
-
-  padding: 0 12px;
-
-  background-color: #ffffff;
+  padding: 0 var(--space-3);
+  background-color: var(--color-surface);
 }
 
-.monthly-page .monthly-task-row:last-child {
+.monthly-task-row:last-child {
   border-bottom: none;
 }
 
-/* =========================================================
+/* ========================================
    Task Toggle
-========================================================= */
-.monthly-page .monthly-task-toggle {
+======================================== */
+.monthly-task-toggle {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   padding: 0;
-  margin-right: 8px;
-  border: 1.5px solid #3f342d;
-
-  border-radius: 2px;
-  color: #111111;
-  background-color: #ffffff;
-
+  margin-right: var(--space-2);
+  border: 1.5px solid var(--color-text);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  background-color: var(--color-surface);
   font-family: inherit;
-  font-size: 20px;
+  font-size: var(--font-3xl);
   line-height: 1;
-
   cursor: pointer;
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
 }
 
-.monthly-page .monthly-task-toggle:hover {
-  background-color: #faf7f2;
-  border-color: #a8957f;
+.monthly-task-toggle:hover {
+  background-color: var(--color-background-hover);
+  border-color: var(--color-primary-hover);
 }
 
-.monthly-page .monthly-task-toggle.task-completed {
-  background-color: #663912;
-  color: #eeeeee;
-  font-size: 20px;
+.monthly-task-toggle.task-completed {
+  background-color: var(--color-primary-dark);
+  color: var(--color-border-light);
+  font-size: var(--font-2xl);
 }
 
-.monthly-page .monthly-task-toggle.task-completed:hover {
-  background-color: #8a6a4c;
-  border-color: #8a6a4c;
+.monthly-task-toggle.task-completed:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
-/* =========================================================
+/* ========================================
    Task Content
-========================================================= */
-.monthly-page .monthly-task-content {
+======================================== */
+.monthly-task-content {
   min-width: 0;
   flex: 1;
-
   display: flex;
   align-items: center;
-
-  gap: 8px;
-
-  background-color: #ffffff;
+  gap: var(--space-2);
+  background-color: var(--color-surface);
 }
 
-.monthly-page .monthly-task-title {
+.monthly-task-title {
   min-width: 0;
   flex: 1;
-
   margin: 0;
-
-  color: #3f342d;
-  font-size: 14px;
-  font-weight: 500;
+  color: var(--color-text);
+  font-size: var(--font-md);
+  font-weight: var(--weight-medium);
   line-height: 1.5;
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
   cursor: pointer;
 }
 
-.monthly-page .monthly-task-title.monthly-task-title-expanded {
+.monthly-task-title.monthly-task-title-expanded {
   display: block;
   overflow: visible;
   white-space: normal;
   overflow-wrap: anywhere;
 }
 
-.monthly-page .monthly-task-title.task-completed {
+.monthly-task-title.task-completed {
   text-decoration: line-through;
   text-decoration-color: rgba(17, 17, 17, 0.45);
   text-decoration-thickness: 1px;
 }
 
-/* =========================================================
+/* ========================================
    Task Edit
-========================================================= */
-.monthly-page .monthly-task-edit {
+======================================== */
+.monthly-task-edit {
   min-width: 0;
   flex: 1;
-
   display: flex;
   align-items: center;
-
-  gap: 7px;
+  gap: var(--space-2);
 }
 
-.monthly-page .monthly-task-edit input {
+.monthly-task-edit input {
   min-width: 0;
   flex: 1;
-
-  height: 32px;
+  height: var(--control-height-sm);
   box-sizing: border-box;
-
-  padding: 0 8px;
-
-  border: 1px solid #cccccc;
-  border-radius: 2px;
-
-  background-color: #ffffff;
-  color: #111111;
-
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
   font-family: inherit;
-  font-size: 13px;
-
+  font-size: var(--font-md);
   outline: none;
 }
 
-.monthly-page .monthly-task-edit input:focus {
-  border-color: #111111;
+.monthly-task-edit input:focus {
+  border-color: var(--color-text);
 }
 
-/* =========================================================
+/* ========================================
    Edit / Delete Button
-========================================================= */
-.monthly-page .monthly-task-action,
-.monthly-page .monthly-task-delete {
+======================================== */
+.monthly-task-action,
+.monthly-task-delete {
   flex-shrink: 0;
-
-  padding: 5px 7px;
+  padding: var(--space-1) var(--space-2);
   margin: 0;
-
   border: 1px solid transparent;
-  border-radius: 2px;
-
-  background-color: #ffffff;
-  color: #6d3f1f;
-
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-primary);
   font-family: inherit;
-  font-size: 12px;
-  font-weight: 420;
-
+  font-size: var(--font-sm);
+  font-weight: var(--weight-regular);
   cursor: pointer;
   text-decoration: none;
-
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease,
     color 0.15s ease;
 }
 
-.monthly-page .monthly-task-action:hover,
-.monthly-page .monthly-task-delete:hover {
-  background-color: #faf7f2;
-  border-color: #c9d9a5;
-  color: #5f452f;
+.monthly-task-action:hover,
+.monthly-task-delete:hover {
+  background-color: var(--color-background-hover);
+  border-color: var(--color-border);
+  color: var(--color-primary-dark);
   text-decoration: none;
 }
 
-.monthly-page .monthly-task-action:focus-visible,
-.monthly-page .monthly-task-delete:focus-visible {
-  outline: 2px solid #111111;
+.monthly-task-action:focus-visible,
+.monthly-task-delete:focus-visible {
+  outline: 2px solid var(--color-text);
   outline-offset: 1px;
   text-decoration: none;
 }
 
-.monthly-page .monthly-task-delete {
-  margin-left: 3px;
+.monthly-task-delete {
+  margin-left: var(--space-1);
 }
 
-/* =========================================================
+/* ========================================
    Task Bottom Area
-========================================================= */
-.monthly-page .monthly-task-add {
+======================================== */
+.monthly-task-add {
   position: absolute;
   right: 18px;
   bottom: 17px;
-
-  height: 34px;
-
+  height: var(--control-height-md);
   display: flex;
   align-items: center;
-
   margin: 0;
 }
 
-/* =========================================================
+/* ========================================
    Add Task Button
-========================================================= */
-.monthly-page .monthly-add-task-button {
-  height: 34px;
-
+======================================== */
+.monthly-add-task-button {
+  height: var(--control-height-md);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  padding: 0 12px;
+  padding: 0 var(--space-3);
   box-sizing: border-box;
-
-  border: 1px solid #6d3f1f;
-  border-radius: 2px;
-
-  background-color: #6d3f1f;
-  color: #ffffff;
-
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
   font-family: inherit;
-  font-size: 12px;
-
+  font-size: var(--font-sm);
   cursor: pointer;
-
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
 }
 
-.monthly-page .monthly-add-task-button::before {
+.monthly-add-task-button::before {
   content: "+";
-  margin-right: 6px;
-
-  font-size: 16px;
-  font-weight: 300;
+  margin-right: var(--space-2);
+  font-size: var(--font-lg);
+  font-weight: var(--weight-regular);
   line-height: 1;
 }
 
-.monthly-page .monthly-add-task-button:hover {
-  background-color: #80552f;
-  border-color: #80552f;
+.monthly-add-task-button:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
-.monthly-page .monthly-add-task-button:focus-visible {
-  outline: 2px solid #111111;
+.monthly-add-task-button:focus-visible {
+  outline: 2px solid var(--color-text);
   outline-offset: 1px;
 }
 
-/* =========================================================
+/* ========================================
    Add Task Form
-========================================================= */
-.monthly-page .monthly-task-add-form {
+======================================== */
+.monthly-task-add-form {
   display: flex;
   align-items: center;
-
-  gap: 7px;
+  gap: var(--space-2);
   margin: 0;
 }
 
-.monthly-page .monthly-task-add-input {
+.monthly-task-add-input {
   min-width: 0;
   width: 185px;
-  height: 34px;
+  height: var(--control-height-md);
   box-sizing: border-box;
-
-  padding: 0 9px;
-
-  border: 1px solid #cccccc;
-  border-radius: 2px;
-
-  background-color: #ffffff;
-  color: #111111;
-
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
   font-family: inherit;
-  font-size: 12px;
-
+  font-size: var(--font-sm);
   outline: none;
 }
 
-.monthly-page .monthly-task-add-input:focus {
-  border-color: #111111;
+.monthly-task-add-input:focus {
+  border-color: var(--color-text);
 }
 
-.monthly-page .monthly-task-add-input::placeholder {
-  color: #999999;
+.monthly-task-add-input::placeholder {
+  color: var(--color-text-muted);
 }
 
-/* =========================================================
+/* ========================================
    Add Button
-========================================================= */
-.monthly-page .monthly-task-add-button {
-  height: 34px;
+======================================== */
+.monthly-task-add-button {
+  height: var(--control-height-md);
   flex-shrink: 0;
-
-  padding: 0 13px;
-
-  border: 1px solid #6d3f1f;
-  border-radius: 2px;
-
-  background-color: #6d3f1f;
-  color: #ffffff;
-
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
   font-family: inherit;
-  font-size: 12px;
-
+  font-size: var(--font-sm);
   cursor: pointer;
-
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
 }
 
-.monthly-page .monthly-task-add-button:hover {
-  background-color: #80552f;
-  border-color: #80552f;
+.monthly-task-add-button:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
-.monthly-page .monthly-task-add-button:focus-visible {
-  outline: 2px solid #111111;
+.monthly-task-add-button:focus-visible {
+  outline: 2px solid var(--color-text);
   outline-offset: 1px;
 }
 
-/* =========================================================
+/* ========================================
    Empty Message
-========================================================= */
-.monthly-page .monthly-section-message {
+======================================== */
+.monthly-section-message {
   flex: 1;
   min-height: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   margin: 0;
-  padding: 20px;
-
+  padding: var(--space-5);
   box-sizing: border-box;
-
   border: none;
-
-  color: #111111;
-  background-color: #ffffff;
-
-  font-size: 12px;
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  font-size: var(--font-sm);
   line-height: 1.6;
-
   text-align: center;
 }
 
-.monthly-page .monthly-last-month-section
-  .monthly-section-message {
+.monthly-last-month-section .monthly-section-message {
   flex: none;
   display: block;
-
   margin: 0;
-  padding: 20px;
+  padding: var(--space-5);
 }
 
 .monthly-completed-weekly-section .monthly-section-message {
   background-color: rgba(255, 252, 245, 0.96);
-  padding: 10px;
-
+  padding: var(--space-2);
   align-items: flex-start;
-  font-size: 10px;
+  font-size: var(--font-xs);
 }
 
-/* =========================================================
+/* ========================================
    Reflection
-========================================================= */
-.monthly-page .monthly-reflection-input {
+======================================== */
+.monthly-reflection-input {
   min-width: 0;
   min-height: 0;
   flex: 1;
   width: 100%;
   box-sizing: border-box;
-
   resize: none;
-
-  padding: 7px 12px;
-
-  border: 1px solid #e5e5e5;
-  border-radius: 2px;
-
-  background-color: #ffffff;
-  color: #111111;
-
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-md);
   line-height: 36px;
-
   outline: none;
-
   background-image:
     repeating-linear-gradient(
       to bottom,
       transparent 0,
       transparent 35px,
-      #e5e5e5 35px,
-      #e5e5e5 36px,
+      var(--color-border) 35px,
+      var(--color-border) 36px,
       transparent 36px,
       transparent 37px
     );
-
   background-size:
     calc(100% - 24px) 100%;
-
   background-position:
     center;
-
   background-repeat: no-repeat;
   background-attachment: local;
 }
 
-.monthly-page .monthly-reflection-input:focus {
-  border-color: #cccccc;
+.monthly-reflection-input:focus {
+  border-color: var(--color-border-input);
 }
 
-.monthly-page .monthly-reflection-input::placeholder {
-  color: #888888;
+.monthly-reflection-input::placeholder {
+  color: var(--color-text-muted);
 }
 
-/* =========================================================
+/* ========================================
    Last Month
-========================================================= */
-.monthly-page .monthly-completed-task-list {
+======================================== */
+.monthly-completed-task-list {
   min-height: 0;
   flex: 1;
-
   margin: 0;
   padding: 0;
-
   list-style: none;
-
   overflow-y: auto;
-
-  border-top: 1px solid #e5e5e5;
-
-  background-color: #ffffff;
-
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface);
   scrollbar-width: thin;
-  scrollbar-color: #cccccc transparent;
+  scrollbar-color: var(--color-border-input) transparent;
 }
 
-.monthly-page .monthly-completed-task-list::-webkit-scrollbar {
+.monthly-completed-task-list::-webkit-scrollbar {
   width: 6px;
 }
 
-.monthly-page .monthly-completed-task-list::-webkit-scrollbar-track {
+.monthly-completed-task-list::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.monthly-page .monthly-completed-task-list::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
-  border-radius: 2px;
+.monthly-completed-task-list::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-input);
+  border-radius: var(--radius-sm);
 }
 
-.monthly-page .monthly-completed-task-list li {
-  padding: 12px 8px;
-
-  border-bottom: 1px solid #e5e5e5;
-
-  color: #222222;
-
-  font-size: 14px;
-  font-weight: 500;
+.monthly-completed-task-list li {
+  padding: var(--space-3) var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: var(--font-md);
+  font-weight: var(--weight-medium);
   line-height: 1.5;
-
   text-align: left;
 }
 
-.monthly-page .monthly-completed-task-list li::before {
+.monthly-completed-task-list li::before {
   content: "・";
-
-  margin-right: 10px;
-
-  color: #888888;
+  margin-right: var(--space-3);
+  color: var(--color-text-muted);
 }
 
-/* =========================================================
+/* ========================================
    Completed Weekly Tasks
-========================================================= */
-.monthly-page .monthly-completed-weekly-list {
+======================================== */
+.monthly-completed-weekly-list {
   min-height: 0;
   flex: 1;
-
   overflow-y: auto;
   overflow-x: hidden;
-
   padding-right: 3px;
-
   scrollbar-width: thin;
-  scrollbar-color: #cccccc transparent;
+  scrollbar-color: var(--color-border-input) transparent;
 }
 
-.monthly-page .monthly-completed-weekly-list::-webkit-scrollbar {
+.monthly-completed-weekly-list::-webkit-scrollbar {
   width: 6px;
 }
 
-.monthly-page .monthly-completed-weekly-list::-webkit-scrollbar-track {
+.monthly-completed-weekly-list::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.monthly-page .monthly-completed-weekly-list::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
-  border-radius: 2px;
+.monthly-completed-weekly-list::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-input);
+  border-radius: var(--radius-sm);
 }
 
-/* Week 1 / Week 2 ... */
-.monthly-page .monthly-completed-weekly-title {
-  margin: 0 0 5px;
-
+/* ========================================
+   Week 1 / Week 2 ...
+======================================== */
+.monthly-completed-weekly-title {
+  margin: 0 0 var(--space-1);
   padding-top: 0;
-
-  color: #756457;
-
-  border-top: 1px solid #e5ddd4;
-
-  font-size: 12px;
-  font-weight: 500;
+  color: var(--color-text-secondary);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
   line-height: 1.4;
 }
 
-.monthly-page .monthly-completed-weekly-group {
-  margin-bottom: 10px;
+.monthly-completed-weekly-group {
+  margin-bottom: var(--space-2);
 }
 
-/* =========================================================
+/* ========================================
    Completed Weekly Task List
-========================================================= */
-.monthly-page .monthly-completed-weekly-group
-  .monthly-completed-task-list {
+======================================== */
+.monthly-completed-weekly-group
+.monthly-completed-task-list {
   border-top: none;
 }
 
-.monthly-page .monthly-completed-weekly-group
-  .monthly-completed-task-list li {
-  padding: 0 0 4px;
-
+.monthly-completed-weekly-group
+.monthly-completed-task-list li {
+  padding: 0 0 var(--space-1);
   border-bottom: none;
-
-  color: #3f342d;
-
-  font-size: 12px;
-  font-weight: 500;
+  color: var(--color-text);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
   line-height: 1.5;
 }
 
-.monthly-page .monthly-completed-weekly-group
-  .monthly-completed-task-list li::before {
+.monthly-completed-weekly-group
+.monthly-completed-task-list li::before {
   content: "";
   margin-right: 0;
 }
 
-/* =========================================================
+/* ========================================
    Responsive
-========================================================= */
-@media (max-width: 1000px) {
+======================================== */
+@media (max-width: 900px) {
+  .monthly-page {
+    display: block;
+  }
+
+  .monthly-page .sidebar {
+    width: 100%;
+    min-width: 0;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
   .monthly-content {
-    gap: 10px;
-    padding: 12px;
+    height: calc(100vh - 56px);
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 700px) {
+  .monthly-content {
+    grid-template-columns: 1fr;
+    grid-template-rows:
+      repeat(4, minmax(0, 1fr));
+    overflow-y: auto;
   }
 
-  .monthly-page .monthly-section {
-    padding: 16px 12px 56px;
+  .monthly-this-month-section {
+    grid-column: 1;
+    grid-row: 1;
   }
 
-  .monthly-page .monthly-section-header h2 {
-    font-size: 16px;
+  .monthly-next-month-section {
+    grid-column: 1;
+    grid-row: 2;
   }
 
-  .monthly-page .monthly-section-header svg {
-    margin-right: 10px;
+  .monthly-reflection-section {
+    grid-column: 1;
+    grid-row: 3;
   }
 
-  .monthly-page .monthly-task-title {
-    font-size: 13px;
+  .monthly-last-month-section {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .monthly-completed-weekly-section {
+    display: none;
   }
 }

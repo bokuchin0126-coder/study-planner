@@ -236,7 +236,7 @@
 }
 
 .daily-task-toggle:hover {
-  background-color: var(--color-background);
+  background-color: var(--color-background-hover);
   border-color: var(--color-primary-hover);
 }
 

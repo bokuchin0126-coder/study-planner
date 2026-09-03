@@ -320,7 +320,6 @@ export default function CompletedPage() {
 
               <div className="completed-filters">
 
-                {/* 1段目：表示対象 + 状態 */}
                 <div className="completed-filter-row">
 
                   <div className="completed-filter">
@@ -376,7 +375,6 @@ export default function CompletedPage() {
                 </div>
 
 
-                {/* 2段目：年 + 月 */}
                 <div className="completed-filter-row">
 
                   <div className="completed-filter">

@@ -1,495 +1,447 @@
-/* =========================================================
-   Weekly Page
-========================================================= */
+/* ========================================
+   Layout
+======================================== */
 .weekly-page {
   width: 100%;
   height: 100vh;
-
   display: flex;
   overflow: hidden;
-  color: #111111;
+  color: var(--color-text);
 }
 
-/* =========================================================
-   Main Layout
-   左 : 中 : 右 = 5 : 3 : 2
-========================================================= */
+/* ========================================
+   Main Content
+======================================== */
 .weekly-content {
   flex: 1;
   min-width: 0;
   min-height: 0;
   height: 100vh;
-
   box-sizing: border-box;
   display: grid;
   grid-template-columns: 5fr 3fr 2fr;
-  grid-template-rows: minmax(0, 3fr) minmax(0, 2fr);
-
-  gap: 14px;
-  padding: 18px;
+  grid-template-rows:
+    minmax(0, 3fr)
+    minmax(0, 2fr);
+  gap: var(--space-4);
+  padding: var(--space-5);
   overflow: hidden;
 }
 
-/* =========================================================
+/* ========================================
    Section
-========================================================= */
-.weekly-page .weekly-section {
+======================================== */
+.weekly-section {
   position: relative;
   min-width: 0;
   min-height: 0;
-
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding: 20px 16px 60px;
-
+  padding: var(--space-5) var(--space-4) 60px;
   background: rgba(255, 252, 245, 0.96);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
-/* =========================================================
+/* ========================================
    Section Position
-========================================================= */
-.weekly-page .this-week-section {
+======================================== */
+.this-week-section {
   grid-column: 1;
   grid-row: 1;
-  background: #fffdf9;
+  background: var(--color-background);
 }
 
-.weekly-page .reflection-section {
+.reflection-section {
   grid-column: 1;
   grid-row: 2;
-  margin-top: -14px;
+  margin-top: -16px;
+  padding-bottom: var(--space-4);
 
-  padding-bottom: 15px;
-  border-top: 1px solid #dddddd;
-  background: #fffdf8;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-background);
 }
 
-.weekly-page .next-week-section {
+.next-week-section {
   grid-column: 2;
   grid-row: 1;
 }
 
-.weekly-page .last-week-section {
+.last-week-section {
   grid-column: 2;
   grid-row: 2;
 }
 
-.weekly-page .completed-daily-section {
+.completed-daily-section {
   grid-column: 3;
   grid-row: 1 / 3;
-  padding: 20px 16px;
+  padding: var(--space-5) var(--space-4);
+  background: rgba(255, 252, 245, 0.96);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
 }
 
-/* =========================================================
+/* ========================================
    Section Header
-========================================================= */
-.weekly-page .weekly-section-header {
+======================================== */
+.weekly-section-header {
   display: flex;
   align-items: center;
-
   flex-shrink: 0;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-3);
 }
 
-.weekly-page .weekly-section-header h2 {
+.weekly-section-header h2 {
   margin: 0;
-  color: #111111;
-  font-size: 18px;
-
-  font-weight: 700;
+  color: var(--color-text);
+  font-size: var(--font-xl);
+  font-weight: var(--weight-bold);
   line-height: 1.5;
 }
 
-.weekly-page .weekly-section-header svg {
+.weekly-section-header svg {
   flex-shrink: 0;
-  margin-right: 12px;
-  color: #6d4326;
+  margin-right: var(--space-3);
+  color: var(--color-primary);
 }
 
-/* =========================================================
+/* ========================================
    Task List
-========================================================= */
-.weekly-page .weekly-task-list {
+======================================== */
+.weekly-task-list {
   min-width: 0;
   min-height: 0;
   flex: 1;
-
   width: 100%;
   box-sizing: border-box;
-  border: 1px solid #e8dfd5;
-  border-radius: 2px;
-
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: #ffffff;
-
+  background-color: var(--color-surface);
   scrollbar-width: thin;
-  scrollbar-color: #cccccc transparent;
+  scrollbar-color: var(--color-border-input) transparent;
 }
 
-/* Task separators */
-.weekly-page .weekly-task-list > * {
-  border-bottom: 1px solid #dddddd;
+.weekly-task-list > * {
+  border-bottom: 1px solid var(--color-border);
 }
 
-/* =========================================================
+/* ========================================
    Task List Scrollbar
-========================================================= */
-.weekly-page .weekly-task-list::-webkit-scrollbar {
+======================================== */
+.weekly-task-list::-webkit-scrollbar {
   width: 6px;
 }
 
-.weekly-page .weekly-task-list::-webkit-scrollbar-track {
+.weekly-task-list::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.weekly-page .weekly-task-list::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
-  border-radius: 2px;
+.weekly-task-list::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-input);
+  border-radius: var(--radius-sm);
 }
 
-/* =========================================================
-   Weekly Task Row
-========================================================= */
-.weekly-page .weekly-task-row {
+/* ========================================
+   Task Row
+======================================== */
+.weekly-task-row {
   width: 100%;
   min-height: 46px;
   box-sizing: border-box;
-
   display: flex;
   align-items: center;
-
-  padding: 0 12px;
-  background-color: #ffffff;
+  padding: 0 var(--space-3);
+  background-color: var(--color-surface);
 }
 
-.weekly-page .weekly-task-row:last-child {
+.weekly-task-row:last-child {
   border-bottom: none;
 }
 
-/* =========================================================
+/* ========================================
    Task Toggle
-========================================================= */
-.weekly-page .weekly-task-toggle {
+======================================== */
+.weekly-task-toggle {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   padding: 0;
-  margin-right: 8px;
-  border: 1.5px solid #3f342d;
-
-  border-radius: 2px;
-  color: #111111;
-  background-color: #ffffff;
-
+  margin-right: var(--space-2);
+  border: 1.5px solid var(--color-text);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  background-color: var(--color-surface);
   font-family: inherit;
-  font-size: 20px;
+  font-size: var(--font-3xl);
   line-height: 1;
-
   cursor: pointer;
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
 }
 
-.weekly-page .weekly-task-toggle:hover {
-  background-color: #faf7f2;
-  border-color: #a8957f;
+.weekly-task-toggle:hover {
+  background-color: var(--color-background-hover);
+  border-color: var(--color-primary-hover);
 }
 
 .weekly-task-toggle.task-completed {
-  background-color: #663912;
-  color: #eeeeee;
-  font-size: 20px;
+  background-color: var(--color-primary-dark);
+  color: var(--color-border-light);
+  font-size: var(--font-2xl);
 }
 
 .weekly-task-toggle.task-completed:hover {
-  background-color: #8a6a4c;
-  border-color: #8a6a4c;
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
-/* =========================================================
+/* ========================================
    Task Content
-========================================================= */
-.weekly-page .weekly-task-content {
+======================================== */
+.weekly-task-content {
   min-width: 0;
   flex: 1;
   display: flex;
-
   align-items: center;
-  gap: 8px;
-  background-color: #ffffff;
+  background-color: var(--color-surface);
+  gap: var(--space-2);
 }
 
-.weekly-page .weekly-task-title {
+.weekly-task-title {
   min-width: 0;
   white-space: nowrap;
   flex: 1;
-
   margin: 0;
-  color: #3f342d;
-  font-size: 14px;
-
-  font-weight: 500;
+  color: var(--color-text);
+  font-size: var(--font-md);
+  font-weight: var(--weight-medium);
   line-height: 1.5;
   overflow: hidden;
-
   text-overflow: ellipsis;
   cursor: pointer;
 }
 
-.weekly-page .weekly-task-title.weekly-task-title-expanded {
+.weekly-task-title.weekly-task-title-expanded {
   display: block;
   overflow: visible;
-
   white-space: normal;
   overflow-wrap: anywhere;
 }
 
-.weekly-page .weekly-task-title.task-completed {
+.weekly-task-title.task-completed {
   text-decoration: line-through;
   text-decoration-color: rgba(17, 17, 17, 0.45);
   text-decoration-thickness: 1px;
 }
 
-/* =========================================================
+/* ========================================
    Edit / Delete Button
-========================================================= */
-.weekly-page .weekly-task-action,
-.weekly-page .weekly-task-delete {
+======================================== */
+.weekly-task-action,
+.weekly-task-delete {
   flex-shrink: 0;
-  padding: 5px 7px;
-  margin: 0;
-
+  padding: var(--space-1) var(--space-2);
   border: 1px solid transparent;
-  border-radius: 2px;
-  background-color: #ffffff;
-
-  color: #6d3f1f;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-primary);
   font-family: inherit;
-  font-size: 12px;
-
-  font-weight: 420;
+  font-size: var(--font-sm);
+  font-weight: var(--weight-regular);
   cursor: pointer;
   text-decoration: none;
-
   transition:
     background-color 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
+    border-color 0.15s ease;
 }
 
-.weekly-page .weekly-task-action:hover,
-.weekly-page .weekly-task-delete:hover {
-  background-color: #faf7f2;
-  border-color: #c9d9a5;
-
-  color: #5f452f;
+.weekly-task-action:hover,
+.weekly-task-delete:hover {
+  background-color: var(--color-background-hover);
+  border-color: var(--color-border);
+  color: var(--color-primary-dark);
   text-decoration: none;
 }
 
-.weekly-page .weekly-task-action:focus-visible,
-.weekly-page .weekly-task-delete:focus-visible {
-  outline: 2px solid #111111;
+.weekly-task-action:focus-visible,
+.weekly-task-delete:focus-visible {
+  outline: 2px solid var(--color-text);
   outline-offset: 1px;
   text-decoration: none;
 }
 
-.weekly-page .weekly-task-delete {
-  margin-left: 3px;
+.weekly-task-delete {
+  margin-left: var(--space-1);
 }
 
-/* =========================================================
+/* ========================================
    Task Edit
-========================================================= */
-.weekly-page .weekly-task-edit {
+======================================== */
+.weekly-task-edit {
   min-width: 0;
   flex: 1;
-
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: var(--space-2);
 }
 
-.weekly-page .weekly-task-edit input {
+.weekly-task-edit input {
   min-width: 0;
   flex: 1;
-  height: 32px;
-
+  height: var(--control-height-sm);
   box-sizing: border-box;
-  padding: 0 8px;
-  border: 1px solid #cccccc;
-
-  border-radius: 2px;
-  background-color: #ffffff;
-  color: #111111;
-
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
   font-family: inherit;
-  font-size: 13px;
+  font-size: var(--font-md);
   outline: none;
 }
 
-.weekly-page .weekly-task-edit input:focus {
-  border-color: #111111;
+.weekly-task-edit input:focus {
+  border-color: var(--color-text);
 }
 
-/* =========================================================
+/* ========================================
    Task Bottom Area
-========================================================= */
-.weekly-page .weekly-task-add {
+======================================== */
+.weekly-task-add {
   position: absolute;
   right: 18px;
   bottom: 17px;
-
-  height: 34px;
+  height: var(--control-height-md);
   display: flex;
-
   align-items: center;
   margin: 0;
 }
 
-/* =========================================================
+/* ========================================
    Add Task Button
-========================================================= */
-.weekly-page .weekly-add-task-button {
-  height: 34px;
+======================================== */
+.weekly-add-task-button {
+  height: var(--control-height-md);
   display: inline-flex;
   align-items: center;
-
   justify-content: center;
-  padding: 0 12px;
+  padding: 0 var(--space-3);
   box-sizing: border-box;
-
-  border: 1px solid #6d3f1f;
-  border-radius: 2px;
-  background-color: #6d3f1f;
-
-  color: #ffffff;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
   font-family: inherit;
-  font-size: 12px;
-
+  font-size: var(--font-sm);
   cursor: pointer;
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
 }
 
-.weekly-page .weekly-add-task-button::before {
+.weekly-add-task-button::before {
   content: "+";
-  margin-right: 6px;
-
-  font-size: 16px;
-  font-weight: 300;
+  margin-right: var(--space-2);
+  font-size: var(--font-lg);
+  font-weight: var(--weight-regular);
   line-height: 1;
 }
 
-.weekly-page .weekly-add-task-button:hover {
-  background-color: #80552f;
-  border-color: #80552f;
+.weekly-add-task-button:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
-.weekly-page .weekly-add-task-button:focus-visible {
-  outline: 2px solid #111111;
+.weekly-add-task-button:focus-visible {
+  outline: 2px solid var(--color-text);
   outline-offset: 1px;
 }
 
-/* =========================================================
+/* ========================================
    Add Task Form
-========================================================= */
-.weekly-page .weekly-task-add-form {
+======================================== */
+.weekly-task-add-form {
   display: flex;
   align-items: center;
-
-  gap: 7px;
+  gap: var(--space-2);
   margin: 0;
 }
 
-.weekly-page .weekly-task-add-input {
+.weekly-task-add-input {
   min-width: 0;
   width: 185px;
-  height: 34px;
-
+  height: var(--control-height-md);
   box-sizing: border-box;
-  padding: 0 9px;
-  border: 1px solid #cccccc;
-
-  border-radius: 2px;
-  background-color: #ffffff;
-  color: #111111;
-
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
   font-family: inherit;
-  font-size: 12px;
+  font-size: var(--font-sm);
   outline: none;
 }
 
-.weekly-page .weekly-task-add-input:focus {
-  border-color: #111111;
+.weekly-task-add-input:focus {
+  border-color: var(--color-text);
 }
 
-.weekly-page .weekly-task-add-input::placeholder {
-  color: #999999;
+.weekly-task-add-input::placeholder {
+  color: var(--color-text-muted);
 }
 
-/* =========================================================
+/* ========================================
    Add Button
-========================================================= */
-.weekly-page .weekly-task-add-button {
-  height: 34px;
+======================================== */
+.weekly-task-add-button {
+  height: var(--control-height-md);
   flex-shrink: 0;
-  padding: 0 13px;
-
-  border: 1px solid #6d3f1f;
-  border-radius: 2px;
-  background-color: #6d3f1f;
-
-  color: #ffffff;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
   font-family: inherit;
-  font-size: 12px;
-
+  font-size: var(--font-sm);
   cursor: pointer;
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
 }
 
-.weekly-page .weekly-task-add-button:hover {
-  background-color: #80552f;
-  border-color: #80552f;
+.weekly-task-add-button:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
-.weekly-page .weekly-task-add-button:focus-visible {
-  outline: 2px solid #111111;
+.weekly-task-add-button:focus-visible {
+  outline: 2px solid var(--color-text);
   outline-offset: 1px;
 }
 
-/* =========================================================
+/* ========================================
    Empty Message
-========================================================= */
-.weekly-page .weekly-section-message {
+======================================== */
+.weekly-section-message {
   flex: 1;
   min-height: 0;
   display: flex;
-
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   margin: 0;
-
-  padding: 20px;
+  padding: var(--space-5);
   box-sizing: border-box;
   border: none;
-
-  color: #111111;
-  background-color: #ffffff;
-  font-size: 12px;
-
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  font-size: var(--font-sm);
   line-height: 1.6;
   text-align: center;
 }
@@ -497,9 +449,8 @@
 .last-week-section .weekly-section-message {
   flex: none;
   display: block;
-
   margin: 0;
-  padding: 20px;
+  padding: var(--space-5);
 }
 
 .completed-daily-section .weekly-section-message {
@@ -507,191 +458,207 @@
   background-color: rgba(255, 252, 245, 0.96);
 }
 
-/* =========================================================
+/* ========================================
    Reflection
-========================================================= */
-.weekly-page .weekly-reflection-input {
+======================================== */
+.weekly-reflection-input {
   min-width: 0;
   min-height: 0;
   flex: 1;
-
   width: 100%;
   box-sizing: border-box;
   resize: none;
-
-  padding: 7px 12px;
-  border: 1px solid #e5e5e5;
-  border-radius: 2px;
-
-  background-color: #ffffff;
-  color: #111111;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
   font-family: inherit;
-  
-  font-size: 14px;
+  font-size: var(--font-md);
   line-height: 36px;
   outline: none;
-
   background-image:
     repeating-linear-gradient(
       to bottom,
       transparent 0,
       transparent 35px,
-      #e5e5e5 35px,
-      #e5e5e5 36px,
+      var(--color-border) 35px,
+      var(--color-border) 36px,
       transparent 36px,
       transparent 37px
     );
-
   background-size:
     calc(100% - 24px) 100%;
   background-position:
     center;
-
   background-repeat: no-repeat;
   background-attachment: local;
 }
 
-.weekly-page .weekly-reflection-input:focus {
-  border-color: #cccccc;
+.weekly-reflection-input:focus {
+  border-color: var(--color-border-input);
 }
 
-.weekly-page .weekly-reflection-input::placeholder {
-  color: #888888;
+.weekly-reflection-input::placeholder {
+  color: var(--color-text-muted);
 }
 
-/* =========================================================
+/* ========================================
    Last Week
-========================================================= */
-.weekly-page .weekly-completed-task-list {
+======================================== */
+.weekly-completed-task-list {
   min-height: 0;
   flex: 1;
   margin: 0;
-
   padding: 0;
   list-style: none;
   overflow-y: auto;
-  border-top: 1px solid #e5e5e5;
-
-  background-color: #ffffff;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface);
   scrollbar-width: thin;
-  scrollbar-color: #cccccc transparent;
+  scrollbar-color: var(--color-border-input) transparent;
 }
 
-.weekly-page .weekly-completed-task-list::-webkit-scrollbar {
+.weekly-completed-task-list::-webkit-scrollbar {
   width: 6px;
 }
 
-.weekly-page .weekly-completed-task-list::-webkit-scrollbar-track {
+.weekly-completed-task-list::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.weekly-page .weekly-completed-task-list::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
-  border-radius: 2px;
+.weekly-completed-task-list::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-input);
+  border-radius: var(--radius-sm);
 }
 
-.weekly-page .weekly-completed-task-list li {
-  padding: 12px 8px;
-  border-bottom: 1px solid #e5e5e5;
-  color: #222222;
-
-  font-size: 14px;
-  font-weight: 500;
-
+.weekly-completed-task-list li {
+  padding: var(--space-3) var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: var(--font-md);
+  font-weight: var(--weight-medium);
   line-height: 1.5;
   text-align: left;
 }
 
-.weekly-page .weekly-completed-task-list li::before {
+.weekly-completed-task-list li::before {
   content: "・";
-  margin-right: 10px;
-  color: #888888;
+  margin-right: var(--space-3);
+  color: var(--color-text-muted);
 }
 
-/* =========================================================
+/* ========================================
    Completed Daily Tasks
-========================================================= */
-.weekly-page .completed-daily-list {
+======================================== */
+.completed-daily-list {
   min-height: 0;
   flex: 1;
   overflow-y: auto;
-
   overflow-x: hidden;
   padding-right: 3px;
-
   scrollbar-width: thin;
-  scrollbar-color: #cccccc transparent;
+  scrollbar-color: var(--color-border-input) transparent;
 }
 
-.weekly-page .completed-daily-list::-webkit-scrollbar {
+.completed-daily-list::-webkit-scrollbar {
   width: 6px;
 }
 
-.weekly-page .completed-daily-list::-webkit-scrollbar-track {
+.completed-daily-list::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.weekly-page .completed-daily-list::-webkit-scrollbar-thumb {
-  background-color: #cccccc;
-  border-radius: 2px;
+.completed-daily-list::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-input);
+  border-radius: var(--radius-sm);
 }
 
-.weekly-page .completed-daily-date {
-  margin: 0 0 5px;
+.completed-daily-date {
+  margin: 0 0 var(--space-1);
   padding-top: 0;
-  color: #756457;
-
-  border-top: 1px solid #e5ddd4;
-  font-size: 12px;
-
-  font-weight: 500;
+  color: var(--color-text-secondary);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
   line-height: 1.4;
 }
 
-.weekly-page .completed-daily-task {
-  margin: 0 0 4px;
-  color: #3f342d;
-  font-size: 12px;
-
-  font-weight: 500;
+.completed-daily-task {
+  margin: 0 0 var(--space-1);
+  color: var(--color-text);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
 
-.weekly-page .completed-daily-group {
-  margin-bottom: 10px;
+.completed-daily-group {
+  margin-bottom: var(--space-2);
 }
 
-.weekly-page .completed-daily-empty {
+.completed-daily-empty {
   margin: 0;
-  color: #888888;
-
-  font-size: 12px;
+  color: var(--color-text-muted);
+  font-size: var(--font-xs);
   line-height: 1.5;
 }
 
-/* =========================================================
+/* ========================================
    Responsive
-========================================================= */
-@media (max-width: 1000px) {
+======================================== */
+@media (max-width: 900px) {
+  .weekly-page {
+    display: block;
+  }
+
+  .weekly-page .sidebar {
+    width: 100%;
+    min-width: 0;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
   .weekly-content {
-    gap: 10px;
-    padding: 12px;
+    height: calc(100vh - 56px);
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 700px) {
+  .weekly-content {
+    grid-template-columns: 1fr;
+    grid-template-rows:
+      repeat(4, minmax(0, 1fr));
+    overflow-y: auto;
   }
 
-  .weekly-page .weekly-section {
-    padding: 16px 12px 56px;
+  .this-week-section {
+    grid-column: 1;
+    grid-row: 1;
   }
 
-  .weekly-page .weekly-section-header h2 {
-    font-size: 16px;
+  .next-week-section {
+    grid-column: 1;
+    grid-row: 2;
   }
 
-  .weekly-page .weekly-section-header svg {
-    margin-right: 10px;
+  .reflection-section {
+    grid-column: 1;
+    grid-row: 3;
   }
 
-  .weekly-page .weekly-task-title {
-    font-size: 13px;
+  .last-week-section {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .completed-daily-section {
+    display: none;
   }
 }

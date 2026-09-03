@@ -5,7 +5,7 @@
   width: 100%;
   height: 100vh;
   display: flex;
-  overflow: hidden;;
+  overflow: hidden;
   color: var(--color-text);
 }
 
@@ -212,7 +212,7 @@
   padding: 0px;
   margin-right: var(--space-2);
 
-  border: 1.5px solid #3f342d;
+  border: 1.5px solid var(--color-text);
   border-radius: var(--radius-sm);
 
   color: var(--color-text);
@@ -236,13 +236,13 @@
 }
 
 .daily-task-toggle:hover {
-  background-color: #faf7f2;
-  border-color: #a8957f;
+  background-color: var(--color-background);
+  border-color: var(--color-primary-hover);
 }
 
 .daily-task-toggle.task-completed:hover {
-  background-color: #8a6a4c;
-  border-color: #8a6a4c;
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
 }
 
 /* ========================================
@@ -267,7 +267,7 @@
 
   margin: 0;
 
-  color: #3f342d;
+  color: var(--color-text);
 
   font-size: var(--font-md);
   font-weight: var(--weight-medium);
@@ -324,9 +324,9 @@
 
 .daily-task-action:hover,
 .daily-task-delete:hover {
-  background-color: #faf7f2;
-  border-color: #c9d9a5;
-  color: #5f452f;
+  background-color: var(--color-background-hover);
+  border-color: var(--color-border);
+  color: var(--color-primary-dark);
 
   text-decoration: none;
 }
@@ -412,7 +412,7 @@
 
   margin: 0;
 
-  color: #212121;
+  color: var(--color-text);
 
   font-size: var(--font-xs);
   line-height: 34px;
@@ -436,7 +436,7 @@
   border-radius: var(--radius-sm);
 
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-surface);
 
   font-family: inherit;
   font-size: var(--font-sm);
@@ -505,7 +505,7 @@
 }
 
 .daily-task-add-input::placeholder {
-  color: #999999;
+  color: var(--color-text-muted);
 }
 
 /* ========================================
@@ -560,7 +560,7 @@
 
   padding: var(--space-2) var(--space-3);
 
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
 
   background-color: var(--color-surface);
@@ -577,8 +577,8 @@
       to bottom,
       transparent 0,
       transparent 35px,
-      #e5e5e5 35px,
-      #e5e5e5 36px,
+      var(--color-border) 35px,
+      var(--color-border) 36px,
       transparent 36px,
       transparent 37px
     );
@@ -627,11 +627,11 @@
 }
 
 .daily-tomorrow-section .daily-section-message {
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-border);
 }
 
 .daily-today-section .daily-section-message {
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-border);
 }
 
 /* ========================================
@@ -642,7 +642,7 @@
   min-height: 160px;
 
   background-color: var(--color-surface);
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-border);
 }
 
 .daily-completed-task-list {
@@ -656,7 +656,7 @@
 
   overflow-y: auto;
 
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid var(--color-border);
   background-color: var(--color-surface);
 
   scrollbar-width: thin;
@@ -683,9 +683,9 @@
 .daily-completed-task-list li {
   padding: var(--space-3) var(--space-2);
 
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid var(--color-border);
 
-  color: #222222;
+  color: var(--color-text);
   font-size: var(--font-md);
   font-weight: var(--weight-medium);
   line-height: 1.5;
@@ -713,7 +713,7 @@
 .daily-summary-section .daily-section-header svg {
   flex-shrink: 0;
   margin-right: var(--space-3);
-  color: #6d4326;
+  color: var(--color-primary);
   transform: none;
 }
 
@@ -746,7 +746,7 @@
 
   margin-bottom: var(--space-1);
 
-  color: #756457;
+  color: var(--color-text-secondary);
 
   font-size: var(--font-sm);
   font-weight: var(--weight-medium);
@@ -758,7 +758,7 @@
 
   max-width: 230px;
 
-  color: #332922;
+  color: var(--color-text);
 
   font-size: var(--font-xl);
   font-weight: var(--weight-medium);
@@ -790,7 +790,7 @@
 }
 
 .daily-summary-progress-heading strong {
-  color: #6d4326;
+  color: var(--color-primary-dark);
 
   font-size: var(--font-2xl);
   font-weight: var(--weight-semibold);
@@ -802,14 +802,14 @@
 
   overflow: hidden;
 
-  background: #e7ddd3;
+  background: var(--color-border);
   border-radius: var(--radius-sm);
 }
 
 .daily-summary-progress-bar {
   height: 100%;
 
-  background: #8b5e3c;
+  background: var(--color-primary-hover);
   border-radius: var(--radius-sm);
 
   transition: width 0.25s ease;
@@ -837,7 +837,7 @@
 }
 
 .daily-summary-yesterday-row strong {
-  color: #6d4326;
+  color: var(--color-primary);
 
   font-size: var(--font-lg);
   font-weight: var(--weight-medium);
@@ -877,7 +877,7 @@
   justify-content: center;
   gap: var(--space-1);
 
-  color: #332922;
+  color: var(--color-text);
 
   font-size: var(--font-2xl);
   font-weight: var(--weight-medium);
@@ -885,7 +885,7 @@
 }
 
 .daily-summary-value small {
-  color: #756457;
+  color: var(--color-text-secondary);
 
   font-size: var(--font-xs);
   font-weight: var(--weight-regular);

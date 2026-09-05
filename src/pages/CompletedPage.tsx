@@ -438,7 +438,6 @@ export default function CompletedPage() {
                 </div>
 
 
-                {/* 3段目：キーワード */}
                 <div className="completed-search">
 
                   <label htmlFor="completed-search">
@@ -460,7 +459,6 @@ export default function CompletedPage() {
               </div>
 
 
-              {/* フィルターリセット */}
               {(
                 searchText ||
                 selectedYear !== "all" ||
@@ -487,19 +485,16 @@ export default function CompletedPage() {
             <section className="completed-section completed-statistics-section">
 
               <div className="completed-section-header">
-                <BarChart3
-                  size={22}
-                  strokeWidth={1.8}
-                />
-
                 <div>
+                  <BarChart3 size={22} strokeWidth={1.8} />
                   <h2>統計</h2>
-
-                  <p>
-                    {recordTypeLabel}の履歴
-                    {targetRecordsCount}件
-                  </p>
                 </div>
+
+                <p>
+                  {recordTypeLabel}の履歴
+                  {targetRecordsCount}件
+                </p>
+                
               </div>
 
 

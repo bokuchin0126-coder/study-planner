@@ -1,0 +1,187 @@
+/* =========================================================
+   Auth Page
+   ========================================================= */
+.auth-page {
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+/* =========================================================
+   Auth Card
+   ========================================================= */
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  box-sizing: border-box;
+  padding: var(--space-8);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+/* =========================================================
+   Title
+   ========================================================= */
+.auth-title {
+  margin: 0 0 var(--space-6);
+  color: var(--color-text);
+  font-size: var(--font-3xl);
+  font-weight: var(--weight-bold);
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* =========================================================
+   Form
+   ========================================================= */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* =========================================================
+   Field
+   ========================================================= */
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.auth-field label {
+  color: var(--color-text);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  line-height: 1.4;
+}
+
+.auth-field input {
+  width: 100%;
+  height: var(--control-height-lg);
+  box-sizing: border-box;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--font-md);
+  outline: none;
+}
+
+.auth-field input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.auth-field input:focus {
+  border-color: var(--color-text);
+}
+
+/* =========================================================
+   Error
+   ========================================================= */
+.auth-error {
+  margin: calc(var(--space-1) * -1) 0 0;
+  color: var(--color-primary-dark);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  line-height: 1.5;
+}
+
+/* =========================================================
+   Submit Button
+   ========================================================= */
+.auth-submit-button {
+  width: 100%;
+  height: var(--control-height-lg);
+  margin-top: var(--space-2);
+  padding: 0 var(--space-3);
+  box-sizing: border-box;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+  font-family: inherit;
+  font-size: var(--font-md);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.auth-submit-button:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.auth-submit-button:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   Login / Signup Switch
+   ========================================================= */
+.auth-switch {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border-light);
+  text-align: center;
+}
+
+.auth-switch p {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-sm);
+  line-height: 1.5;
+}
+
+.auth-switch a {
+  color: var(--color-primary);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+@media (max-width: 700px) {
+  .auth-page {
+    padding: var(--space-4);
+  }
+
+  .auth-card {
+    max-width: 100%;
+    padding: var(--space-6);
+  }
+}
+
+@media (max-width: 400px) {
+  .auth-page {
+    padding: var(--space-3);
+  }
+
+  .auth-card {
+    padding: var(--space-5);
+    border: none;
+  }
+
+  .auth-title {
+    margin-bottom: var(--space-5);
+  }
+}

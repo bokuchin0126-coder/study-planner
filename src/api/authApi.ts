@@ -27,6 +27,14 @@ export async function signIn(email: string, password: string) {
   if (error) throw error
 }
 
+export async function signInWithGithub() {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "github"
+  })
+
+  if (error) throw error
+}
+
 export async function signOut() {
   const { error } = await supabase.auth.signOut()
 

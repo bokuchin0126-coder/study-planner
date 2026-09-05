@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react" 
-import { signIn } from "../api/authApi" 
+import { signIn, signInWithGithub } from "../api/authApi" 
 import { Link, useNavigate } from "react-router-dom" 
 import { supabase } from "../lib/supabase" 
  
@@ -37,6 +37,17 @@ export default function LoginPage() {
       setError("メールアドレスまたはパスワードが正しくありません。")
     } 
   } 
+
+  const handleGithubSignIn = async () => {
+    setError("")
+
+    try {
+      await signInWithGithub()
+    } catch(e) {
+      console.error(e)
+      setError("GitHubでのログインに失敗しました。")
+    }
+  }
  
   useEffect(() => { 
     const checkUser = async () => { 
@@ -109,6 +120,15 @@ export default function LoginPage() {
         >
           ログイン
         </button>
+
+        <button
+          type="button"
+          className="auth-github-button"
+          onClick={handleGithubSignIn}
+        >
+          GitHubでログイン
+        </button>
+
       </form>
 
       <div className="auth-switch">

@@ -1,5 +1,5 @@
 import { useState } from "react" 
-import { signUp } from "../api/authApi" 
+import { signUp, signInWithGithub } from "../api/authApi" 
 import { Link, useNavigate } from "react-router-dom" 
 import "../css/auth.css"
  
@@ -52,6 +52,17 @@ export default function SignupPage() {
 
     } 
   } 
+
+  const handleGithubSignIn = async () => {
+    setError("")
+
+    try {
+      await signInWithGithub()
+    } catch(e) {
+      console.error(e)
+      setError("GitHubでの登録に失敗しました。")
+    }
+  }
  
  
   return (
@@ -108,6 +119,15 @@ export default function SignupPage() {
         >
           登録
         </button>
+
+        <button
+          type="button"
+          className="auth-github-button"
+          onClick={handleGithubSignIn}
+        >
+          GitHubで登録
+        </button>
+
       </form>
 
       <div className="auth-switch">

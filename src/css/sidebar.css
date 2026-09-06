@@ -89,3 +89,122 @@
   margin: 0;
   padding: 0;
 }
+
+/* ========================================
+   Responsive
+======================================== */
+
+@media (max-width: 700px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+
+    width: 100%;
+    min-width: 0;
+    height: 56px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 var(--space-4);
+
+    background: var(--color-background);
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    overflow: visible;
+  }
+
+  .sidebar-logo {
+    width: auto !important;
+    min-height: auto !important;
+
+    display: flex;
+    align-items: center;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: var(--color-primary) !important;
+    font-size: var(--font-lg) !important;
+    font-weight: var(--weight-medium);
+  }
+
+  .sidebar-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+
+    height: 64px;
+
+    padding: 0;
+
+    background: var(--color-background);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .sidebar-nav ul {
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+  }
+
+  .sidebar-nav li {
+    min-width: 0;
+  }
+
+  .sidebar a,
+  .sidebar button {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 2px;
+
+    margin: 0;
+    padding: var(--space-1) 0;
+
+    border: none;
+    border-radius: 0;
+
+    background-color: transparent;
+
+    font-size: var(--font-xs);
+  }
+
+  .sidebar svg {
+    width: 20px;
+    height: 20px;
+
+    margin: 0;
+
+    color: var(--color-primary);
+  }
+
+  .sidebar a:hover,
+  .sidebar button:hover {
+    background-color: var(--color-background-hover);
+    border-color: transparent;
+  }
+
+  .sidebar-link.active {
+    background-color: var(--color-background-hover);
+    color: var(--color-primary-dark);
+  }
+}

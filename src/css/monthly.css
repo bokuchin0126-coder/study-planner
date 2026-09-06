@@ -607,16 +607,19 @@
 .monthly-completed-weekly-group
 .monthly-completed-task-list {
   border-top: none;
+  background-color: transparent;
 }
 
 .monthly-completed-weekly-group
 .monthly-completed-task-list li {
   padding: 0 0 var(--space-1);
   border-bottom: none;
+  background-color: transparent;
   color: var(--color-text);
   font-size: var(--font-xs);
   font-weight: var(--weight-medium);
   line-height: 1.5;
+  text-align: center;
 }
 
 .monthly-completed-weekly-group
@@ -625,61 +628,239 @@
   margin-right: 0;
 }
 
+
 /* ========================================
    Responsive
 ======================================== */
-@media (max-width: 900px) {
+@media (max-width: 700px) {
+  /* ----------------------------------------
+     Page
+  ---------------------------------------- */
   .monthly-page {
-    display: block;
-  }
-
-  .monthly-page .sidebar {
     width: 100%;
-    min-width: 0;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    padding: var(--space-2) var(--space-3);
-    border-right: none;
-    border-bottom: 1px solid var(--color-border-light);
+    min-height: 100vh;
+    height: auto;
+    display: block;
+    overflow: visible;
   }
 
   .monthly-content {
-    height: calc(100vh - 56px);
-    padding: var(--space-4);
-    gap: var(--space-4);
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding:
+      calc(56px + var(--space-4))
+      var(--space-3)
+      calc(64px + var(--space-4));
+    overflow: visible;
+  }
+
+  /* ----------------------------------------
+     Section
+  ---------------------------------------- */
+  .monthly-section {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    flex: none;
+    box-sizing: border-box;
+    padding:
+      var(--space-5)
+      var(--space-3);
+    overflow: visible;
+  }
+
+  .monthly-this-month-section,
+  .monthly-next-month-section,
+  .monthly-reflection-section,
+  .monthly-last-month-section,
+  .monthly-completed-weekly-section {
+    grid-column: auto;
+    grid-row: auto;
+    margin-top: 0;
+  }
+
+  /* ----------------------------------------
+     Section Header
+  ---------------------------------------- */
+  .monthly-section-header {
+    margin-bottom: var(--space-3);
+  }
+
+  .monthly-section-header h2 {
+    font-size: var(--font-lg);
+    line-height: 1.5;
+  }
+
+  .monthly-section-header svg {
+    width: 20px;
+    height: 20px;
+    margin-right: var(--space-2);
+  }
+
+  /* ----------------------------------------
+     Task List
+  ---------------------------------------- */
+  .monthly-task-list {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    flex: none;
+    overflow: visible;
+  }
+
+  .monthly-task-row {
+    min-height: 52px;
+    padding: var(--space-2);
+  }
+
+  .monthly-task-toggle {
+    width: 24px;
+    height: 24px;
+    margin-right: var(--space-2);
+  }
+
+  .monthly-task-content {
+    min-width: 0;
+  }
+
+  .monthly-task-title {
+    font-size: var(--font-md);
+  }
+
+  .monthly-task-action,
+  .monthly-task-delete {
+    padding:
+      var(--space-2)
+      var(--space-2);
+    font-size: var(--font-sm);
+  }
+
+  .monthly-task-delete {
+    margin-left: 0;
+  }
+
+  /* ----------------------------------------
+     Add Task
+  ---------------------------------------- */
+  .monthly-task-add {
+    position: static;
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    margin-top: var(--space-3);
+  }
+
+  .monthly-task-add-form {
+    width: 100%;
+  }
+
+  .monthly-task-add-input {
+    width: auto;
+    flex: 1;
+  }
+
+  .monthly-add-task-button {
+    width: 100%;
+  }
+
+  /* ----------------------------------------
+     Reflection
+  ---------------------------------------- */
+  .monthly-reflection-section {
+    min-height: 0;
+    padding-bottom: var(--space-5);
+  }
+
+  .monthly-reflection-input {
+    width: 100%;
+    min-height: 160px;
+    height: 160px;
+    flex: none;
+    line-height: 32px;
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 31px,
+        var(--color-border) 31px,
+        var(--color-border) 32px,
+        transparent 32px,
+        transparent 34px
+      );
+  }
+
+  /* ----------------------------------------
+     Last Month
+  ---------------------------------------- */
+  .monthly-last-month-section {
+    min-height: 0;
+  }
+
+  .monthly-completed-task-list {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    flex: none;
+  }
+
+  .monthly-last-month-section .monthly-section-message {
+    flex: none;
+  }
+
+  /* ----------------------------------------
+     Completed Weekly Tasks
+  ---------------------------------------- */
+  .monthly-completed-weekly-section {
+    display: flex;
+    min-height: 0;
+  }
+
+  .monthly-completed-weekly-list {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    flex: none;
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .monthly-completed-weekly-group {
+    margin-bottom: var(--space-3);
+  }
+
+  .monthly-completed-weekly-title {
+    padding-top: var(--space-1);
   }
 }
 
-@media (max-width: 700px) {
+/* ========================================
+   Small Mobile
+======================================== */
+@media (max-width: 400px) {
   .monthly-content {
-    grid-template-columns: 1fr;
-    grid-template-rows:
-      repeat(4, minmax(0, 1fr));
-    overflow-y: auto;
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
   }
 
-  .monthly-this-month-section {
-    grid-column: 1;
-    grid-row: 1;
+  .monthly-section {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
   }
 
-  .monthly-next-month-section {
-    grid-column: 1;
-    grid-row: 2;
+  .monthly-task-row {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
   }
 
-  .monthly-reflection-section {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
-  .monthly-last-month-section {
-    grid-column: 1;
-    grid-row: 4;
-  }
-
-  .monthly-completed-weekly-section {
-    display: none;
+  .monthly-task-action,
+  .monthly-task-delete {
+    padding-left: var(--space-1);
+    padding-right: var(--space-1);
   }
 }

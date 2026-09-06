@@ -5,7 +5,9 @@ import {
   signUp,
   signIn,
   signOut,
-  deleteAccount
+  deleteAccount,
+  signInWithGithub,
+  signInWithGoogle
 } from "./authApi"
 
 
@@ -15,6 +17,7 @@ vi.mock("../lib/supabase", () => ({
       getUser: vi.fn(),
       signUp: vi.fn(),
       signInWithPassword: vi.fn(),
+      signInWithOAuth: vi.fn(),
       signOut: vi.fn()
     },
     functions: {
@@ -26,6 +29,7 @@ vi.mock("../lib/supabase", () => ({
 const mockedGetUser = vi.mocked(supabase.auth.getUser)
 const mockedSignUp = vi.mocked(supabase.auth.signUp)
 const mockedSignIn = vi.mocked(supabase.auth.signInWithPassword)
+const mockedSignInWithOAuth = vi.mocked(supabase.auth.signInWithOAuth)
 const mockedInvoke = vi.mocked(supabase.functions.invoke)
 const mockedSignOut = vi.mocked(supabase.auth.signOut)
 
@@ -166,6 +170,63 @@ describe("signIn", () => {
     })
   })
 })
+
+describe("signInWithGithub", () => {
+  it("GitHubログインを開始できる", async () => {
+    mockedSignInWithOAuth.mockResolvedValue({
+      data: { provider: "github", url: null },
+      error: null
+    } as any)
+
+    await expect(
+      signInWithGithub()
+    ).resolves.toBeUndefined()
+
+    expect(mockedSignInWithOAuth).toHaveBeenCalledWith({
+      provider: "github"
+    })
+  })
+
+  it("Supabaseでエラーが発生したらエラーを投げる", async () => {
+    const error = new Error("GitHubログインに失敗しました")
+
+    mockedSignInWithOAuth.mockResolvedValue({
+      data: null,
+      error
+    } as any)
+
+    await expect(signInWithGithub()).rejects.toThrow(error)
+  })
+})
+
+describe("signInWithGoogle", () => {
+  it("Googleログインを開始できる", async () => {
+    mockedSignInWithOAuth.mockResolvedValue({
+      data: { provider: "google", url: null },
+      error: null
+    } as any)
+
+    await expect(
+      signInWithGoogle()
+    ).resolves.toBeUndefined()
+
+    expect(mockedSignInWithOAuth).toHaveBeenCalledWith({
+      provider: "google"
+    })
+  })
+
+  it("Supabaseでエラーが発生したらエラーを投げる", async () => {
+    const error = new Error("Googleログインに失敗しました")
+
+    mockedSignInWithOAuth.mockResolvedValue({
+      data: null,
+      error
+    } as any)
+
+    await expect(signInWithGoogle()).rejects.toThrow(error)
+  })
+})
+
 
 describe("signOut", () => {
   it("ユーザーをログアウトさせることができる", async () => {

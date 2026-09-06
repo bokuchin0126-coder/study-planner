@@ -717,6 +717,9 @@
 @media (max-width: 900px) {
   .completed-page {
     display: block;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
   }
 
   .completed-page .sidebar {
@@ -731,41 +734,73 @@
   }
 
   .completed-content {
-    height: calc(100vh - 56px);
+    width: 100%;
+    height: auto;
+    min-height: calc(100vh - 56px);
     padding: var(--space-4);
+    overflow: visible;
   }
 
+  /* =========================================================
+     Main Layout
+  ========================================================= */
   .completed-layout {
     grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto auto;
     gap: var(--space-4);
+    height: auto;
+    min-height: 0;
   }
 
+  /* =========================================================
+     Left
+  ========================================================= */
   .completed-left {
     grid-template-rows: auto auto auto;
     gap: var(--space-4);
+    min-height: 0;
   }
 
+  /* =========================================================
+     Header
+  ========================================================= */
   .completed-header {
     min-height: 100px;
+    padding: var(--space-4) var(--space-5);
+  }
+
+  /* =========================================================
+     History
+  ========================================================= */
+  .completed-history-section {
+    min-height: 500px;
   }
 
   .completed-history-header {
     flex-wrap: wrap;
     gap: var(--space-2);
+    min-height: 68px;
     padding-top: var(--space-3);
     padding-bottom: var(--space-3);
   }
 
   .completed-history-filters {
-    margin-left: 0;
     width: 100%;
+    margin-left: 0;
   }
 
   .completed-history-filters select {
     flex: 1;
+    width: auto;
   }
 
+  .completed-history-filters select:nth-child(2) {
+    width: auto;
+  }
+
+  /* =========================================================
+     Record
+  ========================================================= */
   .completed-record-content {
     grid-template-columns: 1fr;
     gap: var(--space-4);
@@ -776,12 +811,13 @@
   }
 }
 
+
 /* =========================================================
    Mobile
 ========================================================= */
 @media (max-width: 700px) {
   .completed-content {
-    padding: var(--space-2);
+    padding: 60px var(--space-2) 100px;
   }
 
   .completed-layout {
@@ -792,9 +828,16 @@
     gap: var(--space-2);
   }
 
+  /* =========================================================
+     Header
+  ========================================================= */
   .completed-header {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
     gap: var(--space-2);
+    min-height: 0;
     padding: var(--space-4);
   }
 
@@ -808,48 +851,154 @@
 
   .completed-header p {
     font-size: var(--font-xs);
+    line-height: 1.6;
   }
 
-  .completed-filter-section,
-  .completed-statistics-section {
+  /* =========================================================
+     Filter
+  ========================================================= */
+  .completed-filter-section {
     padding: var(--space-4);
+  }
+
+  .completed-filter-section .completed-section-header {
+    margin-bottom: var(--space-4);
   }
 
   .completed-filter-row {
     grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .completed-filter select,
+  .completed-search input {
+    height: var(--control-height-lg);
+  }
+
+  /* =========================================================
+     Statistics
+  ========================================================= */
+  .completed-statistics-section {
+    padding: var(--space-4);
+  }
+
+  .completed-statistics-section .completed-section-header {
+    padding: 0;
+    margin-bottom: var(--space-3);
   }
 
   .completed-statistics {
     grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .completed-stat {
+    padding: var(--space-3);
+  }
+
+  .completed-progress-message {
+    margin-top: var(--space-2);
+  }
+
+  /* =========================================================
+     History
+  ========================================================= */
+  .completed-history-section {
+    min-height: 0;
   }
 
   .completed-history-header {
-    padding-left: var(--space-3);
-    padding-right: var(--space-3);
+    align-items: center;
+    padding: var(--space-3);
+  }
+
+  .completed-history-header h2 {
+    font-size: var(--font-lg);
   }
 
   .completed-history-filters {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    gap: var(--space-2);
   }
 
   .completed-history-filters select {
     min-width: 0;
+    width: 100%;
+    flex: 1;
   }
 
   .completed-history-scroll {
     padding-left: var(--space-3);
     padding-right: var(--space-3);
+    padding-bottom: var(--space-5);
+  }
+
+  /* =========================================================
+     Month Heading
+  ========================================================= */
+  .completed-month-heading {
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-2);
+  }
+
+  /* =========================================================
+     Timeline
+  ========================================================= */
+  .completed-timeline {
+    margin-left: 28px;
+  }
+
+  .completed-timeline::before {
+    top: 17px;
+    bottom: 17px;
+  }
+
+  /* =========================================================
+     Record
+  ========================================================= */
+  .completed-record {
+    padding-left: var(--space-7);
+    padding-bottom: var(--space-5);
   }
 
   .completed-record-content {
-    gap: var(--space-3);
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
   }
 
-  .completed-record {
-    padding-left: var(--space-7);
+  .completed-record-date {
+    font-size: var(--font-sm);
   }
 
-  .completed-timeline {
-    margin-left: 32px;
+  .completed-record-content h5 {
+    font-size: var(--font-sm);
+  }
+
+  .completed-record-content p,
+  .completed-record-tasks li {
+    font-size: var(--font-sm);
+  }
+
+  /* =========================================================
+     Long Term
+  ========================================================= */
+  .completed-long-term-record
+  .completed-record-content {
+    grid-template-columns: 1fr;
+  }
+
+  /* =========================================================
+     Empty
+  ========================================================= */
+  .completed-empty {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  /* =========================================================
+     Load More
+  ========================================================= */
+  .completed-load-more {
+    width: 100%;
+    max-width: 180px;
   }
 }

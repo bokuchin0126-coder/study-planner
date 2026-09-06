@@ -607,58 +607,207 @@
 /* ========================================
    Responsive
 ======================================== */
-@media (max-width: 900px) {
+@media (max-width: 700px) {
+  /* ----------------------------------------
+     Page
+  ---------------------------------------- */
   .weekly-page {
-    display: block;
-  }
-
-  .weekly-page .sidebar {
     width: 100%;
-    min-width: 0;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    padding: var(--space-2) var(--space-3);
-    border-right: none;
-    border-bottom: 1px solid var(--color-border-light);
+    min-height: 100vh;
+    height: auto;
+    display: block;
+    overflow: visible;
   }
 
   .weekly-content {
-    height: calc(100vh - 56px);
-    padding: var(--space-4);
-    gap: var(--space-4);
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding:
+      calc(56px + var(--space-4))
+      var(--space-3)
+      calc(64px + var(--space-4));
+    overflow: visible;
+  }
+
+  /* ----------------------------------------
+     Section
+  ---------------------------------------- */
+  .weekly-section {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    flex: none;
+    box-sizing: border-box;
+    padding:
+      var(--space-5)
+      var(--space-3);
+    overflow: visible;
+  }
+
+  .this-week-section,
+  .next-week-section,
+  .reflection-section,
+  .last-week-section,
+  .completed-daily-section {
+    grid-column: auto;
+    grid-row: auto;
+    margin-top: 0;
+  }
+
+  /* ----------------------------------------
+     Section Header
+  ---------------------------------------- */
+  .weekly-section-header {
+    margin-bottom: var(--space-3);
+  }
+
+  .weekly-section-header h2 {
+    font-size: var(--font-lg);
+    line-height: 1.5;
+  }
+
+  .weekly-section-header svg {
+    width: 20px;
+    height: 20px;
+    margin-right: var(--space-2);
+  }
+
+  /* ----------------------------------------
+     Task List
+  ---------------------------------------- */
+  .weekly-task-list {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    flex: none;
+    overflow: visible;
+  }
+
+  .weekly-task-row {
+    min-height: 52px;
+    padding: var(--space-2);
+  }
+
+  .weekly-task-toggle {
+    width: 24px;
+    height: 24px;
+    margin-right: var(--space-2);
+  }
+
+  .weekly-task-content {
+    min-width: 0;
+  }
+
+  .weekly-task-title {
+    font-size: var(--font-md);
+  }
+
+  .weekly-task-action,
+  .weekly-task-delete {
+    padding:
+      var(--space-2)
+      var(--space-2);
+    font-size: var(--font-sm);
+  }
+
+  .weekly-task-delete {
+    margin-left: 0;
+  }
+
+  /* ----------------------------------------
+     Add Task
+  ---------------------------------------- */
+  .weekly-task-add {
+    position: static;
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    margin-top: var(--space-3);
+  }
+
+  .weekly-task-add-form {
+    width: 100%;
+  }
+
+  .weekly-task-add-input {
+    width: auto;
+    flex: 1;
+  }
+
+  .weekly-add-task-button {
+    width: 100%;
+  }
+
+  /* ----------------------------------------
+     Reflection
+  ---------------------------------------- */
+  .reflection-section {
+    min-height: 0;
+    padding-bottom: var(--space-5);
+  }
+
+  .weekly-reflection-input {
+    width: 100%;
+    min-height: 160px;
+    height: 160px;
+    flex: none;
+    line-height: 32px;
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 31px,
+        var(--color-border) 31px,
+        var(--color-border) 32px,
+        transparent 32px,
+        transparent 34px
+      );
+  }
+
+  /* ----------------------------------------
+     Last Week
+  ---------------------------------------- */
+  .last-week-section {
+    min-height: 0;
+  }
+
+  .weekly-completed-task-list {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    flex: none;
+  }
+
+  .last-week-section .weekly-section-message {
+    flex: none;
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 400px) {
   .weekly-content {
-    grid-template-columns: 1fr;
-    grid-template-rows:
-      repeat(4, minmax(0, 1fr));
-    overflow-y: auto;
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
   }
 
-  .this-week-section {
-    grid-column: 1;
-    grid-row: 1;
+  .weekly-section {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
   }
 
-  .next-week-section {
-    grid-column: 1;
-    grid-row: 2;
+  .weekly-task-row {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
   }
 
-  .reflection-section {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
-  .last-week-section {
-    grid-column: 1;
-    grid-row: 4;
-  }
-
-  .completed-daily-section {
-    display: none;
+  .weekly-task-action,
+  .weekly-task-delete {
+    padding-left: var(--space-1);
+    padding-right: var(--space-1);
   }
 }

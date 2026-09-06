@@ -1,5 +1,5 @@
 import { useState } from "react" 
-import { signUp, signInWithGithub } from "../api/authApi" 
+import { signUp, signInWithGithub, signInWithGoogle } from "../api/authApi" 
 import { Link, useNavigate } from "react-router-dom" 
 import "../css/auth.css"
  
@@ -49,7 +49,6 @@ export default function SignupPage() {
       } else {
         setError("登録に失敗しました。もう一度お試しください。")
       }
-
     } 
   } 
 
@@ -61,6 +60,17 @@ export default function SignupPage() {
     } catch(e) {
       console.error(e)
       setError("GitHubでの登録に失敗しました。")
+    }
+  }
+
+  const handleGoogleSignIn = async () => {
+    setError("")
+  
+    try {
+      await signInWithGoogle()
+    } catch(e) {
+      console.error(e)
+      setError("Googleでの登録に失敗しました。")
     }
   }
  
@@ -126,6 +136,14 @@ export default function SignupPage() {
           onClick={handleGithubSignIn}
         >
           GitHubで登録
+        </button>
+
+        <button
+          type="button"
+          className="auth-google-button"
+          onClick={handleGoogleSignIn}
+        >
+          Googleで登録
         </button>
 
       </form>

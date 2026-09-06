@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react" 
-import { signIn, signInWithGithub } from "../api/authApi" 
+import { signIn, signInWithGithub, signInWithGoogle } from "../api/authApi" 
 import { Link, useNavigate } from "react-router-dom" 
 import { supabase } from "../lib/supabase" 
  
@@ -46,6 +46,17 @@ export default function LoginPage() {
     } catch(e) {
       console.error(e)
       setError("GitHubでのログインに失敗しました。")
+    }
+  }
+
+  const handleGoogleSignIn = async () => {
+    setError("")
+
+    try {
+      await signInWithGoogle()
+    } catch(e) {
+      console.error(e)
+      setError("Googleでのログインに失敗しました。")
     }
   }
  
@@ -127,6 +138,14 @@ export default function LoginPage() {
           onClick={handleGithubSignIn}
         >
           GitHubでログイン
+        </button>
+
+        <button
+          type="button"
+          className="auth-google-button"
+          onClick={handleGoogleSignIn}
+        >
+          Googleでログイン
         </button>
 
       </form>

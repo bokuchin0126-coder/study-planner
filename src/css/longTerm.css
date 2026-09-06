@@ -816,8 +816,14 @@
     font-size: var(--font-lg);
   }
 
-  .long-term-page .section-header svg {
+  .long-term-page .section-header-main svg {
+    width: 20px;
+    height: 20px;
     margin-right: var(--space-2);
+  }
+
+  .long-term-page .section-description {
+    margin-left: 28px;
   }
 
   .long-term-page .task-title {
@@ -825,46 +831,276 @@
   }
 }
 
+/* =========================================================
+   Mobile
+========================================================= */
 @media (max-width: 700px) {
+
+  /* ----------------------------------------
+     Page
+  ---------------------------------------- */
+  .long-term-page {
+    width: 100%;
+    min-height: 100vh;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+
   .long-term-page .content {
-    grid-template-columns: 1fr;
-    grid-template-rows:
-      minmax(180px, auto)
-      minmax(300px, auto)
-      minmax(180px, auto)
-      minmax(180px, auto)
-      minmax(220px, auto)
-      minmax(130px, auto);
-    overflow-y: auto;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding:
+      calc(56px + var(--space-4))
+      var(--space-3)
+      calc(64px + var(--space-4));
+    overflow: visible;
   }
 
-  .long-term-page .goal-section {
-    grid-column: 1;
-    grid-row: 1;
+  /* ----------------------------------------
+     Section
+  ---------------------------------------- */
+  .long-term-page .section {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    flex: none;
+    box-sizing: border-box;
+    padding: var(--space-5) var(--space-3);
+    overflow: visible;
   }
 
-  .long-term-page .period-section {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .long-term-page .task-section {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
-  .long-term-page .reflection-section {
-    grid-column: 1;
-    grid-row: 4;
-  }
-
-  .long-term-page .completed-task-section {
-    grid-column: 1;
-    grid-row: 5;
-  }
-
+  .long-term-page .goal-section,
+  .long-term-page .period-section,
+  .long-term-page .task-section,
+  .long-term-page .reflection-section,
+  .long-term-page .completed-task-section,
   .long-term-page .completion-section {
-    grid-column: 1;
-    grid-row: 6;
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  /* ----------------------------------------
+     Section Header
+  ---------------------------------------- */
+  .long-term-page .section-header {
+    margin-bottom: var(--space-3);
+  }
+
+  .long-term-page .section-header-main h2 {
+    font-size: var(--font-lg);
+    line-height: 1.5;
+  }
+
+  .long-term-page .section-header-main svg {
+    width: 20px;
+    height: 20px;
+    margin-right: var(--space-2);
+  }
+
+  .long-term-page .section-description {
+    margin-left: 28px;
+    font-size: var(--font-xs);
+  }
+
+  /* ----------------------------------------
+     Goal
+  ---------------------------------------- */
+  .long-term-page .goal-section {
+    min-height: 180px;
+  }
+
+  .long-term-page .goal-input {
+    min-height: 0;
+  }
+
+  /* ----------------------------------------
+     Period
+  ---------------------------------------- */
+  .long-term-page .period-section {
+    min-height: 150px;
+    overflow: visible;
+  }
+
+  .long-term-page .period-picker {
+    width: 100%;
+    flex: none;
+  }
+
+  .long-term-page .period-date {
+    min-width: 0;
+  }
+
+  .long-term-page .date-button {
+    height: var(--control-height-lg);
+    font-size: var(--font-sm);
+  }
+
+  .long-term-page .date-picker {
+    width: min(260px, calc(100vw - 56px));
+  }
+
+  /* ----------------------------------------
+     Task
+  ---------------------------------------- */
+  .long-term-page .task-section {
+    min-height: 300px;
+  }
+
+  .long-term-page .task-list {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    flex: none;
+    overflow: visible;
+  }
+
+  .long-term-page .task-row {
+    min-height: 52px;
+    padding: var(--space-2);
+  }
+
+  .long-term-page .task-toggle {
+    width: 24px;
+    height: 24px;
+    margin-right: var(--space-2);
+  }
+
+  .long-term-page .task-content {
+    min-width: 0;
+  }
+
+  .long-term-page .task-title {
+    font-size: var(--font-md);
+  }
+
+  .long-term-page .task-action,
+  .long-term-page .task-delete {
+    padding:
+      var(--space-2)
+      var(--space-2);
+    font-size: var(--font-sm);
+  }
+
+  .long-term-page .task-delete {
+    margin-left: 0;
+  }
+
+  /* ----------------------------------------
+     Add Task
+  ---------------------------------------- */
+  .long-term-page .task-add {
+    width: 100%;
+    height: auto;
+    margin-top: var(--space-3);
+  }
+
+  .long-term-page .task-add-form {
+    width: 100%;
+  }
+
+  .long-term-page .task-add-input {
+    width: auto;
+    flex: 1;
+  }
+
+  .long-term-page .add-task-button {
+    width: 100%;
+  }
+
+  /* ----------------------------------------
+     Reflection
+  ---------------------------------------- */
+  .long-term-page .reflection-section {
+    min-height: 220px;
+  }
+
+  .long-term-page .reflection-input {
+    width: 100%;
+    min-height: 160px;
+    height: 160px;
+    flex: none;
+    line-height: 32px;
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 31px,
+        var(--color-border) 31px,
+        var(--color-border) 32px,
+        transparent 32px,
+        transparent 34px
+      );
+  }
+
+  /* ----------------------------------------
+     Completed Tasks
+  ---------------------------------------- */
+  .long-term-page .completed-task-section {
+    min-height: 180px;
+  }
+
+  .long-term-page .completed-task-groups {
+    height: auto;
+    max-height: none;
+    flex: none;
+    overflow: visible;
+  }
+
+  /* ----------------------------------------
+     Completion
+  ---------------------------------------- */
+  .long-term-page .completion-section {
+    min-height: 130px;
+  }
+
+  .long-term-page .completion-button {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   Small Mobile
+========================================================= */
+@media (max-width: 400px) {
+
+  .long-term-page .content {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+  }
+
+  .long-term-page .section {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+  }
+
+  .long-term-page .task-row {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+  }
+
+  .long-term-page .task-action,
+  .long-term-page .task-delete {
+    padding-left: var(--space-1);
+    padding-right: var(--space-1);
+  }
+
+  .long-term-page .period-picker {
+    gap: var(--space-1);
+  }
+
+  .long-term-page .date-button {
+    padding-left: var(--space-1);
+    padding-right: var(--space-1);
+    font-size: var(--font-xs);
+  }
+
+  .long-term-page .period-separator {
+    font-size: var(--font-sm);
   }
 }

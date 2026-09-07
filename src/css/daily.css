@@ -639,10 +639,15 @@
 ======================================== */
 
 .daily-yesterday-content {
+  min-width: 0;
   min-height: 160px;
+
+  display: flex;
+  flex-direction: column;
 
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
+  overflow: hidden;
 }
 
 .daily-completed-task-list {

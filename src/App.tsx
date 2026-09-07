@@ -8,6 +8,7 @@ import MonthlyPage from "./pages/MonthlyPage"
 import LongTermPage from "./pages/LongTermPage"
 import CompletedPage from "./pages/CompletedPage"
 import Settingspage from "./pages/SettingsPage"
+import ScrollToTop from "./components/ScrollToTop"
 import "./css/common.css"
 
 
@@ -15,6 +16,9 @@ function App() {
 
 
   return (
+  <>
+    <ScrollToTop />
+    
     <Routes>
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/signin" element={<LoginPage />} />
@@ -30,6 +34,7 @@ function App() {
 
       <Route path="*" element={<Navigate to="/daily" replace />} />
     </Routes>
+  </>
   )
 }
 

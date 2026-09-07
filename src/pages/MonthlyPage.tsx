@@ -141,41 +141,6 @@ export default function MonthlyPage() {
 
     <main className="monthly-content">
 
-      <section className="monthly-section monthly-last-month-section">
-
-        <div className="monthly-section-header">
-          <Trophy size={22} strokeWidth={1.8} />
-          <h2>先月の達成</h2>
-        </div>
-
-        {lastMonth ? (
-          completedLastMonthTasks &&
-          completedLastMonthTasks.length > 0 ? (
-
-            <ul className="monthly-completed-task-list">
-
-              {completedLastMonthTasks.map(task => (
-                <li key={task.id}>
-                  {task.title}
-                </li>
-              ))}
-
-            </ul>
-
-          ) : (
-            <p className="monthly-section-message">
-              先月達成したタスクはありません
-            </p>
-          )
-        ) : (
-          <p className="monthly-section-message">
-            先月のタスクはありません
-          </p>
-        )}
-
-      </section>
-
-
       <DndContext
         sensors={sensors}
         onDragEnd={(event) =>
@@ -639,6 +604,41 @@ export default function MonthlyPage() {
         </section>
 
       </DndContext>
+
+
+      <section className="monthly-section monthly-last-month-section">
+
+        <div className="monthly-section-header">
+          <Trophy size={22} strokeWidth={1.8} />
+          <h2>先月の達成</h2>
+        </div>
+
+        {lastMonth ? (
+          completedLastMonthTasks &&
+          completedLastMonthTasks.length > 0 ? (
+
+            <ul className="monthly-completed-task-list">
+
+              {completedLastMonthTasks.map(task => (
+                <li key={task.id}>
+                  {task.title}
+                </li>
+              ))}
+
+            </ul>
+
+          ) : (
+            <p className="monthly-section-message">
+              先月達成したタスクはありません
+            </p>
+          )
+        ) : (
+          <p className="monthly-section-message">
+            先月のタスクはありません
+          </p>
+        )}
+
+      </section>
 
 
       <section className="monthly-section monthly-completed-weekly-section">

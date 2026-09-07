@@ -721,7 +721,7 @@
   font-size: var(--font-sm);
   font-weight: var(--weight-medium);
   line-height: 1.5;
-  text-align: left;
+  text-align: center;
 }
 
 .long-term-page .completed-task-list li::before {

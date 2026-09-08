@@ -1,23 +1,18 @@
 .sidebar {
   width: 180px;
-
   min-width: 180px;
-
   height: 100vh;
 
   box-sizing: border-box;
-
   padding: 24px 12px;
 
-  background: #fef9f3;
-
-  border-right: 1px solid #eed398;
-
+  background: var(--color-background);
+  border-right: 1px solid var(--color-border);
   overflow: hidden;
 }
 
 .sidebar svg {
-  color: #6b4326;
+  color: var(--color-primary);
   flex-shrink: 0;
   margin-right: 8px;
 }
@@ -26,48 +21,35 @@
 .sidebar h2,
 .sidebar-title {
   margin: 0 0 28px;
-
   padding: 0 14px;
 
-  color: #663912;
-
+  color: var(--color-primary-dark);
   font-size: 18px;
-
   font-weight: 700;
 }
 
 .sidebar a,
 .sidebar button {
   width: 100%;
-
   min-height: 46px;
 
   box-sizing: border-box;
-
   display: flex;
-
   align-items: center;
 
   padding: 0 14px;
-
   margin-bottom: 15px;
-
   border: 1px solid transparent;
-
   border-radius: 2px;
 
   background-color: transparent;
-
-  color: #663912;
+  color: var(--color-primary-dark);
 
   font-family: inherit;
-
   font-size: 14px;
 
   text-decoration: none;
-
   cursor: pointer;
-
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
@@ -75,11 +57,11 @@
 
 .sidebar a:hover,
 .sidebar button:hover {
-  background-color: #f5e8d8;
+  background-color: var(--color-background-hover);
 
-  border-color: #eed385;
+  border-color: var(--color-background-hover);
 
-  color: #663912;
+  color: var(--color-primary-dark);
 
   text-decoration: none;
 }

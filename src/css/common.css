@@ -95,3 +95,16 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
+
+.loading-screen {
+  width: 100%;
+  min-height: 100vh;
+
+  margin: 0;
+  padding-top: var(--space-8);
+  box-sizing: border-box;
+  
+  background-color: #ffffff;
+  color: var(--color-text);
+  text-align: center;
+}

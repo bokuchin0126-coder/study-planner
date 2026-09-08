@@ -4,6 +4,7 @@
 .daily-page {
   width: 100%;
   height: 100vh;
+
   display: flex;
   overflow: hidden;
   color: var(--color-text);
@@ -17,6 +18,7 @@
   flex: 1;
   min-width: 0;
   min-height: 0;
+
   height: 100vh;
   box-sizing: border-box;
   display: grid;
@@ -300,7 +302,6 @@
 .daily-task-action,
 .daily-task-delete {
   flex-shrink: 0;
-
   padding: var(--space-1) var(--space-2);
 
   border: 1px solid transparent;
@@ -314,9 +315,7 @@
   font-weight: var(--weight-regular);
 
   cursor: pointer;
-
   text-decoration: none;
-
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
@@ -361,9 +360,7 @@
   flex: 1;
 
   height: var(--control-height-sm);
-
   box-sizing: border-box;
-
   padding: 0 var(--space-2);
 
   border: 1px solid var(--color-border-input);
@@ -409,7 +406,6 @@
 
   left: 18px;
   bottom: 17px;
-
   margin: 0;
 
   color: var(--color-text);
@@ -429,7 +425,6 @@
   justify-content: center;
 
   padding: 0 var(--space-3);
-
   box-sizing: border-box;
 
   border: 1px solid var(--color-primary);
@@ -442,7 +437,6 @@
   font-size: var(--font-sm);
 
   cursor: pointer;
-
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
@@ -450,7 +444,6 @@
 
 .daily-add-task-button::before {
   content: "+";
-
   margin-right: var(--space-2);
 
   font-size: var(--font-lg);
@@ -485,7 +478,6 @@
   height: var(--control-height-md);
 
   box-sizing: border-box;
-
   padding: 0 var(--space-2);
 
   border: 1px solid var(--color-border-input);
@@ -496,7 +488,6 @@
 
   font-family: inherit;
   font-size: var(--font-sm);
-
   outline: none;
 }
 
@@ -513,9 +504,7 @@
 ======================================== */
 .daily-task-add-button {
   height: var(--control-height-md);
-
   flex-shrink: 0;
-
   padding: 0 var(--space-3);
 
   border: 1px solid var(--color-primary);
@@ -528,7 +517,6 @@
   font-size: var(--font-sm);
 
   cursor: pointer;
-
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease;
@@ -555,11 +543,9 @@
   width: 100%;
 
   box-sizing: border-box;
-
   resize: none;
 
   padding: var(--space-2) var(--space-3);
-
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
 
@@ -571,7 +557,6 @@
   line-height: 36px;
 
   outline: none;
-
   background-image:
     repeating-linear-gradient(
       to bottom,
@@ -614,7 +599,6 @@
 
   margin: 0;
   padding: var(--space-5);
-
   box-sizing: border-box;
 
   color: var(--color-text);
@@ -622,7 +606,6 @@
 
   font-size: var(--font-sm);
   line-height: 1.6;
-
   text-align: center;
 }
 
@@ -658,7 +641,6 @@
   padding: 0;
 
   list-style: none;
-
   overflow-y: auto;
 
   border-top: 1px solid var(--color-border);
@@ -687,7 +669,6 @@
 
 .daily-completed-task-list li {
   padding: var(--space-3) var(--space-2);
-
   border-bottom: 1px solid var(--color-border);
 
   color: var(--color-text);
@@ -724,7 +705,6 @@
 
 .daily-summary-section .daily-section-header h2 {
   margin: 0;
-
   color: var(--color-text);
 
   font-size: var(--font-xl);
@@ -740,7 +720,6 @@
 .daily-summary-goal {
   padding-bottom: var(--space-4);
   margin-bottom: var(--space-4);
-
   border-bottom: 1px solid var(--color-text-muted);
 
   text-align: center;
@@ -750,7 +729,6 @@
   display: block;
 
   margin-bottom: var(--space-1);
-
   color: var(--color-text-secondary);
 
   font-size: var(--font-sm);
@@ -760,7 +738,6 @@
 
 .daily-summary-goal-value {
   margin: 0 auto;
-
   max-width: 230px;
 
   color: var(--color-text);
@@ -777,7 +754,6 @@
 
 .daily-summary-progress {
   padding: var(--space-3) 0 var(--space-4);
-
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -789,7 +765,6 @@
   margin-bottom: var(--space-2);
 
   color: var(--color-text-secondary);
-
   font-size: var(--font-sm);
   font-weight: var(--weight-medium);
 }
@@ -931,6 +906,7 @@
   .daily-page {
     width: 100%;
     min-height: 100vh;
+
     height: auto;
     display: block;
     overflow: visible;
@@ -939,6 +915,7 @@
   .daily-content {
     width: 100%;
     height: auto;
+
     min-height: 0;
     box-sizing: border-box;
 
@@ -963,11 +940,11 @@
   .daily-section {
     width: 100%;
     height: auto;
+
     min-height: 0;
     flex: none;
 
     box-sizing: border-box;
-
     padding:
       var(--space-5)
       var(--space-3);

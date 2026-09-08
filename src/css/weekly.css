@@ -4,6 +4,7 @@
 .weekly-page {
   width: 100%;
   height: 100vh;
+
   display: flex;
   overflow: hidden;
   color: var(--color-text);
@@ -16,14 +17,17 @@
   flex: 1;
   min-width: 0;
   min-height: 0;
+
   height: 100vh;
   box-sizing: border-box;
   display: grid;
+
   grid-template-columns: 5fr 3fr 2fr;
   grid-template-rows:
     minmax(0, 3fr)
     minmax(0, 2fr);
   gap: var(--space-4);
+
   padding: var(--space-5);
   overflow: hidden;
 }
@@ -35,9 +39,11 @@
   position: relative;
   min-width: 0;
   min-height: 0;
+
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+
   padding: var(--space-5) var(--space-4) 60px;
   background: rgba(255, 252, 245, 0.96);
   border-radius: var(--radius-sm);
@@ -76,6 +82,7 @@
 .completed-daily-section {
   grid-column: 3;
   grid-row: 1 / 3;
+
   padding: var(--space-5) var(--space-4);
   background: rgba(255, 252, 245, 0.96);
   border-radius: var(--radius-sm);
@@ -88,6 +95,7 @@
 .weekly-section-header {
   display: flex;
   align-items: center;
+
   flex-shrink: 0;
   margin-bottom: var(--space-3);
 }
@@ -95,6 +103,7 @@
 .weekly-section-header h2 {
   margin: 0;
   color: var(--color-text);
+
   font-size: var(--font-xl);
   font-weight: var(--weight-bold);
   line-height: 1.5;
@@ -114,12 +123,15 @@
   min-height: 0;
   flex: 1;
   width: 100%;
+
   box-sizing: border-box;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--color-surface);
+
   scrollbar-width: thin;
   scrollbar-color: var(--color-border-input) transparent;
 }
@@ -151,6 +163,7 @@
   width: 100%;
   min-height: 46px;
   box-sizing: border-box;
+
   display: flex;
   align-items: center;
   padding: 0 var(--space-3);
@@ -167,19 +180,24 @@
 .weekly-task-toggle {
   width: 24px;
   height: 24px;
+
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+
   padding: 0;
   margin-right: var(--space-2);
   border: 1.5px solid var(--color-text);
   border-radius: var(--radius-sm);
+
   color: var(--color-text);
   background-color: var(--color-surface);
+
   font-family: inherit;
   font-size: var(--font-3xl);
   line-height: 1;
+
   cursor: pointer;
   transition:
     background-color 0.15s ease,
@@ -209,6 +227,7 @@
   min-width: 0;
   flex: 1;
   display: flex;
+
   align-items: center;
   background-color: var(--color-surface);
   gap: var(--space-2);
@@ -218,10 +237,12 @@
   min-width: 0;
   white-space: nowrap;
   flex: 1;
+
   margin: 0;
   color: var(--color-text);
   font-size: var(--font-md);
   font-weight: var(--weight-medium);
+
   line-height: 1.5;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -231,6 +252,7 @@
 .weekly-task-title.weekly-task-title-expanded {
   display: block;
   overflow: visible;
+
   white-space: normal;
   overflow-wrap: anywhere;
 }
@@ -250,11 +272,14 @@
   padding: var(--space-1) var(--space-2);
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
+
   background-color: var(--color-surface);
   color: var(--color-primary);
+
   font-family: inherit;
   font-size: var(--font-sm);
   font-weight: var(--weight-regular);
+
   cursor: pointer;
   text-decoration: none;
   transition:
@@ -288,6 +313,7 @@
   min-width: 0;
   flex: 1;
   display: flex;
+
   align-items: center;
   gap: var(--space-2);
 }
@@ -296,12 +322,15 @@
   min-width: 0;
   flex: 1;
   height: var(--control-height-sm);
+
   box-sizing: border-box;
   padding: 0 var(--space-2);
   border: 1px solid var(--color-border-input);
   border-radius: var(--radius-sm);
+
   background-color: var(--color-surface);
   color: var(--color-text);
+
   font-family: inherit;
   font-size: var(--font-md);
   outline: none;
@@ -319,6 +348,7 @@
   right: 18px;
   bottom: 17px;
   height: var(--control-height-md);
+
   display: flex;
   align-items: center;
   margin: 0;
@@ -332,12 +362,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   padding: 0 var(--space-3);
   box-sizing: border-box;
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-sm);
+
   background-color: var(--color-primary);
   color: var(--color-surface);
+
   font-family: inherit;
   font-size: var(--font-sm);
   cursor: pointer;
@@ -349,6 +382,7 @@
 .weekly-add-task-button::before {
   content: "+";
   margin-right: var(--space-2);
+
   font-size: var(--font-lg);
   font-weight: var(--weight-regular);
   line-height: 1;
@@ -370,6 +404,7 @@
 .weekly-task-add-form {
   display: flex;
   align-items: center;
+
   gap: var(--space-2);
   margin: 0;
 }
@@ -378,12 +413,15 @@
   min-width: 0;
   width: 185px;
   height: var(--control-height-md);
+
   box-sizing: border-box;
   padding: 0 var(--space-2);
   border: 1px solid var(--color-border-input);
   border-radius: var(--radius-sm);
+
   background-color: var(--color-surface);
   color: var(--color-text);
+
   font-family: inherit;
   font-size: var(--font-sm);
   outline: none;
@@ -403,11 +441,14 @@
 .weekly-task-add-button {
   height: var(--control-height-md);
   flex-shrink: 0;
+
   padding: 0 var(--space-3);
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-sm);
+
   background-color: var(--color-primary);
   color: var(--color-surface);
+
   font-family: inherit;
   font-size: var(--font-sm);
   cursor: pointer;
@@ -432,15 +473,19 @@
 .weekly-section-message {
   flex: 1;
   min-height: 0;
+
   display: flex;
   align-items: flex-start;
   justify-content: center;
+
   margin: 0;
   padding: var(--space-5);
   box-sizing: border-box;
   border: none;
+
   color: var(--color-text);
   background-color: var(--color-surface);
+
   font-size: var(--font-sm);
   line-height: 1.6;
   text-align: center;
@@ -466,17 +511,21 @@
   min-height: 0;
   flex: 1;
   width: 100%;
+
   box-sizing: border-box;
   resize: none;
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+
   background-color: var(--color-surface);
   color: var(--color-text);
+
   font-family: inherit;
   font-size: var(--font-md);
   line-height: 36px;
   outline: none;
+
   background-image:
     repeating-linear-gradient(
       to bottom,
@@ -511,10 +560,12 @@
   flex: 1;
   margin: 0;
   padding: 0;
+
   list-style: none;
   overflow-y: auto;
   border: 1px solid var(--color-border);
   background-color: var(--color-surface);
+
   scrollbar-width: thin;
   scrollbar-color: var(--color-border-input) transparent;
 }
@@ -536,6 +587,7 @@
   padding: var(--space-3) var(--space-2);
   border-bottom: 1px solid var(--color-border);
   color: var(--color-text);
+
   font-size: var(--font-md);
   font-weight: var(--weight-medium);
   line-height: 1.5;
@@ -556,6 +608,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+
   padding-right: 3px;
   scrollbar-width: thin;
   scrollbar-color: var(--color-border-input) transparent;
@@ -579,6 +632,7 @@
   padding-top: 0;
   color: var(--color-text-secondary);
   border-top: 1px solid var(--color-border);
+
   font-size: var(--font-xs);
   font-weight: var(--weight-medium);
   line-height: 1.4;
@@ -587,8 +641,10 @@
 .completed-daily-task {
   margin: 0 0 var(--space-1);
   color: var(--color-text);
+
   font-size: var(--font-xs);
   font-weight: var(--weight-medium);
+
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
@@ -615,6 +671,7 @@
     width: 100%;
     min-height: 100vh;
     height: auto;
+
     display: block;
     overflow: visible;
   }
@@ -623,9 +680,11 @@
     width: 100%;
     height: auto;
     min-height: 0;
+
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+
     gap: var(--space-3);
     padding:
       calc(56px + var(--space-4))
@@ -641,6 +700,7 @@
     width: 100%;
     height: auto;
     min-height: 0;
+
     flex: none;
     box-sizing: border-box;
     padding:
@@ -684,6 +744,7 @@
     width: 100%;
     height: auto;
     min-height: 0;
+
     flex: none;
     overflow: visible;
   }
@@ -726,6 +787,7 @@
     position: static;
     width: 100%;
     height: auto;
+
     display: flex;
     align-items: center;
     margin-top: var(--space-3);
@@ -756,6 +818,7 @@
     width: 100%;
     min-height: 160px;
     height: 160px;
+
     flex: none;
     line-height: 32px;
     background-image:
@@ -780,6 +843,7 @@
   .weekly-completed-task-list {
     height: auto;
     max-height: none;
+    
     overflow: visible;
     flex: none;
   }

@@ -4,6 +4,7 @@
 .monthly-page {
   width: 100%;
   height: 100vh;
+
   display: flex;
   overflow: hidden;
   color: var(--color-text);
@@ -17,12 +18,15 @@
   min-width: 0;
   min-height: 0;
   height: 100vh;
+
   box-sizing: border-box;
   display: grid;
+
   grid-template-columns: 5fr 3fr 2fr;
   grid-template-rows:
     minmax(0, 3fr)
     minmax(0, 2fr);
+
   gap: var(--space-4);
   padding: var(--space-5);
   overflow: hidden;
@@ -35,12 +39,15 @@
   position: relative;
   min-width: 0;
   min-height: 0;
+
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+
   padding: var(--space-5) var(--space-4) 60px;
   background: rgba(255, 252, 245, 0.96);
   border-radius: var(--radius-sm);
+
   overflow: hidden;
 }
 
@@ -56,6 +63,7 @@
 .monthly-reflection-section {
   grid-column: 1;
   grid-row: 2;
+
   margin-top: -16px;
   padding-bottom: var(--space-4);
   border-top: 1px solid var(--color-border);
@@ -83,6 +91,7 @@
 ======================================== */
 .monthly-section-header {
   display: flex;
+
   align-items: center;
   flex-shrink: 0;
   margin-bottom: var(--space-3);
@@ -91,6 +100,7 @@
 .monthly-section-header h2 {
   margin: 0;
   color: var(--color-text);
+
   font-size: var(--font-xl);
   font-weight: var(--weight-bold);
   line-height: 1.5;
@@ -108,6 +118,7 @@
 .monthly-section-description {
   margin: 3px 0 0;
   color: var(--color-text-muted);
+
   font-size: var(--font-sm);
   line-height: 1.5;
 }
@@ -120,12 +131,15 @@
   min-height: 0;
   flex: 1;
   width: 100%;
+
   box-sizing: border-box;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--color-surface);
+
   scrollbar-width: thin;
   scrollbar-color: var(--color-border-input) transparent;
 }
@@ -156,9 +170,11 @@
 .monthly-task-row {
   width: 100%;
   min-height: 46px;
+
   box-sizing: border-box;
   display: flex;
   align-items: center;
+
   padding: 0 var(--space-3);
   background-color: var(--color-surface);
 }
@@ -173,18 +189,23 @@
 .monthly-task-toggle {
   width: 24px;
   height: 24px;
+
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+
   padding: 0;
   margin-right: var(--space-2);
   border: 1.5px solid var(--color-text);
   border-radius: var(--radius-sm);
+
   color: var(--color-text);
   background-color: var(--color-surface);
+
   font-family: inherit;
   font-size: var(--font-3xl);
+
   line-height: 1;
   cursor: pointer;
   transition:
@@ -216,6 +237,7 @@
   flex: 1;
   display: flex;
   align-items: center;
+
   gap: var(--space-2);
   background-color: var(--color-surface);
 }
@@ -224,11 +246,14 @@
   min-width: 0;
   flex: 1;
   margin: 0;
+
   color: var(--color-text);
   font-size: var(--font-md);
   font-weight: var(--weight-medium);
+
   line-height: 1.5;
   white-space: nowrap;
+
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
@@ -237,6 +262,7 @@
 .monthly-task-title.monthly-task-title-expanded {
   display: block;
   overflow: visible;
+
   white-space: normal;
   overflow-wrap: anywhere;
 }
@@ -254,6 +280,7 @@
   min-width: 0;
   flex: 1;
   display: flex;
+
   align-items: center;
   gap: var(--space-2);
 }
@@ -262,12 +289,15 @@
   min-width: 0;
   flex: 1;
   height: var(--control-height-sm);
+
   box-sizing: border-box;
   padding: 0 var(--space-2);
   border: 1px solid var(--color-border-input);
   border-radius: var(--radius-sm);
+
   background-color: var(--color-surface);
   color: var(--color-text);
+
   font-family: inherit;
   font-size: var(--font-md);
   outline: none;
@@ -285,13 +315,16 @@
   flex-shrink: 0;
   padding: var(--space-1) var(--space-2);
   margin: 0;
+
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background-color: var(--color-surface);
   color: var(--color-primary);
+
   font-family: inherit;
   font-size: var(--font-sm);
   font-weight: var(--weight-regular);
+
   cursor: pointer;
   text-decoration: none;
   transition:
@@ -327,6 +360,7 @@
   right: 18px;
   bottom: 17px;
   height: var(--control-height-md);
+
   display: flex;
   align-items: center;
   margin: 0;
@@ -340,14 +374,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   padding: 0 var(--space-3);
   box-sizing: border-box;
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-sm);
+
   background-color: var(--color-primary);
   color: var(--color-surface);
   font-family: inherit;
   font-size: var(--font-sm);
+
   cursor: pointer;
   transition:
     background-color 0.15s ease,
@@ -357,6 +394,7 @@
 .monthly-add-task-button::before {
   content: "+";
   margin-right: var(--space-2);
+
   font-size: var(--font-lg);
   font-weight: var(--weight-regular);
   line-height: 1;
@@ -386,12 +424,15 @@
   min-width: 0;
   width: 185px;
   height: var(--control-height-md);
+
   box-sizing: border-box;
   padding: 0 var(--space-2);
   border: 1px solid var(--color-border-input);
   border-radius: var(--radius-sm);
+
   background-color: var(--color-surface);
   color: var(--color-text);
+
   font-family: inherit;
   font-size: var(--font-sm);
   outline: none;
@@ -411,13 +452,17 @@
 .monthly-task-add-button {
   height: var(--control-height-md);
   flex-shrink: 0;
+
   padding: 0 var(--space-3);
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-sm);
+
   background-color: var(--color-primary);
   color: var(--color-surface);
+
   font-family: inherit;
   font-size: var(--font-sm);
+
   cursor: pointer;
   transition:
     background-color 0.15s ease,
@@ -442,13 +487,16 @@
   min-height: 0;
   display: flex;
   align-items: center;
+
   justify-content: center;
   margin: 0;
   padding: var(--space-5);
   box-sizing: border-box;
   border: none;
+
   color: var(--color-text);
   background-color: var(--color-surface);
+
   font-size: var(--font-sm);
   line-height: 1.6;
   text-align: center;
@@ -464,6 +512,7 @@
 .monthly-completed-weekly-section .monthly-section-message {
   background-color: rgba(255, 252, 245, 0.96);
   padding: var(--space-2);
+
   align-items: flex-start;
   font-size: var(--font-xs);
 }
@@ -476,17 +525,21 @@
   min-height: 0;
   flex: 1;
   width: 100%;
+
   box-sizing: border-box;
   resize: none;
   padding: var(--space-2) var(--space-3);
+
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background-color: var(--color-surface);
   color: var(--color-text);
+
   font-family: inherit;
   font-size: var(--font-md);
   line-height: 36px;
   outline: none;
+
   background-image:
     repeating-linear-gradient(
       to bottom,
@@ -521,10 +574,12 @@
   flex: 1;
   margin: 0;
   padding: 0;
+
   list-style: none;
   overflow-y: auto;
   border: 1px solid var(--color-border);
   background-color: var(--color-surface);
+
   scrollbar-width: thin;
   scrollbar-color: var(--color-border-input) transparent;
 }
@@ -546,8 +601,10 @@
   padding: var(--space-3) var(--space-2);
   border-bottom: 1px solid var(--color-border);
   color: var(--color-text);
+
   font-size: var(--font-md);
   font-weight: var(--weight-medium);
+
   line-height: 1.5;
   text-align: left;
 }
@@ -564,8 +621,10 @@
 .monthly-completed-weekly-list {
   min-height: 0;
   flex: 1;
+
   overflow-y: auto;
   overflow-x: hidden;
+
   padding-right: 3px;
   scrollbar-width: thin;
   scrollbar-color: var(--color-border-input) transparent;
@@ -590,8 +649,10 @@
 .monthly-completed-weekly-title {
   margin: 0 0 var(--space-1);
   padding-top: 0;
+
   color: var(--color-text-secondary);
   border-top: 1px solid var(--color-border);
+
   font-size: var(--font-xs);
   font-weight: var(--weight-medium);
   line-height: 1.4;
@@ -614,8 +675,10 @@
 .monthly-completed-task-list li {
   padding: 0 0 var(--space-1);
   border-bottom: none;
+
   background-color: transparent;
   color: var(--color-text);
+
   font-size: var(--font-xs);
   font-weight: var(--weight-medium);
   line-height: 1.5;
@@ -640,6 +703,7 @@
     width: 100%;
     min-height: 100vh;
     height: auto;
+
     display: block;
     overflow: visible;
   }
@@ -648,9 +712,11 @@
     width: 100%;
     height: auto;
     min-height: 0;
+
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+
     gap: var(--space-3);
     padding:
       calc(56px + var(--space-4))
@@ -666,8 +732,10 @@
     width: 100%;
     height: auto;
     min-height: 0;
+
     flex: none;
     box-sizing: border-box;
+
     padding:
       var(--space-5)
       var(--space-3);
@@ -709,6 +777,7 @@
     width: 100%;
     height: auto;
     min-height: 0;
+
     flex: none;
     overflow: visible;
   }
@@ -751,6 +820,7 @@
     position: static;
     width: 100%;
     height: auto;
+
     display: flex;
     align-items: center;
     margin-top: var(--space-3);
@@ -781,6 +851,7 @@
     width: 100%;
     min-height: 160px;
     height: 160px;
+
     flex: none;
     line-height: 32px;
     background-image:
@@ -806,6 +877,7 @@
     height: auto;
     max-height: none;
     overflow: visible;
+
     flex: none;
   }
 
@@ -825,6 +897,7 @@
     width: 100%;
     height: auto;
     max-height: none;
+    
     flex: none;
     overflow: visible;
     padding-right: 0;

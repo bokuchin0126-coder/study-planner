@@ -570,12 +570,16 @@
    Last Month
 ======================================== */
 .monthly-completed-task-list {
+  min-height: 160px;
+  flex: 1;
   margin: 0;
   padding: 0;
 
   list-style: none;
   overflow-y: auto;
-  
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+
   scrollbar-width: thin;
   scrollbar-color: var(--color-border-input) transparent;
 }
@@ -625,6 +629,25 @@
   scrollbar-width: thin;
   scrollbar-color: var(--color-border-input) transparent;
 }
+
+.monthly-completed-weekly-task-list {
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.monthly-completed-weekly-task-list li {
+  margin: 0 0 var(--space-1);
+  color: var(--color-text);
+
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
+
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
 
 .monthly-completed-weekly-list::-webkit-scrollbar {
   width: 6px;

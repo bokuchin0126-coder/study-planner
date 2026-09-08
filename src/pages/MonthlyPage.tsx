@@ -668,7 +668,7 @@ export default function MonthlyPage() {
                   </p>
 
                   {week && week.tasks.length > 0 ? (
-                    <ul className="monthly-completed-task-list">
+                    <ul className="monthly-completed-weekly-task-list">
                       {week.tasks.map(task => (
                         <li key={task.id}>
                           ✓ {task.title}

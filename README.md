@@ -1,75 +1,110 @@
-# React + TypeScript + Vite
+# Study Planner
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## アプリ概要
 
-Currently, two official plugins are available:
+Study Plannerは、日々の学習計画を「日・週・月・長期」の単位で管理できる学習計画管理Webアプリです。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+自分自身が継続的に学習計画を管理することを目的として、タスクの登録・編集・完了管理だけでなく、各期間の振り返りや達成履歴まで一つのアプリ内で管理できるよう設計しました。
 
-## React Compiler
+企画・設計・実装・テスト・本番環境へのデプロイまで、一連の開発工程を個人で行っています。
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 本番環境
 
-## Expanding the ESLint configuration
+[Study Planner](https://study-planner-mu-eight.vercel.app/)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## デモ
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 開発背景・目的
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+学習を続ける中で、あらかじめ目標やその日に取り組むことが決まっているときと、何をするか決まってないときでは、学習の集中度に大きな違いがあると感じました。
+そこで、長期的な目標を起点として、日・週・月などの期間ごとに取り組むべきことをあらかじめ整理し、次に何をするか迷わず学習に取り組めるようにしたいと考えました。
+その考えをもとに、学習目標から日々のタスクまでを一つのアプリで管理でき、学習後の振り返りや達成状況も確認できる「Study Planner」を開発しました。
 
-```
+## 主な機能
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- 長期目標・日・週・月ごとの学習計画管理
+- タスクの追加・編集・削除・完了管理
+- 学習内容の振り返り記録
+- 完了したタスク・達成履歴の確認
+- メールアドレス・GitHub・Googleによる認証
+- ユーザーごとのデータ管理
+- PC・スマートフォンに対応したレスポンシブUI
+- アカウント管理・退会
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 使用技術
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- TypeScript
+- React
+- Vite
+- Supabase(認証・データベース)
+- PostgraSQL(データベース)
+- React Router(ページ遷移)
+- dnd-kit(ドラッグ＆ドロップ)
+- Vitest(テスト)
 
-```
+## 開発で工夫した点
+
+### 学習計画が崩れても継続できるタスク管理
+学習計画では、予定通りにタスクを消化できないことがあります。
+そこで、Dailyで未達成となったタスクを翌日に繰り越せる仕組みを設計しました。
+
+単純にタスクを完了・未完了で管理するだけではなく、予定通りに進まなかった場合でも、
+次の日の学習計画に自然に繋げられるようにすることで、継続して利用しやすい設計を意識しました。
+
+### 期間をまたいだ達成状況の可視化
+Dailyで完了したタスクだけでなく、Weekly・Monthly・Long Termの各ページから、
+それぞれの期間内で達成した下位期間のタスクを確認できるようにしました。
+
+長期的な目標だけを管理するのではなく、日々の達成が週・月・長期の計画にどうつながっているかを
+確認できるようにすることで、学習の進捗を一つの流れとして把握できるようにしています。
+
+## 認証・データ管理
+
+Study PlannerではSupabase Authenticationを利用してユーザー認証を実装しています。
+
+メールアドレス・パスワードによる認証に加えて、GitHubおよびGoogle OAuthによるログインにも対応しています。
+
+ユーザーごとのデータをSupabase上で管理し、認証されたユーザーが自身の学習計画を管理できる構成としています。
+
+## 品質管理・テスト
+
+実装後の動作確認だけでなく、Vitestによるテスト、ESLintによるコードチェック、TypeScriptの型チェックを含むbuild確認を行っています。
+
+最終確認時点では97件のテストがすべて成功し、ESLintでもエラー・警告がないことを確認した上で本番環境へデプロイしています。
+
+また、開発中に発生した不具合については、原因を確認した上で修正し、ローカル環境だけでなく本番環境でも動作確認を行っています。
+
+## レスポンシブ対応
+
+PCだけでなくスマートフォンからも利用できるよう、レスポンシブ対応を行っています。
+
+スマートフォンでは画面下部に固定ナビゲーションを配置し、主要な画面へアクセスしやすいUIとしています。
+
+また、画面幅に応じてレイアウトやスクロールの挙動を調整し、実機でも動作確認を行っています。
+
+## UI・CSS設計
+
+ここにCSS変数によるデザイントークンの共通化、各ページ間のUI統一、レスポンシブを前提とした設計などを書く。
+
+## Git・開発フロー
+
+ここにGit / GitHubを利用した開発フローを書く。
+Issue、ブランチ、Pull Request、merge、mainへの反映など、実際にどのように開発・管理したかを記載。
+
+## デプロイ・本番環境
+
+GitHubとVercelを連携し、mainブランチへの変更を本番環境へ自動デプロイする構成としています。
+
+ローカル環境と本番環境で必要な環境変数を分けて管理し、SupabaseのAuthenticationおよびOAuthについても本番環境で利用できるよう設定しています。
+
+## データベース設計
+
+ここにテーブル構成、リレーション、ユーザーごとのデータ管理などを記載。
+可能であればER図も掲載する。
+
+## 今後の改善
+
+ここに「現時点で実装していないが、今後追加・改善したい機能」を記載。
+実際に使いながら見つかった改善点もここに反映する。
+<img width="596" height="2619" alt="image" src="https://github.com/user-attachments/assets/2356bc65-00f8-4cc5-ba1a-ff47383489a3" />

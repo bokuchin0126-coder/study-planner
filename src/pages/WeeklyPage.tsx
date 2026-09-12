@@ -77,9 +77,9 @@ export default function WeeklyPage() {
     setExpandadTaskId(null)
   })
 
-  const weekAddRef = useRef<HTMLDivElement | null>(null)
-  const nextWeekAddRef = useRef<HTMLDivElement | null>(null)
-  const editRef = useRef<HTMLDivElement | null>(null)
+  const weekAddRef = useRef<HTMLFormElement | null>(null)
+  const nextWeekAddRef = useRef<HTMLFormElement | null>(null)
+  const editRef = useRef<HTMLFormElement | null>(null)
 
   useOutsideClick(weekAddRef, () => {
     setWeekShowAdd(false)
@@ -195,46 +195,37 @@ export default function WeeklyPage() {
                       </button> 
    
                       {editingId === task.id ? (
-                        <div 
+                        <form 
                           className="weekly-task-edit"
                           ref={editRef}
-                        > 
-  
+                          onSubmit={async (e) => {
+                            e.preventDefault()
+                            await updateWeeklyTaskTitle(
+                              task.id,
+                              editText,
+                              weekStart
+                            )
+                            setEditText("")
+                            setEditingId("")
+                          }}
+                        >
+
                           <input 
                             value={editText}
                             autoFocus 
                             onChange={(e) =>
                               setEditText(e.target.value) 
                             }
-                            onKeyDown={async (e) => {
-                              if (e.key === "Enter") { 
-                                await updateWeeklyTaskTitle( 
-                                  task.id,
-                                  editText, 
-                                  weekStart
-                                ) 
-                                setEditText("") 
-                                setEditingId("")
-                              } 
-                            }} 
                           /> 
    
                           <button 
                             className="weekly-task-action" 
-                            onClick={async () => {
-                              await updateWeeklyTaskTitle( 
-                                task.id, 
-                                editText, 
-                                weekStart 
-                              ) 
-                              setEditText("")
-                              setEditingId("")
-                            }} 
+                            type="submit"
                           > 
                             保存
                           </button> 
    
-                        </div> 
+                        </form> 
                       ) : ( 
                         <div className="weekly-task-content"> 
       
@@ -299,9 +290,20 @@ export default function WeeklyPage() {
             <div className="weekly-task-add"> 
  
               {weekShowAdd ? ( 
-                <div 
+                <form 
                   className="weekly-task-add-form"
                   ref={weekAddRef}
+                  onSubmit={async (e) => {
+                    e.preventDefault()
+                    const text = addText
+                    setAddText("")
+                    await addWeeklyRecord(
+                      text,
+                      weekStart,
+                      weekEnd
+                    )
+                    setWeekShowAdd(false)
+                  }}
                 >  
  
                   <input 
@@ -312,37 +314,16 @@ export default function WeeklyPage() {
                     onChange={(e) => 
                       setAddText(e.target.value) 
                     } 
-                    onKeyDown={async (e) => { 
-                      if (e.key === "Enter") { 
-                        const text = addText
-                        setAddText("") 
-                        await addWeeklyRecord( 
-                          text,
-                          weekStart, 
-                          weekEnd 
-                        ) 
-                        setWeekShowAdd(false)
-                      } 
-                    }} 
                   /> 
  
                   <button
                     className="weekly-task-add-button" 
-                    onClick={async () => { 
-                      const text = addText
-                      setAddText("") 
-                      await addWeeklyRecord( 
-                        text,
-                        weekStart, 
-                        weekEnd 
-                      ) 
-                      setWeekShowAdd(false) 
-                    }} 
+                    type="submit"
                   > 
                     追加 
                   </button> 
  
-                </div> 
+                </form> 
               ) : ( 
                 <div> 
  
@@ -430,9 +411,19 @@ export default function WeeklyPage() {
                     <div className="weekly-task-row">
  
                       {editingId === task.id ? ( 
-                        <div 
+                        <form 
                           className="weekly-task-edit"
                           ref={editRef}
+                          onSubmit={async (e) => {
+                            e.preventDefault()
+                            await updateWeeklyTaskTitle(
+                              task.id,
+                              editText,
+                              nextWeekStart
+                            )
+                            setEditText("")
+                            setEditingId(null)
+                          }}
                         >  
  
                           <input 
@@ -441,35 +432,16 @@ export default function WeeklyPage() {
                             onChange={(e) => 
                               setEditText(e.target.value) 
                             } 
-                            onKeyDown={async (e) => { 
-                              if (e.key === "Enter") { 
-                                await updateWeeklyTaskTitle( 
-                                  task.id, 
-                                  editText, 
-                                  nextWeekStart 
-                                ) 
-                                setEditText("") 
-                                setEditingId("") 
-                              } 
-                            }} 
                           /> 
    
                           <button 
                             className="weekly-task-action"
-                            onClick={async () => { 
-                              await updateWeeklyTaskTitle(
-                                task.id, 
-                                editText, 
-                                nextWeekStart
-                              ) 
-                              setEditText("") 
-                              setEditingId("")
-                            }}
+                            type="submit"
                           > 
                             保存
                           </button>
   
-                        </div> 
+                        </form> 
                       ) : ( 
                         <div className="weekly-task-content"> 
    
@@ -531,9 +503,20 @@ export default function WeeklyPage() {
             <div className="weekly-task-add"> 
  
               {nextWeekShowAdd ? ( 
-                <div 
+                <form 
                   className="weekly-task-add-form"
                   ref={nextWeekAddRef}
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    const text = addText;
+                    setAddText("");
+                    await addWeeklyRecord(
+                      text,
+                      nextWeekStart,
+                      nextWeekEnd
+                    );
+                    setNextWeekShowAdd(false);
+                  }}
                 > 
  
                   <input 
@@ -544,37 +527,16 @@ export default function WeeklyPage() {
                     onChange={(e) => 
                       setAddText(e.target.value) 
                     } 
-                    onKeyDown={async (e) => { 
-                      if (e.key === "Enter") { 
-                        const text = addText
-                        setAddText("")
-                        await addWeeklyRecord( 
-                          text, 
-                          nextWeekStart, 
-                          nextWeekEnd 
-                        )  
-                        setNextWeekShowAdd(false)
-                      } 
-                    }} 
                   /> 
  
                   <button 
                     className="weekly-task-add-button"
-                    onClick={async () => { 
-                      const text = addText
-                      setAddText("") 
-                      await addWeeklyRecord( 
-                        text, 
-                        nextWeekStart, 
-                        nextWeekEnd 
-                      ) 
-                      setNextWeekShowAdd(false) 
-                    }} 
+                    type="submit"
                   > 
                     追加 
                   </button> 
  
-                </div> 
+                </form> 
               ) : ( 
                 
                 <button 

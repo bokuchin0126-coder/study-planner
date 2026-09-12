@@ -229,16 +229,21 @@ export async function carryOverDailyTasksInDB(
   }
 }
 
-export async function getDailyRecords(today: string, tomorrow: string, yesterday: string, userId: string) {
+export async function getDailyRecords(startDate: string, endDate: string, userId: string) {
   try {
     const { data: plansData, error: planError } = await supabase
       .from("daily_plans")
       .select()
       .eq("user_id", userId)
-      .in("date", [today, tomorrow, yesterday])
+      .gte("date", startDate)
+      .lte("date", endDate)
 
     if (planError) throw planError
     const planIds = (plansData ?? []).map(plan => plan.id)
+
+    if (planIds.length === 0) {
+      return {plansData: [], tasksData: []}
+    }
 
     const { data: tasksData, error: tasksError } = await supabase
       .from("daily_tasks")

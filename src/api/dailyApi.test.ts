@@ -644,7 +644,7 @@ describe("getDailyRecords", () => {
     }) 
  
     expect(mockedFrom).toHaveBeenCalledWith("daily_plans") 
-}) 
+  }) 
 })
 
 describe("activateCarryOverTasks", () => {

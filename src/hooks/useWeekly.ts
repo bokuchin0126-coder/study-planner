@@ -43,6 +43,36 @@ export default function useWeekly() {
     else return ""
   }
 
+  function getWeeklyFetchDate(type: "start" | "end") { 
+    const today = new Date() 
+ 
+    const monthStart = new Date( 
+      today.getFullYear(), 
+      today.getMonth(), 
+      1 
+    ) 
+ 
+    const monthEnd = new Date( 
+      today.getFullYear(), 
+      today.getMonth() + 1, 
+      0 
+    ) 
+ 
+    if (type === "start") { 
+      monthStart.setDate(monthStart.getDate() - 7) 
+ 
+      return new Intl.DateTimeFormat("sv-SE", { 
+        timeZone: "Asia/Tokyo" 
+      }).format(monthStart) 
+    } 
+ 
+    monthEnd.setDate(monthEnd.getDate() + 7) 
+ 
+    return new Intl.DateTimeFormat("sv-SE", { 
+      timeZone: "Asia/Tokyo" 
+    }).format(monthEnd) 
+  } 
+
   const addWeeklyRecord = async (text: string, startDate: string, endDate: string) => {
     try {
       if (text.trim() === "") throw alert("タスクを入力して下さい")
@@ -185,9 +215,8 @@ export default function useWeekly() {
         const user = await getCurrentUser()
 
         const { plansData, tasksData } = await getWeeklyRecords(
-          weeklyDate("start"), 
-          weeklyDate("start", -1), 
-          weeklyDate("start", 1),
+          getWeeklyFetchDate("start"),
+          getWeeklyFetchDate("end"),
           user.id
         )
  

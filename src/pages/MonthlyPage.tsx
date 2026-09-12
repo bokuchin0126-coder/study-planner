@@ -99,9 +99,9 @@ export default function MonthlyPage() {
     setExpandadTaskId(null)
   })
 
-  const monthAddRef = useRef<HTMLDivElement | null>(null)
-  const nextMonthAddRef = useRef<HTMLDivElement | null>(null)
-  const editRef = useRef<HTMLDivElement | null>(null)
+  const monthAddRef = useRef<HTMLFormElement | null>(null)
+  const nextMonthAddRef = useRef<HTMLFormElement | null>(null)
+  const editRef = useRef<HTMLFormElement | null>(null)
   
   useOutsideClick(monthAddRef, () => {
     setMonthShowAdd(false)
@@ -203,9 +203,19 @@ export default function MonthlyPage() {
 
                     {editingId === task.id ? (
   
-                      <div
+                      <form
                         className="monthly-task-edit"
                         ref={editRef}
+                        onSubmit={async (e) => {
+                          e.preventDefault();
+                          await updateMonthlyTaskTitle(
+                            task.id,
+                            editText,
+                            monthStart
+                          );
+                          setEditText("");
+                          setEditingId("");
+                        }}
                       >
  
                         <input
@@ -214,35 +224,16 @@ export default function MonthlyPage() {
                           onChange={(e) =>
                             setEditText(e.target.value)
                           }
-                          onKeyDown={async (e) => {
-                            if (e.key === "Enter") {
-                              await updateMonthlyTaskTitle(
-                                task.id,
-                                editText,
-                                monthStart
-                              )
-                              setEditText("")
-                              setEditingId("")
-                            }
-                          }}
                         />
   
                         <button
                           className="monthly-task-action"
-                          onClick={async () => {
-                            await updateMonthlyTaskTitle(
-                              task.id,
-                              editText,
-                              monthStart
-                            )
-                            setEditText("")
-                            setEditingId("")
-                          }}
+                          type="submit"
                         >
                            保存
                         </button>
 
-                      </div>
+                      </form>
 
                     ) : (
                       <div className="monthly-task-content">
@@ -310,9 +301,19 @@ export default function MonthlyPage() {
           <div className="monthly-task-add">
 
             {monthShowAdd ? (
-              <div 
+              <form 
                 className="monthly-task-add-form"
                 ref={monthAddRef}
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const text = addText;
+                  setAddText("");
+                  await addMonthlyRecord(
+                    text,
+                    monthStart
+                  );
+                  setMonthShowAdd(false);
+                }}
               >
 
                 <input
@@ -323,35 +324,16 @@ export default function MonthlyPage() {
                   onChange={(e) =>
                     setAddText(e.target.value)
                   }
-                  onKeyDown={async (e) => {
-                    if (e.key === "Enter") {
-                      const text = addText
-                      setAddText("")
-                      await addMonthlyRecord(
-                        text,
-                        monthStart
-                      )
-                      setMonthShowAdd(false)
-                    }
-                  }}
                 />
 
                 <button
                   className="monthly-task-add-button"
-                  onClick={async () => {
-                    const text = addText
-                    setAddText("")
-                    await addMonthlyRecord(
-                      text,
-                      monthStart
-                    )
-                    setMonthShowAdd(false)
-                  }}
+                  type="submit"
                 >
                   追加
                 </button>
 
-              </div>
+              </form>
             ) : (
               <button
                 className="monthly-add-task-button"
@@ -442,9 +424,19 @@ export default function MonthlyPage() {
                   <div className="monthly-task-row">
 
                     {editingId === task.id ? (
-                      <div
+                      <form
                         className="monthly-task-edit"
                         ref={editRef}
+                        onSubmit={async (e) => {
+                          e.preventDefault();
+                          await updateMonthlyTaskTitle(
+                            task.id,
+                            editText,
+                            nextMonthStart
+                          );
+                          setEditText("");
+                          setEditingId("");
+                        }}
                       >
   
                         <input
@@ -453,35 +445,16 @@ export default function MonthlyPage() {
                           onChange={(e) =>
                             setEditText(e.target.value)
                           }
-                          onKeyDown={async (e) => {
-                            if (e.key === "Enter") {
-                              await updateMonthlyTaskTitle(
-                                task.id,
-                                editText,
-                                nextMonthStart
-                              )
-                              setEditText("")
-                              setEditingId("")
-                            }
-                          }}
                         />
   
                         <button
                           className="monthly-task-action"
-                          onClick={async () => {
-                            await updateMonthlyTaskTitle(
-                              task.id,
-                              editText,
-                              nextMonthStart
-                            )
-                            setEditText("")
-                            setEditingId("")
-                          }}
+                          type="submit"
                         >
                           保存
                         </button>
   
-                      </div>
+                      </form>
                     ) : (
                       <div className="monthly-task-content">
   
@@ -546,9 +519,16 @@ export default function MonthlyPage() {
           <div className="monthly-task-add">
 
             {nextMonthShowAdd ? (
-              <div 
+              <form 
                 className="monthly-task-add-form"
                 ref={nextMonthAddRef}
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const text = addText;
+                  setAddText("");
+                  await addMonthlyRecord(text, nextMonthStart);
+                  setNextMonthShowAdd(false);
+                }}
               >
 
                 <input
@@ -559,35 +539,16 @@ export default function MonthlyPage() {
                   onChange={(e) =>
                     setAddText(e.target.value)
                   }
-                  onKeyDown={async (e) => {
-                    if (e.key === "Enter") {
-                      const text = addText
-                      setAddText("")
-                      await addMonthlyRecord(
-                        text,
-                        nextMonthStart
-                      )
-                      setNextMonthShowAdd(false)
-                    }
-                  }}
                 />
 
                 <button
                   className="monthly-task-add-button"
-                  onClick={async () => {
-                    const text = addText
-                    setAddText("")
-                    await addMonthlyRecord(
-                      text,
-                      nextMonthStart
-                    )
-                    setNextMonthShowAdd(false)
-                  }}
+                  type="submit"
                 >
                   追加
                 </button>
 
-              </div>
+              </form>
             ) : (
               <button
                 className="monthly-add-task-button"

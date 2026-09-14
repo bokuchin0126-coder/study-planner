@@ -667,13 +667,11 @@ export default function LongTermPage() {
                       この期間中に達成したMonthlyタスクはありません
                     </p>
                   ) : (
-                    <ul className="completed-task-list">
-                      {tasks.map((task) => (
-                        <li key={task}>
-                          {task}
-                        </li>
-                      ))}
-                    </ul>
+                    tasks.map((task) => (
+                      <p className="completed-task-list" key={task}>
+                        ✓ {task}
+                      </p>
+                    ))
                   )}
                 </div>
               )

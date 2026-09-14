@@ -640,13 +640,11 @@ export default function MonthlyPage() {
                   </p>
 
                   {week && week.tasks.length > 0 ? (
-                    <ul className="monthly-completed-weekly-task-list">
-                      {week.tasks.map(task => (
-                        <li key={task.id}>
-                          ✓ {task.title}
-                        </li>
-                      ))}
-                    </ul>
+                    week.tasks.map(task => (
+                      <div className="monthly-completed-weekly-task-list" key={task.id}>
+                        ✓ {task.title}
+                      </div>
+                    ))
                   ) : (
                     <p className="monthly-section-message">
                       達成した課題はありません

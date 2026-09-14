@@ -631,13 +631,6 @@
 }
 
 .monthly-completed-weekly-task-list {
-  margin: 0;
-  padding: 0;
-
-  list-style: none;
-}
-
-.monthly-completed-weekly-task-list li {
   margin: 0 0 var(--space-1);
   color: var(--color-text);
 
@@ -646,8 +639,11 @@
 
   line-height: 1.5;
   overflow-wrap: anywhere;
-}
 
+  padding-left: var(--space-4);
+  text-indent: calc(var(--space-4) * -1);
+  text-align: left;
+}
 
 .monthly-completed-weekly-list::-webkit-scrollbar {
   width: 6px;

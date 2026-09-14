@@ -10,7 +10,6 @@ import {
   daleteWeeklyTaskInDB,
   getWeeklyRecords
 } from "./weeklyApi"
-import { getDailyRecords } from "./dailyApi"
 
 
 const weeklyDate = (date: "start" | "end", offset = 0) => {

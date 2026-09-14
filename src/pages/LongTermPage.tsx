@@ -75,8 +75,8 @@ export default function LongTermPage() {
     setExpandadTaskId(null)
   })
 
-  const addRef = useRef<HTMLDivElement | null>(null)
-  const editRef = useRef<HTMLDivElement | null>(null)
+  const addRef = useRef<HTMLFormElement | null>(null)
+  const editRef = useRef<HTMLFormElement | null>(null)
     
   useOutsideClick(addRef, () => {
     setShowAdd(false)
@@ -476,9 +476,18 @@ export default function LongTermPage() {
                     </button>
  
                     {editingId === task.id ? (
-                      <div
+                      <form
                         className="task-edit"
                         ref={editRef}
+                        onSubmit={(e) => {
+                          e.preventDefault()
+                          updateLongTermTaskTitle(
+                            task.id,
+                            editText
+                          )
+                          setEditText("")
+                          setEditingId("")
+                        }}
                       >
                         <input
                           value={editText}
@@ -486,32 +495,15 @@ export default function LongTermPage() {
                           onChange={(e) =>
                             setEditText(e.target.value)
                           }
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              updateLongTermTaskTitle(
-                                task.id,
-                                editText
-                              )
-                              setEditText("")
-                              setEditingId("")
-                            }
-                          }}
                         />
   
                         <button
                           className="task-action"
-                          onClick={() => {
-                            updateLongTermTaskTitle(
-                              task.id,
-                              editText
-                            )
-                            setEditText("")
-                            setEditingId("")
-                          }}
+                          type="submit"
                         >
                           保存
                         </button>
-                      </div>
+                      </form>
                     ) : (
                       <div className="task-content">
                         <p
@@ -569,9 +561,16 @@ export default function LongTermPage() {
 
           <div className="task-add">
             {showAdd ? (
-              <div
+              <form
                 className="task-add-form"
                 ref={addRef}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const text = addText;
+                  setAddText("");
+                  addLongTermTask(text);
+                  setShowAdd(false);
+                }}
               >
                 <input
                   className="task-add-input"
@@ -581,28 +580,15 @@ export default function LongTermPage() {
                   onChange={(e) =>
                     setAddText(e.target.value)
                   }
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      const text = addText
-                      setAddText("")
-                      addLongTermTask(text)
-                      setShowAdd(false)
-                    }
-                  }}
                 />
 
                 <button
                   className="task-add-button"
-                  onClick={() => {
-                    const text = addText
-                    setAddText("")
-                    addLongTermTask(text)
-                    setShowAdd(false)
-                  }}
+                  type="submit"
                 >
                   追加
                 </button>
-              </div>
+              </form>
             ) : (
               <button
                 className="add-task-button"

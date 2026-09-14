@@ -11,14 +11,15 @@ import {
   updateMonthlyTaskToggleInDB,
   updateMonthlyReflectionInDB,
   deleteMonthlyTaskInDB,
-  getMonthlyRecords
+  getMonthlyRecords,
+  getCurrentLongTermPeriod
 } from "../api/monthlyApi"
 
 
- 
+
 export default function useMonthly() {
   const [monthlyRecords, setMonthlyRecords] = useState<MonthlyRecord[]>([])
-  
+
   const monthlyDate = (date: "start" | "end", offset = 0) => {
     const now = new Date()
 
@@ -29,14 +30,86 @@ export default function useMonthly() {
 
     const monthStart = new Date(year, month, 1)
     const monthEnd = new Date(year, month + 1, 0)
-  
+
     const format = (d: Date) => new Intl.DateTimeFormat("sv-SE", {
       timeZone: "Asia/Tokyo"
     }).format(d)
-  
+
     if (date === "start") return format(monthStart)
     else if (date === "end") return format(monthEnd)
     else return ""
+  }
+
+  const getMonthlyFetchRange = async () => {
+    const user = await getCurrentUser()
+    const longTermPeriod = await getCurrentLongTermPeriod(user.id)
+
+    if (!longTermPeriod) {
+      return {
+        startDate: monthlyDate("start", -2),
+        endDate: monthlyDate("end", 2)
+      }
+    }
+    const now = new Date()
+
+    const currentMonthStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1
+    )
+
+    const currentMonthEnd = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0
+    )
+
+    const start = new Date(longTermPeriod.start_date)
+    const end = new Date(longTermPeriod.end_date)
+
+    const isWithinLongTerm =
+      start <= currentMonthEnd &&
+      end >= currentMonthStart
+
+    if (!isWithinLongTerm) {
+      return {
+        startDate: monthlyDate("start", -2),
+        endDate: monthlyDate("end", 2)
+      }
+    }
+
+    const months =
+      (end.getFullYear() - start.getFullYear()) * 12 +
+      (end.getMonth() - start.getMonth()) +
+      1
+
+    if (months >= 3) {
+      const fetchStart = new Date(
+        start.getFullYear(),
+        start.getMonth() - 1,
+        1
+      )
+
+      const fetchEnd = new Date(
+        end.getFullYear(),
+        end.getMonth() + 2,
+        0
+      )
+
+      return {
+        startDate: new Intl.DateTimeFormat("sv-SE", {
+          timeZone: "Asia/Tokyo"
+        }).format(fetchStart),
+        endDate: new Intl.DateTimeFormat("sv-SE", {
+          timeZone: "Asia/Tokyo"
+        }).format(fetchEnd)
+      }
+    }
+
+    return {
+      startDate: monthlyDate("start", -2),
+      endDate: monthlyDate("end", 2)
+    }
   }
 
   const addMonthlyRecord = async (text: string, date: string) => {
@@ -73,7 +146,7 @@ export default function useMonthly() {
 
       } else {
         const orderIndex = await getNextOrderIndex(
-          "monthly_tasks", 
+          "monthly_tasks",
           currentDateId,
           user.id
         )
@@ -86,15 +159,15 @@ export default function useMonthly() {
           orderIndex: orderIndex
         }
 
-        setMonthlyRecords(prev => prev.map(month => month.month === date ? 
+        setMonthlyRecords(prev => prev.map(month => month.month === date ?
           {
             ...month,
-            tasks: [...month.tasks, task]  
+            tasks: [...month.tasks, task]
           }
           : month
         ))
       }
-    } catch(e) {
+    } catch (e) {
       console.error(e)
       alert("タスクの追加に失敗しました")
     }
@@ -105,16 +178,16 @@ export default function useMonthly() {
       const user = await getCurrentUser()
       await updateMonthlyTaskTitleInDB(id, text, user.id)
 
-      setMonthlyRecords(prev => prev.map(month => month.month === date ? 
+      setMonthlyRecords(prev => prev.map(month => month.month === date ?
         {
           ...month,
           tasks: month.tasks.map(task => (
-            task.id === id ? {...task, title: text} : task
+            task.id === id ? { ...task, title: text } : task
           ))
         }
         : month
       ))
-    } catch(e) {
+    } catch (e) {
       console.error(e)
       alert("タスクの編集に失敗しました")
     }
@@ -125,17 +198,17 @@ export default function useMonthly() {
       const user = await getCurrentUser()
       await updateMonthlyTaskToggleInDB(id, completed, user.id)
 
-      setMonthlyRecords(prev => prev.map(month => month.month === date ? 
+      setMonthlyRecords(prev => prev.map(month => month.month === date ?
         {
           ...month,
           tasks: month.tasks.map(task => (
-            task.id === id ? {...task, completed: !completed} : task
+            task.id === id ? { ...task, completed: !completed } : task
           ))
         }
         : month
       ))
 
-    } catch(e) {
+    } catch (e) {
       console.error(e)
       alert("タグの切り替えに失敗しました")
     }
@@ -146,14 +219,14 @@ export default function useMonthly() {
       const user = await getCurrentUser()
       await updateMonthlyReflectionInDB(text, date, user.id)
 
-      setMonthlyRecords(prev => prev.map(month => month.month === date ? 
+      setMonthlyRecords(prev => prev.map(month => month.month === date ?
         {
           ...month,
           reflection: text
         }
         : month
       ))
-    } catch(e) {
+    } catch (e) {
       console.error(e)
       alert("振り返りテキストの更新に失敗しました")
     }
@@ -164,14 +237,14 @@ export default function useMonthly() {
       const user = await getCurrentUser()
       await deleteMonthlyTaskInDB(id, user.id)
 
-      setMonthlyRecords(prev => prev.map(month => month.month === date ? 
+      setMonthlyRecords(prev => prev.map(month => month.month === date ?
         {
           ...month,
           tasks: month.tasks.filter(task => task.id !== id)
         }
         : month
       ))
-    } catch(e) {
+    } catch (e) {
       console.error(e)
       alert("タスクの削除に失敗しました")
     }
@@ -181,10 +254,11 @@ export default function useMonthly() {
     const fetch = async () => {
       try {
         const user = await getCurrentUser()
+
+        const { startDate, endDate } = await getMonthlyFetchRange()
         const { plansData, tasksData } = await getMonthlyRecords(
-          monthlyDate("start"),
-          monthlyDate("start", -1),
-          monthlyDate("start", 1),
+          startDate,
+          endDate,
           user.id
         )
 
@@ -198,7 +272,7 @@ export default function useMonthly() {
         const monthlyRecord: MonthlyRecord[] = plansData.map(plan => ({
           month: plan.month_start,
           tasks: tasks.filter(task =>
-            tasksData.find( t =>
+            tasksData.find(t =>
               t.id === task.id &&
               t.plan_id === plan.id
             )
@@ -207,11 +281,11 @@ export default function useMonthly() {
         }))
 
         setMonthlyRecords(monthlyRecord)
-      } catch(e) {
+      } catch (e) {
         console.error(e)
         alert("データの取得に失敗しました")
       }
-    } 
+    }
     fetch()
   }, [])
 

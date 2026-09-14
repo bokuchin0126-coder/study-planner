@@ -42,6 +42,8 @@ const mockUpsert = vi.fn()
 const mockEq = vi.fn()
 const mockIn = vi.fn()
 const mockNot = vi.fn()
+const mockGte = vi.fn()
+const mockLte = vi.fn()
 
 const mockSingle = vi.fn()
 const mockMaybeSingle = vi.fn()
@@ -76,9 +78,14 @@ beforeEach(() => {
     eq: mockExecute,
     in: mockIn,
     not: mockNot,
+    gte: mockGte,
     select: mockSelect,
     single: mockSingle,
     maybeSingle: mockMaybeSingle
+  })
+
+  mockGte.mockReturnValue({
+    lte: mockLte
   })
 
   mockSingle.mockResolvedValue({
@@ -553,46 +560,39 @@ describe("carryOverDailyTasksInDB", () => {
 
 describe("getDailyRecords", () => {
   it("指定した日付分のplanデータとタスクデータをDBから持ってくる", async () => {
-    const todayPlan = {
+    const startPlan = {
       user_id: "user-id",
-      id: "today",
-      date: getDate()
+      id: "start",
+      date: "2025-05-05"
     }
-    const yesterdayPlan = {
+    const endPlan = {
       user_id: "user-id",
-      id: "yesterday",
-      date: getDate(0, 0, -1)
-    }
-    const tomorrowPlan = {
-      user_id: "user-id",
-      id: "tomorrow",
-      date: getDate(0, 0, 1)
-    }
-    const todayTask = {
-      user_id: "user-id",
-      plan_id: "today",
-    }
-    const yesterdayTask = {
-      user_id: "user-id",
-      plan_id: "yesterday",
-    }
-    const tomorrowTask = {
-      user_id: "user-id",
-      plan_id: "tomorrow",
+      id: "end",
+      date: "2025-05-14"
     }
 
-    mockIn.mockResolvedValueOnce({
-      data: [todayPlan, yesterdayPlan, tomorrowPlan],
+    const startTask = {
+      user_id: "user-id",
+      plan_id: "start",
+    }
+    const endTask = {
+      user_id: "user-id",
+      plan_id: "end",
+    }
+
+    mockLte.mockResolvedValueOnce({
+      data: [startPlan, endPlan],
       error: null
     })
+
     mockIn.mockResolvedValueOnce({
-      data: [todayTask, yesterdayTask, tomorrowTask],
+      data: [startTask, endTask],
       error: null
     })
+
     const result = await getDailyRecords(
-      getDate(),
-      getDate(0, 0, 1),
-      getDate(0, 0, -1),
+      "2025-05-05",
+      "2025-05-14",
       "user-id"
     )
 
@@ -607,20 +607,44 @@ describe("getDailyRecords", () => {
       "user_id",
       "user-id"
     )
-
-    expect(mockIn).toHaveBeenNthCalledWith(1,
+    expect(mockGte).toHaveBeenCalledWith(
       "date",
-      [getDate(), getDate(0, 0, 1), getDate(0, 0, -1)]
+      "2025-05-05"
     )
-    expect(mockIn).toHaveBeenNthCalledWith(2,
+    expect(mockLte).toHaveBeenCalledWith(
+      "date",
+      "2025-05-14"
+    )
+    expect(mockIn).toHaveBeenCalledWith(
       "plan_id",
-      ["today", "yesterday", "tomorrow"]
+      ["start", "end"]
     )
     expect(result).toEqual({
-      plansData: [todayPlan, yesterdayPlan, tomorrowPlan],
-      tasksData: [todayTask, yesterdayTask, tomorrowTask]
+      plansData: [startPlan, endPlan],
+      tasksData: [startTask, endTask]
     })
   })
+
+  it("指定した範囲にPlanデータがない場合は空配列を返す", async () => { 
+
+    mockLte.mockResolvedValue({ 
+      data: [], 
+      error: null 
+    }) 
+ 
+    const result = await getDailyRecords( 
+      "2025-05-05", 
+      "2025-05-14", 
+      "user-id" 
+    ) 
+ 
+    expect(result).toEqual({ 
+      plansData: [], 
+      tasksData: [] 
+    }) 
+ 
+    expect(mockedFrom).toHaveBeenCalledWith("daily_plans") 
+  }) 
 })
 
 describe("activateCarryOverTasks", () => {

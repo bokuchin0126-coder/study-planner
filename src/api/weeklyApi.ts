@@ -140,9 +140,8 @@ export async function daleteWeeklyTaskInDB(id: string, userId: string) {
 }
 
 export async function getWeeklyRecords(
-  currentWeekStart: string,
-  previousWeekStart: string,
-  nextWeekStart: string,
+  startDate: string,
+  endDate: string,
   userId: string
 ) {
   try {  
@@ -150,10 +149,15 @@ export async function getWeeklyRecords(
       .from("weekly_plans")
       .select()
       .eq("user_id", userId)
-      .in("week_start", [currentWeekStart, previousWeekStart, nextWeekStart])
+      .gte("week_start", startDate)
+      .lte("week_end", endDate)
     
     if (plansError) throw plansError
     const planIds = (plansData ?? []).map(plan => plan.id)
+
+    if (planIds.length === 0) {
+      return { plansData: [], tasksData: [] }
+    }
     
     const { data: tasksData, error: tasksError } = await supabase
       .from("weekly_tasks")

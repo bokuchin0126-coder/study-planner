@@ -51,6 +51,8 @@ const mockDelete = vi.fn()
 
 const mockEq = vi.fn()
 const mockIn = vi.fn()
+const mockGte = vi.fn()
+const mockLte = vi.fn()
 
 const mockSingle = vi.fn()
 const mockMaybeSingle = vi.fn()
@@ -80,6 +82,7 @@ beforeEach(() => {
   mockEq.mockReturnValue({
     eq: mockExecute,
     in: mockIn,
+    gte: mockGte,
     select: mockSelect,
     single: mockSingle,
     maybeSingle: mockMaybeSingle
@@ -92,6 +95,10 @@ beforeEach(() => {
 
   mockExecute.mockResolvedValue({
     error: null
+  })
+
+  mockGte.mockReturnValue({
+    lte: mockLte
   })
 
   mockMaybeSingle.mockResolvedValue({
@@ -318,47 +325,38 @@ describe("daleteWeeklyTaskInDB", () => {
 
 describe("getWeeklyRecords", () => {
   it("指定した期間のplanとタスクをDBから持ってくる", async () => {
-    const weekPlan = {
+    const startPlan = {
       user_id: "user-id",
-      id: "weekPlan-id",
-      week_start: weeklyDate("start")
+      id: "startWeekPlan",
+      week_start: "2025-08-25"
     }
-    const lastWeekPlan = {
+    const endPlan = {
       user_id: "user-id",
-      id: "lastWeekPlan-id",
-      week_start: weeklyDate("start", -1)
+      id: "endWeekPlan",
+      week_end: "2025-10-07"
     }
-    const nextWeekPlan = {
+    const startTask = {
       user_id: "user-id",
-      id: "nextWeekPlan-id",
-      week_start: weeklyDate("start", 1)
+      plan_id: "startWeekPlan",
     }
-    const weekTask = {
+    const endTask = {
       user_id: "user-id",
-      plan_id: "weekPlan-id",
-    }
-    const lastWeekTask = {
-      user_id: "user-id",
-      plan_id: "lastWeekPlan-id",
-    }
-    const nextWeekTask = {
-      user_id: "user-id",
-      plan_id: "nextWeekPlan-id",
+      plan_id: "endWeekPlan",
     }
 
-    mockIn.mockResolvedValueOnce({
-      data: [weekPlan, lastWeekPlan, nextWeekPlan],
+    mockLte.mockResolvedValueOnce({
+      data: [startPlan, endPlan],
       error: null
     })
+
     mockIn.mockResolvedValueOnce({
-      data: [weekTask, lastWeekTask, nextWeekTask],
+      data: [startTask, endTask],
       error: null
     })
 
     const result = await getWeeklyRecords(
-      weeklyDate("start"),
-      weeklyDate("start", -1),
-      weeklyDate("start", 1),
+      "2025-08-25",
+      "2025-10-07",
       "user-id"
     )
 
@@ -373,17 +371,42 @@ describe("getWeeklyRecords", () => {
       "user_id",
       "user-id"
     )
-    expect(mockIn).toHaveBeenNthCalledWith(1, 
+    expect(mockGte).toHaveBeenCalledWith(
       "week_start",
-      [weeklyDate("start"), weeklyDate("start", -1), weeklyDate("start", 1)]
+      "2025-08-25"
     )
-    expect(mockIn).toHaveBeenNthCalledWith(2, 
+    expect(mockLte).toHaveBeenCalledWith(
+      "week_end",
+      "2025-10-07"
+    )
+    expect(mockIn).toHaveBeenCalledWith(
       "plan_id",
-      ["weekPlan-id", "lastWeekPlan-id", "nextWeekPlan-id"]
+      ["startWeekPlan", "endWeekPlan"]
     )
     expect(result).toEqual({
-      plansData: [weekPlan, lastWeekPlan, nextWeekPlan],
-      tasksData: [weekTask, lastWeekTask, nextWeekTask]
+      plansData: [startPlan, endPlan],
+      tasksData: [startTask, endTask]
     })
   })
+
+  it("指定した範囲にPlanデータがない場合は空配列を返す", async () => { 
+  
+    mockLte.mockResolvedValue({ 
+      data: [], 
+      error: null 
+    }) 
+   
+    const result = await getWeeklyRecords( 
+      "2025-08-25", 
+      "2025-10-07", 
+      "user-id" 
+    ) 
+   
+    expect(result).toEqual({ 
+      plansData: [], 
+      tasksData: [] 
+    }) 
+   
+    expect(mockedFrom).toHaveBeenCalledWith("weekly_plans") 
+  }) 
 })

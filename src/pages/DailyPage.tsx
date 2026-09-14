@@ -64,9 +64,9 @@ export default function DailyPage() {
     setExpandadTaskId(null)
   })
 
-  const todayAddRef = useRef<HTMLDivElement | null>(null)
-  const tomorrowAddRef = useRef<HTMLDivElement | null>(null)
-  const editRef = useRef<HTMLDivElement | null>(null)
+  const todayAddRef = useRef<HTMLFormElement | null>(null)
+  const tomorrowAddRef = useRef<HTMLFormElement | null>(null)
+  const editRef = useRef<HTMLFormElement | null>(null)
 
   useOutsideClick(todayAddRef, () => {
     setTodayShowAdd(false)
@@ -172,44 +172,35 @@ export default function DailyPage() {
                       </button>
 
                       {editingId === task.id ? (
-                        <div 
+                        <form 
                           className="daily-task-edit"
                           ref={editRef}
+                          onSubmit={async (e) => {
+                            e.preventDefault()
+                            await updateDailyTaskTitle(
+                              task.id,
+                              editText,
+                              today
+                            )
+                            setEditText("")
+                            setEditingId(null)
+                          }}
                         >
 
                           <input
                             autoFocus
                             value={editText}
                             onChange={(e) => setEditText(e.target.value)}
-                            onKeyDown={async (e) => {
-                              if (e.key === "Enter") {
-                                await updateDailyTaskTitle(
-                                  task.id,
-                                  editText,
-                                  today
-                                )
-                                setEditText("")
-                                setEditingId(null)
-                              }
-                            }}
                           />
 
                           <button
                             className="daily-task-action"
-                            onClick={async () => {
-                              await updateDailyTaskTitle(
-                                task.id,
-                                editText,
-                                today
-                              )
-                              setEditText("")
-                              setEditingId(null)
-                            }}
+                            type="submit"
                           >
                             保存
                           </button>
 
-                        </div>
+                        </form>
                       ) : (
                         <div className="daily-task-content">
 
@@ -280,9 +271,21 @@ export default function DailyPage() {
           <div className="daily-task-add">
 
             {todayShowAdd ? (
-              <div 
+              <form 
                 className="daily-task-add-form"
                 ref={todayAddRef}
+                onSubmit={async (e) => {
+                  e.preventDefault()
+
+                  const text = addText
+                  setAddText("")
+                  const task = await addDailyRecord(
+                    text,
+                    today
+                  )
+                  setTodayShowAdd(false)
+                  await carryOverRecords(task)
+                }}
               >
 
                 <input
@@ -291,37 +294,16 @@ export default function DailyPage() {
                   autoFocus
                   value={addText}
                   onChange={(e) => setAddText(e.target.value)}
-                  onKeyDown={async (e) => {
-                    if (e.key === "Enter") {
-                      const text = addText
-                      setAddText("")
-                      const task = await addDailyRecord(
-                        text,
-                        today
-                      )
-                      setTodayShowAdd(false)
-                      await carryOverRecords(task)
-                    }
-                  }}
                 />
 
                 <button
                   className="daily-task-add-button"
-                  onClick={async () => {
-                    const text = addText
-                    setAddText("")
-                    const task = await addDailyRecord(
-                      text,
-                      today
-                    )
-                    setTodayShowAdd(false)
-                    await carryOverRecords(task)
-                  }}
+                  type="submit"
                 >
                   追加
                 </button>
 
-              </div>
+              </form>
             ) : (
               <button
                 className="daily-add-task-button"
@@ -399,44 +381,35 @@ export default function DailyPage() {
                     <div className="daily-task-row">
 
                       {editingId === task.id ? (
-                        <div 
+                        <form 
                           className="daily-task-edit"
                           ref={editRef}
+                          onSubmit={async (e) => {
+                            e.preventDefault()
+                            await updateDailyTaskTitle(
+                              task.id,
+                              editText,
+                              tomorrowDate
+                            )
+                            setEditText("")
+                            setEditingId(null)
+                          }}
                         >
 
                           <input
                             autoFocus
                             value={editText}
                             onChange={(e) => setEditText(e.target.value)}
-                            onKeyDown={async (e) => {
-                              if (e.key === "Enter") {
-                                await updateDailyTaskTitle(
-                                  task.id,
-                                  editText,
-                                  tomorrowDate
-                                )
-                                setEditText("")
-                                setEditingId(null)
-                              }
-                            }}
                           />
 
                           <button
                             className="daily-task-action"
-                            onClick={async () => {
-                              await updateDailyTaskTitle(
-                                task.id,
-                                editText,
-                                tomorrowDate
-                              )
-                              setEditText("")
-                              setEditingId(null)
-                            }}
+                            type="submit"
                           >
                             保存
                           </button>
 
-                        </div>
+                        </form>
                       ) : (
                         <div className="daily-task-content">
 
@@ -504,9 +477,20 @@ export default function DailyPage() {
           <div className="daily-task-add">
 
             {tomorrowShowAdd ? (
-              <div 
+              <form 
                 className="daily-task-add-form"
                 ref={tomorrowAddRef}
+                onSubmit={async (e) => {
+                  e.preventDefault()
+
+                  const text = addText
+                  setAddText("")
+                  await addDailyRecord(
+                    text,
+                    tomorrowDate
+                  )
+                  setTomorrowShowAdd(false)
+                }}
               >
 
                 <input
@@ -515,35 +499,16 @@ export default function DailyPage() {
                   autoFocus
                   value={addText}
                   onChange={(e) => setAddText(e.target.value)}
-                  onKeyDown={async (e) => {
-                    if (e.key === "Enter") {
-                      const text = addText
-                      setAddText("")
-                      await addDailyRecord(
-                        text,
-                        tomorrowDate
-                      )
-                      setTomorrowShowAdd(false)
-                    }
-                  }}
                 />
 
                 <button
                   className="daily-task-add-button"
-                  onClick={async () => {
-                    const text = addText
-                    setAddText("")
-                    await addDailyRecord(
-                      text,
-                      tomorrowDate
-                    )
-                    setTomorrowShowAdd(false)
-                  }}
+                  type="submit"
                 >
                   追加
                 </button>
 
-              </div>
+              </form>
             ) : (
               <button
                 className="daily-add-task-button"

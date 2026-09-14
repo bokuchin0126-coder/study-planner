@@ -47,6 +47,32 @@ export default function useDaily() {
   const [todayTasks, setTodayTasks] = useState<Task[]>(todayPlan?.tasks ?? [])
   const [tomorrowTasks, setTomorrowTasks] = useState<Task[]>(tomorrowPlan?.tasks ?? [])
 
+  function getDailyFetchDate(type: "start" | "end") {
+    const today = new Date()
+    const day = today.getDay()
+
+    const monday = new Date(today)
+    const diff = day === 0 ? -6 : 1 - day
+    monday.setDate(today.getDate() + diff)
+
+    const sunday = new Date(monday)
+    sunday.setDate(monday.getDate() + 6)
+
+    if (type === "start") {
+      monday.setDate(monday.getDate() - 1)
+
+      return new Intl.DateTimeFormat("sv-SE", {
+        timeZone: "Asia/Tokyo"
+      }).format(monday)
+    }
+
+    sunday.setDate(sunday.getDate() + 1)
+
+    return new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "Asia/Tokyo"
+    }).format(sunday)
+  }
+
   const addDailyRecord = async (text: string, date: string) => {
     if (text.trim() === "") return alert("タスク名を入力して下さい")
 
@@ -246,7 +272,9 @@ export default function useDaily() {
         const user = await getCurrentUser()
         await activateCarryOverTasks(today, user.id)
         
-        const {plansData, tasksData} = await getDailyRecords(today, tomorrowDate, yesterdayDate, user.id)
+        const {plansData, tasksData} = 
+          await getDailyRecords(getDailyFetchDate("start"), getDailyFetchDate("end"), user.id)
+          
         const taskFilter = tasksData.filter(task => task.source_task_id === null)
 
         const dailyRecords = plansData.map(plan => {
@@ -285,7 +313,7 @@ export default function useDaily() {
     if (tomorrowPlan) {
       setTomorrowTasks(tomorrowPlan.tasks)
     }
-  }, [tomorrowPlan])
+  }, [tomorrowPlan, dailyRecords])
 
 
   return {

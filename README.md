@@ -16,13 +16,13 @@ Study Plannerは、日々の学習計画を「日・週・月・長期」の単�
 
 ### PC版
 
-![Study Planner Daily画面](./src/docs/demo-daily-v2.png)
+<img src="./src/docs/demo-daily-v2.png" alt="Study Planner Daily画面" width="800">
 
-![Study Planner Long-term画面](./src/docs/demo-long-term.png)
+<img src="./src/docs/demo-long-term.png" alt="Study Planner Long-term画面" width="800">
 
 ### スマートフォン版
 
-![Study Planner スマートフォン画面](./src/docs/demo-mobile.png)
+<img src="./src/docs/demo-mobile.png" alt="Study Planner スマートフォン版" width="350">
 
 ## 開発背景・目的
 
@@ -80,17 +80,15 @@ Study PlannerではSupabase Authenticationを利用してユーザー認証を�
 
 ## データベース設計
 
-Supabase（PostgreSQL）を使用し、ユーザーごとにDaily・Weekly・Monthly・Long-termの計画とタスクを管理しています。
+Supabase（PostgreSQL）を使用し、ユーザーごとに学習計画とタスクを管理するデータベースを設計しています。
 
-各期間の「plans」と「tasks」を分け、タスクから対応する計画を参照する構成としています。
-
-![Study Planner データベース設計](./docs/database-er-diagram.png)
+<img src="./src/docs/database-schema-v2.png" alt="Study Planner データベース設計" width="800">
 
 ## 品質管理・テスト
 
 実装後の動作確認だけでなく、Vitestによるテスト、ESLintによるコードチェック、TypeScriptの型チェックを含むbuild確認を行っています。
 
-最終確認時点では97件のテストがすべて成功し、ESLintでもエラー・警告がないことを確認した上で本番環境へデプロイしています。
+最終確認時点では102件のテストがすべて成功し、ESLintでもエラー・警告がないことを確認した上で本番環境へデプロイしています。
 
 また、開発中に発生した不具合については、原因を確認した上で修正し、ローカル環境だけでなく本番環境でも動作確認を行っています。
 
@@ -146,7 +144,7 @@ PCだけでなくスマートフォンからも利用できるよう、レスポ
 
 ### 計画機能の見直し
 
-実際に使用した結果、Weekly・Monthlyの計画は、計画を立てるための手間に対して実際の進行が予定通りにならないことが多く、日々のタスク管理には必ずしも必要ではないと感じました。
+実際に使用した結果、Weekly・Monthlyの計画は、計画を立てるための手間に対して実際の進行が予定通りにならないことも多く、日々のタスク管理には必ずしも必要ではないと感じました。
 
 そのため、今後はDailyとLong-termを中心とした、よりシンプルな構成への見直しも検討しています。
 

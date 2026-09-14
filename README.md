@@ -16,7 +16,7 @@ Study Plannerは、日々の学習計画を「日・週・月・長期」の単�
 
 ### PC版
 
-![Study Planner Daily画面](./src/docs/demo-daily.png)
+![Study Planner Daily画面](./src/docs/demo-daily-v2.png)
 
 ![Study Planner Long-term画面](./src/docs/demo-long-term.png)
 

@@ -14,7 +14,15 @@ Study Plannerは、日々の学習計画を「日・週・月・長期」の単�
 
 ## デモ
 
-ここにアプリのスクリーンショットやGIFを掲載予定
+### PC版
+
+![Study Planner Daily画面](./src/docs/demo-daily.png)
+
+![Study Planner Long-term画面](./src/docs/demo-long-term.png)
+
+### スマートフォン版
+
+![Study Planner スマートフォン画面](./src/docs/demo-mobile.png)
 
 ## 開発背景・目的
 

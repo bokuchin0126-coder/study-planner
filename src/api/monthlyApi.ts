@@ -139,9 +139,8 @@ export async function deleteMonthlyTaskInDB(id: string, userId: string) {
 }
 
 export async function getMonthlyRecords(
-  currentMonthStart: string,
-  previousMonthStart: string,
-  nextMonthStart: string,
+  startDate: string,
+  endDate: string,
   userId: string
 ) {
   try {  
@@ -149,10 +148,15 @@ export async function getMonthlyRecords(
       .from("monthly_plans")
       .select()
       .eq("user_id", userId)
-      .in("month_start", [currentMonthStart, previousMonthStart, nextMonthStart])
+      .gte("month_start", startDate)
+      .lte("month_end", endDate)
     
     if (plansError) throw plansError
     const planIds = (plansData ?? []).map(plan => plan.id)
+
+    if (planIds.length === 0) {
+      return { plansData: [], tasksData: [] }
+    }
     
     const { data: tasksData, error: tasksError } = await supabase
       .from("monthly_tasks")
@@ -167,3 +171,26 @@ export async function getMonthlyRecords(
     throw e
   }
 }
+
+export async function getCurrentLongTermPeriod(userId: string) { 
+  try { 
+    const today = new Date() 
+    const todayString = new Intl.DateTimeFormat("sv-SE", { 
+      timeZone: "Asia/Tokyo" 
+    }).format(today) 
+ 
+    const { data, error } = await supabase 
+      .from("long_term_plans") 
+      .select("start_date, end_date") 
+      .eq("user_id", userId) 
+      .lte("start_date", todayString) 
+      .gte("end_date", todayString) 
+      .maybeSingle() 
+ 
+    if (error) throw error 
+ 
+    return data 
+  } catch (e) { 
+    throw e 
+  } 
+} 

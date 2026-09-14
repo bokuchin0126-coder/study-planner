@@ -64,7 +64,18 @@ export default function MonthlyPage() {
   
   const completedLastMonthTasks = lastMonth?.tasks.filter(task => task.completed)
 
-  const thisMonthWeeklyPlans = weeklyRecords.filter((week: WeeklyRecord) => monthStart <= week.week && week.week <= monthEnd )
+  const thisMonthWeeklyPlans = weeklyRecords.filter( 
+    (week: WeeklyRecord) => { 
+      const weekDate = new Date(week.week) 
+      const weekEnd = new Date(weekDate) 
+      weekEnd.setDate(weekEnd.getDate() + 6) 
+ 
+     return ( 
+        weekDate <= new Date(monthEnd) && 
+        weekEnd >= new Date(monthStart) 
+      ) 
+    } 
+  ) 
   const completedThisMonthWeeklyPlans = thisMonthWeeklyPlans.map((week: WeeklyRecord) => ({
     week: week.week,
     tasks: week.tasks.filter(task => task.completed)

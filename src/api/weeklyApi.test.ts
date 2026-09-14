@@ -392,22 +392,22 @@ describe("getWeeklyRecords", () => {
 
   it("指定した範囲にPlanデータがない場合は空配列を返す", async () => { 
   
-      mockLte.mockResolvedValue({ 
-        data: [], 
-        error: null 
-      }) 
-   
-      const result = await getWeeklyRecords( 
-        "2025-08-25", 
-        "2025-10-07", 
-        "user-id" 
-      ) 
-   
-      expect(result).toEqual({ 
-        plansData: [], 
-        tasksData: [] 
-      }) 
-   
-      expect(mockedFrom).toHaveBeenCalledWith("weekly_plans") 
+    mockLte.mockResolvedValue({ 
+      data: [], 
+      error: null 
     }) 
+   
+    const result = await getWeeklyRecords( 
+      "2025-08-25", 
+      "2025-10-07", 
+      "user-id" 
+    ) 
+   
+    expect(result).toEqual({ 
+      plansData: [], 
+      tasksData: [] 
+    }) 
+   
+    expect(mockedFrom).toHaveBeenCalledWith("weekly_plans") 
+  }) 
 })

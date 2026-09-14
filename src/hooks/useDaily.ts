@@ -313,7 +313,7 @@ export default function useDaily() {
     if (tomorrowPlan) {
       setTomorrowTasks(tomorrowPlan.tasks)
     }
-  }, [tomorrowPlan])
+  }, [tomorrowPlan, dailyRecords])
 
 
   return {

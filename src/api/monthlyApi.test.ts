@@ -8,7 +8,8 @@ import {
   updateMonthlyTaskToggleInDB,
   updateMonthlyReflectionInDB,
   deleteMonthlyTaskInDB,
-  getMonthlyRecords
+  getMonthlyRecords,
+  getCurrentLongTermPeriod
 } from "./monthlyApi"
 
 
@@ -22,11 +23,11 @@ const monthlyDate = (date: "start" | "end", offset = 0) => {
 
   const monthStart = new Date(year, month, 1)
   const monthEnd = new Date(year, month + 1, 0)
-  
+
   const format = (d: Date) => new Intl.DateTimeFormat("sv-SE", {
     timeZone: "Asia/Tokyo"
   }).format(d)
-  
+
   if (date === "start") return format(monthStart)
   else if (date === "end") return format(monthEnd)
   else return ""
@@ -48,6 +49,8 @@ const mockDelete = vi.fn()
 
 const mockEq = vi.fn()
 const mockIn = vi.fn()
+const mockGte = vi.fn()
+const mockLte = vi.fn()
 
 const mockSingle = vi.fn()
 const mockMaybeSingle = vi.fn()
@@ -77,6 +80,8 @@ beforeEach(() => {
   mockEq.mockReturnValue({
     eq: mockExecute,
     in: mockIn,
+    gte: mockGte,
+    lte: mockLte,
     select: mockSelect,
     single: mockSingle,
     maybeSingle: mockMaybeSingle
@@ -89,6 +94,14 @@ beforeEach(() => {
 
   mockExecute.mockResolvedValue({
     error: null
+  })
+
+  mockGte.mockReturnValue({
+    lte: mockLte,
+  })
+
+  mockLte.mockReturnValue({
+    gte: mockGte,
   })
 
   mockMaybeSingle.mockResolvedValue({
@@ -118,7 +131,7 @@ describe("getMonthlyPlanByDateInDB", () => {
       maybeSingle: mockMaybeSingle
     })
     mockMaybeSingle.mockResolvedValueOnce({
-      data: {id: plan.id},
+      data: { id: plan.id },
       error: null
     })
 
@@ -232,11 +245,11 @@ describe("updateMonthlyTaskTitleInDB", () => {
 
     expect(mockedFrom).toHaveBeenCalledWith("monthly_tasks")
 
-    expect(mockEq).toHaveBeenCalledWith( 
+    expect(mockEq).toHaveBeenCalledWith(
       "user_id",
       "user-id"
     )
-    expect(mockExecute).toHaveBeenCalledWith( 
+    expect(mockExecute).toHaveBeenCalledWith(
       "id",
       "task-id"
     )
@@ -255,11 +268,11 @@ describe("updateMonthlyTaskToggleInDB", () => {
     )
     expect(mockedFrom).toHaveBeenCalledWith("monthly_tasks")
 
-    expect(mockEq).toHaveBeenCalledWith( 
+    expect(mockEq).toHaveBeenCalledWith(
       "user_id",
       "user-id"
     )
-    expect(mockExecute).toHaveBeenCalledWith( 
+    expect(mockExecute).toHaveBeenCalledWith(
       "id",
       "task-id"
     )
@@ -278,11 +291,11 @@ describe("updateMonthlyReflectionInDB", () => {
     )
     expect(mockedFrom).toHaveBeenCalledWith("monthly_plans")
 
-    expect(mockEq).toHaveBeenCalledWith( 
+    expect(mockEq).toHaveBeenCalledWith(
       "user_id",
       "user-id"
     )
-    expect(mockExecute).toHaveBeenCalledWith( 
+    expect(mockExecute).toHaveBeenCalledWith(
       "month_start",
       monthlyDate("start")
     )
@@ -298,11 +311,11 @@ describe("daleteMonthlyTaskInDB", () => {
 
     expect(mockedFrom).toHaveBeenCalledWith("monthly_tasks")
 
-    expect(mockEq).toHaveBeenCalledWith( 
+    expect(mockEq).toHaveBeenCalledWith(
       "user_id",
       "user-id"
     )
-    expect(mockExecute).toHaveBeenCalledWith( 
+    expect(mockExecute).toHaveBeenCalledWith(
       "id",
       "task-id"
     )
@@ -312,47 +325,37 @@ describe("daleteMonthlyTaskInDB", () => {
 
 describe("getMonthlyRecords", () => {
   it("指定した期間のplanとタスクをDBから持ってくる", async () => {
-    const monthPlan = {
+    const startPlan = {
       user_id: "user-id",
-      id: "month",
-      month_start: monthlyDate("start")
+      id: "startMonth",
+      month_start: "2026-08-01"
     }
-    const lastMonthPlan = {
+    const endPlan = {
       user_id: "user-id",
-      id: "lastMonth",
-      month_start: monthlyDate("start", -1)
+      id: "endMonth",
+      month_end: "2026-10-31"
     }
-    const nextMonthPlan = {
+    const startTask = {
       user_id: "user-id",
-      id: "nextMonth",
-      month_start: monthlyDate("start", 1)
+      plan_id: "startMonth",
     }
-    const monthTask = {
+    const endTask = {
       user_id: "user-id",
-      plan_id: "month",
-    }
-    const lastMonthTask = {
-      user_id: "user-id",
-      plan_id: "lastMonth",
-    }
-    const nextMonthTask = {
-      user_id: "user-id",
-      plan_id: "nextMonth",
+      plan_id: "endMonth",
     }
 
-    mockIn.mockResolvedValueOnce({
-      data: [monthPlan, lastMonthPlan, nextMonthPlan],
+    mockLte.mockResolvedValueOnce({
+      data: [startPlan, endPlan],
       error: null
     })
     mockIn.mockResolvedValueOnce({
-      data: [monthTask, lastMonthTask, nextMonthTask],
+      data: [startTask, endTask],
       error: null
     })
 
     const result = await getMonthlyRecords(
-      monthlyDate("start"),
-      monthlyDate("start", -1),
-      monthlyDate("start", 1),
+      "2026-08-01",
+      "2026-10-31",
       "user-id"
     )
 
@@ -367,17 +370,121 @@ describe("getMonthlyRecords", () => {
       "user_id",
       "user-id"
     )
-    expect(mockIn).toHaveBeenNthCalledWith(1, 
+    expect(mockGte).toHaveBeenCalledWith(
       "month_start",
-      [monthlyDate("start"), monthlyDate("start", -1), monthlyDate("start", 1)]
+      "2026-08-01"
     )
-    expect(mockIn).toHaveBeenNthCalledWith(2, 
+    expect(mockLte).toHaveBeenCalledWith(
+      "month_end",
+      "2026-10-31"
+    )
+    expect(mockIn).toHaveBeenCalledWith(
       "plan_id",
-      ["month", "lastMonth", "nextMonth"]
+      ["startMonth", "endMonth"]
     )
     expect(result).toEqual({
-      plansData: [monthPlan, lastMonthPlan, nextMonthPlan],
-      tasksData: [monthTask, lastMonthTask, nextMonthTask]
+      plansData: [startPlan, endPlan],
+      tasksData: [startTask, endTask]
     })
+  })
+
+  it("該当するplanがない場合は空配列を返す", async () => {
+    mockLte.mockResolvedValueOnce({
+      data: [],
+      error: null
+    })
+
+    const result = await getMonthlyRecords(
+      "2026-08-01",
+      "2026-10-31",
+      "user-id"
+    )
+
+    expect(mockedFrom).toHaveBeenCalledWith("monthly_plans")
+
+    expect(mockEq).toHaveBeenCalledWith(
+      "user_id",
+      "user-id"
+    )
+
+    expect(mockGte).toHaveBeenCalledWith(
+      "month_start",
+      "2026-08-01"
+    )
+
+    expect(mockLte).toHaveBeenCalledWith(
+      "month_end",
+      "2026-10-31"
+    )
+
+    expect(mockedFrom).not.toHaveBeenCalledWith("monthly_tasks")
+
+    expect(result).toEqual({
+      plansData: [],
+      tasksData: []
+    })
+  })
+})
+
+describe("getCurrentLongTermPeriod", () => {
+  it("現在の長期期間を返す", async () => {
+    const today = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "Asia/Tokyo"
+    }).format(new Date())
+
+    const plan = {
+      user_id: "user-id",
+      id: "plan-id",
+      start_date: monthlyDate("start", -1),
+      end_date: monthlyDate("end", 1),
+      reflection: ""
+    }
+
+    mockGte.mockReturnValueOnce({
+      maybeSingle: mockMaybeSingle
+    })
+    mockMaybeSingle.mockResolvedValueOnce({
+      data: plan,
+      error: null
+    })
+
+    const result = await getCurrentLongTermPeriod("user-id")
+
+    expect(mockedFrom).toHaveBeenCalledWith("long_term_plans")
+    expect(mockSelect).toHaveBeenCalledWith("start_date, end_date")
+
+    expect(mockEq).toHaveBeenCalledWith(
+      "user_id",
+      "user-id"
+    )
+    expect(mockLte).toHaveBeenCalledWith(
+      "start_date",
+      today
+    )
+    expect(mockGte).toHaveBeenCalledWith(
+      "end_date",
+      today
+    )
+    expect(mockMaybeSingle).toHaveBeenCalledTimes(1)
+    expect(result).toEqual(plan)
+  })
+
+  it("該当する長期計画がない場合はnullを返す", async () => {
+    const todayString = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "Asia/Tokyo"
+    }).format(new Date())
+
+    mockGte.mockReturnValueOnce({
+      maybeSingle: mockMaybeSingle
+    })
+
+    const result = await getCurrentLongTermPeriod("user-id")
+
+    expect(mockedFrom).toHaveBeenCalledWith("long_term_plans")
+    expect(mockSelect).toHaveBeenCalledWith("start_date, end_date")
+    expect(mockEq).toHaveBeenCalledWith("user_id", "user-id")
+    expect(mockLte).toHaveBeenCalledWith("start_date", todayString)
+    expect(mockGte).toHaveBeenCalledWith("end_date", todayString)
+    expect(result).toBeNull()
   })
 })
